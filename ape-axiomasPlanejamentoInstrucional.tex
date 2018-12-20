@@ -1,0 +1,284 @@
+
+\chapter{Axiomas de planejamento instrucional}
+\label{ape:axiomasPlanejamentoInstrucional}
+
+
+
+\section{Ordenação topológica}
+
+O axioma \textsf{(sortBy ?result ?e ?relation)} efetua a ordenação topológica dos elementos \textsf{?e} de acordo com a relação \textsf{?relation} que define um dígrafo acíclico. 
+
+\begin{example}
+Seja parte do modelo de domínio a ser ensinado representado pelo grafo da Figura \ref{fig:sampleGetRelated}. O axioma \textsf{(sortBy ?result (lo1 lo2 lo3 lo5 lo6 lo7) isRequiredBy)} devolve como resultado os elementos \textsf{(lo1 lo5 lo2 lo3 lo7 lo8)} no símbolo de variável \textsf{?result}.
+\end{example}
+
+\section{Ordenação dos elementos de domínio pelo histórico do estudante}
+
+O axioma \textsf{(sortByAlreadySeen ?result ?e ?l)} efetua a ordenação dos elementos \textsf{?e} de acordo como o registro histórico dos estudantes \textsf{?l}. Assim, os primeiros elementos da lista \textsf{?result} são elementos não presentes nos registros históricos dos estudantes.
+
+\begin{example}
+Seja o estado corrente \textsf{$S$=\{(property l1 hasAlreadySeen lo2), (property l2 hasAlreadySeen lo3)\}}. O axioma \textsf{(sortByAlreadySeen ?result (lo1 lo2 lo3 lo4 lo5) (l1 l2))} devolve como resultado a lista de termos \textsf{(lo1 lo4 lo5 lo1 lo2)} no símbolo variável \textsf{?result}.
+\end{example}
+
+
+\section{Filtrar elementos usando condições}
+
+O axioma \textsf{(filterByQuery ?result ?e ?query)} efetua a filtragem de uma lista de elementos \textsf{?e} que satisfazem as condições definidas na lista \textsf{?query}.
+
+\begin{example}
+Sejam os elementos e relações mostrados na Figura \ref{fig:sampleDomainForGetResource} parte do modelo de domínio a ser ensinado. O axioma
+\begin{alltt}\sffamily
+(filterByQuery ?result (lo1 lo2 lo3 lo4 lo5) ((class Auxiliary)
+                                                       (property hasLearningResourceType exercise)
+                                                       (property hasLearningObjective comp1 s4k3))
+\end{alltt}
+devolve como resultado a lista de identificadores \textsf{(lo3 lo4 lo5)} no símbolo variável \textsf{?result}.
+\end{example}
+
+\section{Construção de condições para consultas}
+
+As condições da lista \textsf{?query} podem ser obtidas mediante os axiomas  \textsf{buildPropertyQuery} e \textsf{buildRelationQuery}. O axioma \textsf{(buildPropertyQuery ?result ?name [?d] ?values ?query)} efetua a construção de condições \textsf{(property ?name [?d] ?v)} para cada elemento \textsf{?v} existente na lista de termos \textsf{?values} adicionando o resultado à lista \textsf{?query}.
+Enquanto, o axioma \textsf{(buildRelationQuery ?result ?name ?dests ?query)} efetua a construção de condições \textsf{(relation ?name ?d)} para cada elemento \textsf{?d} existente na lista de termos \textsf{?dests}.
+
+\begin{example}
+O axioma 
+\begin{alltt}\sffamily
+(buildPropertyQuery ?result hasLearningObjective c0 (s1k1 s1k2 s1k3)
+                          ((class Auxiliary)
+                           (property hasLearningResourceType exercise))
+\end{alltt}z
+devolve como resultado a lista de condições \textsf{((class Auxiliary) (property hasLearningResourceType exercise) (property hasLearningObjective c0 s1k1) (property hasLearningObjective c0 s1k2) (property hasLearningObjective c0 s1k3))} no símbolo de variável \textsf{?result}.
+\end{example}
+
+
+\section{Comparar e obter valores de um nível de competência}
+
+O axioma \textsf{(equivalent (?sl ?kl) ?level)} avalia os valores no nível de desenvolvimento de habilidade \textsf{?sl} e no nível de aquisição de conhecimento \textsf{?kl} com o identificador de nível de competência \textsf{?level}. Enquanto, o axioma \textsf{(getLevel ?level (?sl ?kl))} obtém o identificador do nível de competência \textsf{?level} a partir dos valores nível de desenvolvimento de habilidade \textsf{?sl} e nível de aquisição de conhecimento \textsf{?kl}. Os valores possíveis de \textsf{?sl} são \textsf{any}, \textsf{nothing}, \textsf{rough}, \textsf{explanatory}, \textsf{associative} e \textsf{autonomous}; e os valores possíveis de \textsf{?kl} são \textsf{any}, \textsf{nothing}, \textsf{accretion}, \textsf{tuning} e \textsf{restructuring}.
+
+O axioma \textsf{(getNumericalLevel (?sl ?kl) ?level)} obtém valores numéricos do nível de desenvolvimento de habilidade \textsf{?sl} e de aquisição de conhecimento \textsf{?kl} usando como entrada o identificador de nível de competência \textsf{?level}.
+
+\section{Avaliação do tipo de elemento de conhecimento associado a uma competência}
+
+O axioma \textsf{(hasKnowledgeType ?c ?t)} avalia se o tipo de elemento de conhecimento \textsf{?t} está associado à competência cognitiva \textsf{?c}, os valores possíveis de \textsf{?t} são \textsf{Auxiliary} e \textsf{Fundamental}.
+
+\newpage
+\subsubsection{Obter o nível de competência cognitiva e filtrar estudantes por nível de competência}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:- (getLearnerFundCompetencyLevel ?result ?learner ?c)
+       ((getPropertyValue ?result ?learner hasCompetencyLevel ?c))
+       ((assign ?result s0k0)))
+   
+   (:- (getLearnerAuxCompetencyLevel ?result ?learner ?c)
+       ((getPropertyValue ?result ?learner hasCompetencyLevel ?c))
+       ((getElement ?e ((class CurrentLDElement)))
+        (getPropertyValue ?fc ?e hasFundCompetency)
+        (getLearnerFundCompetencyLevel ?result ?learner ?fc)))
+   
+   (:- (getLearnerCompetencyLevel ?result ?learner ?c)
+       ((hasKnowledgeType ?c Auxiliary)
+        (getLearnerAuxCompetencyLevel ?result ?learner ?c))
+       ((getLearnerFundCompetencyLevel ?result ?learner ?c)))
+\end{jshopcode}
+\caption{Axioma de obtenção do nível de competência cognitiva corrente}
+\label{list:getLearnerCompetencyLevel}
+\end{figure}
+
+
+O axioma \textsf{getLearnerCompetencyLevel} mostrado na Figura \ref{list:getLearnerCompetencyLevel} obtém o nível de competência de um estudante \textsf{?learner} relativo à competência cognitiva \textsf{?c}.  Se a competência \textsf{?c} é associada a um elemento de conhecimento de tipo auxiliar, o nível é obtido mediante o axioma \textsf{getLearnerAuxCompetencyLevel} (linhas 5-9) que busca o valor no registro de competências do modelo de estudante (linha 6). No caso de que não exista um valor  no registro de competências, o valor a ser obtido corresponde ao nível de competência cognitiva fundamental \textsf{?fc} para o qual se efetua o processo de planejamento (linha 7-9).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:- (filterLearnersByCompetencyLevelH ?result () ?c (?sl ?kl) ?tmpResult)
+       ((assign ?result ?tmpResult)))
+   
+   (:- (filterLearnersByCompetencyLevelH ?result (?l . ?learners) ?c (?sl ?kl) ?tmpResult)
+       ((getLearnerCompetencyLevel ?clevel ?l ?c)
+        (getNumericalLevel (?csl ?ckl) ?clevel)
+        (call >= ?csl ?sl) (call >= ?ckl ?kl)
+        (filterLearnersByCompetencyLevelH ?result ?learners ?c (?sl ?kl) (?l . ?tmpResult)))
+       \textit{;; fall-back}
+       ((filterLearnersByCompetencyLevelH ?result ?learners ?c (?sl ?kl) ?tmpResult)))
+   
+   (:- (filterLearnersByCompetencyLevel ?result ?learners ?c ?level)
+       ((getNumericalLevel (?sl ?kl) ?level)
+        (filterLearnersByCompetencyLevelH ?result ?learners ?c (?sl ?kl) ())))
+\end{jshopcode}
+\caption{Axioma para filtrar estudantes por nivel de competência}
+\label{list:filterLearnersByCompetencyLevel}
+\end{figure}
+
+O axioma \textsf{filterLearnersByCompetencyLevel} mostrado na Figura \ref{list:filterLearnersByCompetencyLevel} efetua a filtragem dos estudantes \textsf{?learners} pelo nível de competência \textsf{?level} associadas à competência \textsf{?c}. Os estudantes a serem devolvidos pelo axioma correspondem com estudantes que possuem um nível maior ou igual ao nível \textsf{?level} (linhas 5-8).
+
+\section{Obter uma elemento auxiliar que cumpre as condições}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:- (reachedCompetencyLevels () ?learners) ())
+   
+   (:- (reachedCompetencyLevels ((?c ?l) . ?pres) ?learners)
+       ((filterLearnersByCompetencyLevel ?flearners ?learners ?c ?l)
+        (length ?nroLearners ?learners)
+        (length ?nroFiltereds ?flearners)
+        (call >= ?nroFiltereds (call / ?nroLearners 2))
+        (reachedCompetencyLevels ?pres ?learners)))
+   
+   (:- (readyAux ?result (?aux . ?auxs) ?learners)
+       ((getPropertyValues ?pres ?aux hasPrerequisite)
+        (reachedCompetencyLevels ?pres ?learners)
+        (assign ?result ?aux))
+       \textit{;; fall-back}
+       ((readyAux ?result ?auxs ?learners)))
+   
+   (:- (getReadyAux ?aux ?query ?learners)
+       ((getElements ?unsortAuxs ?query)
+        (sortByAlreadySeen ?auxs ?unsortAuxs ?learners)
+        (readyAux ?aux ?auxs ?learners)))
+\end{jshopcode}
+\caption{Axioma para obter um elemento de conhecimento de tipo auxiliar}
+\label{list:getReadyAux}
+\end{figure}
+
+O axioma \textsf{getReadyAux} mostrado na Figura \ref{list:getReadyAux} seleciona um elemento de conhecimento de tipo auxiliar que cumpre as condições da lista \textsf{?query} (linha 18). O elemento auxiliar selecionado é de preferência um elemento não visualizado anteriormente pelos participantes (linha 19) e deve satisfazer os pré-requisitos de aprendizagem (linha 20). O axioma \textsf{readyAux} (linhas 10-15) obtém o elemento auxiliar que satisfaz todos os pré-requisitos de aprendizagem \textsf{?pres} mediante o axioma \textsf{reachedCompetencyLevels} (linha 1-8, 12). A avaliação de cada pré-requisito de aprendizagem é dita satisfeita se a maioria dos estudantes satisfaz o nível de competência \textsf{?l} (linhas 4-7).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:- (getOrBuildReadyAux ?aux ?query ?learners)
+       ((getReadyAux ?aux ?query ?learners))
+       \textit{;; fall-back}
+       ((assign ?aux (call BuildElement ?query))))
+\end{jshopcode}
+\caption{Axioma para obter ou criar um elemento de conhecimento de tipo auxiliar}
+\label{list:getOrBuildReadyAux}
+\end{figure}
+
+O axioma \textsf{getOrBuildReadyAux} mostrado na Figura \ref{list:getOrBuildReadyAux} efetua a seleção de um elemento de conhecimento de tipo auxiliar que satisfaz as condições da lista \textsf{?query} e satisfaz os pré-requisitos de aprendizagem (linha 2). Caso não seja selecionado nenhum elemento, o axioma efetua a criação de um novo elemento do domínio a ser ensinado mediante o termo de chamada \textsf{(call BuildElement ?query)} (linha 4).
+
+\section{Obter condições de consultas de acordo as características dos estudantes}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:- (getLearnerPropertyQuery ?result ?comp ?learners ?difficults)
+       \textit{;; common}
+       ((assignIterator ?context (training higher-education school other))
+        (forall (?l) ((exist ?l ?learners))
+               ((getPropertyValues ?contexts ?l hasEducationalLevel)
+                (exist ?context ?contexts)))
+        (assign ?result ((property hasContext ?context)
+                         (property hasDifficult ?difficults))))
+       \textit{;; not-common}
+       ((assign ?result ((property hasDifficult ?difficults)))))
+   
+   (:- (getLearnerPropertyQuery ?result ?comp ?learners)
+       \textit{;; high motivated}
+       ((length ?nro ?learners)
+        (filterByQuery ?motLearners ?learners
+                       ((property hasMotivation ?comp (very-high high))))
+        (length ?nroMotLearners ?motLearners)
+        (call > ?nroMotLearners (call / ?nro 2))
+        (getLearnerPropertyQuery ?result ?comp ?learners (very-difficult difficult)))
+       \textit{;; medium motivated}
+       ((length ?nro ?learners)
+        (filterByQuery ?motLearners ?learners
+                       ((property hasMotivation ?comp (medium low))))
+        (length ?nroMotLearners ?motLearners)
+        (call > ?nroMotLearners (call / ?nro 2))
+        (getLearnerPropertyQuery ?result ?comp ?learners (medium easy)))
+       \textit{;; low motivated}
+       ((getLearnerPropertyQuery ?result ?comp ?learners (easy very-easy))))
+\end{jshopcode}
+\caption{Axioma para obter condições de consultas de acordo as características dos estudantes}
+\label{list:getLearnerPropertyQuery}
+\end{figure}
+
+O axioma \textsf{getLearnerPropertyQuery} mostrado na Figura \ref{list:getLearnerPropertyQuery} obtém uma lista de condições a serem empregadas em consultas \textsf{?query} para à obtenção de elementos do modelo de domínio. A lista de condições é obtida avaliando as características individuais dos participantes como alto nível de motivação (linhas 14-19), nível meio de motivação (linhas 21-26) e baixo nível de motivação (linha 28). Outra característica avaliada nos estudantes é o nível de educação possuído pelos estudantes (linhas 1-10).
+
+\begin{example}
+Seja o estado corrente \textsf{$S$=\{(property l1 hasEducationalLevel school), (property l2 hasEducationalLevel school), (property l3 hasEducationalLevel school), (property l1 hasMotivation (c1 medium)), (property l2 hasMotivation (c1 medium)), (property l3 hasMotivation (c1 high))\}}. O axioma \textsf{(getLearnerPropertyQuery ?result c1 l1 l2 l3)} devolve como resultado a lista de condições \textsf{((property hasDifficult (medium easy)) (property hasContext school))} no símbolo variável \textsf{?result}.
+\end{example}
+
+\section{Obter competências e níveis de competência da lista de objetivos educacionais}
+
+O axioma \textsf{(getCompsFromGoals ?result ?goals)} obtém a lista de competências a partir dos objetivos educacionais \textsf{?goals}. Enquanto, o axioma \textsf{(getLevelsFromGoals ?result ?goals)} obtém a lista de níveis de competência.
+
+O axioma \textsf{(getCompFromGoals ?c ?goals)} é uma variante de \textsf{getCompsFromGoals} que obtém uma única competência associada aos objetivos educacionais. O axioma também avalia que todos os objetivos tenham a mesma competência \textsf{?c}.
+
+\section{Obter objetivo educacional de um elemento de conhecimento de tipo auxiliar}
+
+O axioma \textsf{(getGoalFromAuxiliary ?goal ?aux ?c [?l])} obtém o objetivo educacional \textsf{?goal} para um elemento de conhecimento de tipo auxiliar \textsf{?aux} no contexto da competência fundamental \textsf{?c}. O objetivo educacional é obtido usando um dos objetivos de aprendizagem (\textsf{hasLearningObjective}). O parâmetro \textsf{?l} define o nível de competência no objetivo educacional \textsf{?goal}. 
+
+O axioma \textsf{(getGoalsFromAuxiliary ?goals ?aux ?c ?levels)} obtém uma lista de objetivos educacionais \textsf{?goals} usando cada um dos níveis de competência \textsf{?l} definidos na lista de termos \textsf{?levels}. Os objetivos são obtidos no contexto da competência fundamental \textsf{?c}.
+
+Finalmente, o axioma \textsf{(getGoalsFromAuxiliaries ?goals ?auxs ?c)} obtém uma lista de objetivos educacionais \textsf{?goals} usando cada um dos elementos de conhecimento \textsf{?aux} definidos na lista de termos \textsf{?auxs}. Os objetivos são obtidos no contexto da competência fundamental \textsf{?c}. 
+
+\section{Obter objetivos individuais dos estudantes}
+
+O axioma \textsf{(getIndGoals ?result ?groups ?goals [?comps] [?learners])} obtém os objetivos individuais mediante a estrutura \textsf{((l$_{1}$ (c$_{1}$ ig$_{1}$)) ... (l$_{n}$ (c$_{n}$ ig$_{n}$)))}, na qual cada termo \textsf{(l$_{i}$ (c$_{i}$ ig$_{i}$))} representa o objetivo individual \textsf{ig$_{1}$} do estudante \textsf{l$_{i}$} relativo à competência \textsf{c$_{i}$}.
+O objetivo individual \textsf{ig$_{i}$} é representado mediante o identificador \textsf{s$x_{i}$k$y_{i}$s$x_{g}$k$y_{g}$}, no que:
+
+\begin{itemize}
+\item \textsf{$x_{i}$} e \textsf{$y_{i}$} representam o nível de competência corrente do estudante \textsf{l$_{i}$}; e
+\item \textsf{$x_{g}$} e \textsf{$y_{g}$} representam o nível de competência desejável.
+\end{itemize}
+
+Seja o símbolo variável \textsf{?goals} definido pela lista de termos \textsf{((c1 s1) (c2 s2) ... (cn sn))} e o símbolo variável \textsf{?groups} definido por \textsf{((l1$_{1}$ l2$_{1}$ ... lm$_{1}$) (l1$_{1}$ l2$_{1}$ ... lm$_{1}$) ... (l1$_{n}$ l2$_{n}$ ... lm$_{n}$))}. A obtenção dos objetivos individuais é efetuada mediante o relacionamento de cada um dos objetivos educacionais \textsf{(ci si)} e os níveis de competência dos estudantes \textsf{(l1$_{i}$ l2$_{i}$ ... lm$_{i}$)}.
+
+Os parâmetros opcionais \textsf{?comp} e \textsf{?learners} são empregados para definir a filtragem de objetivos individuais a serem obtidos. Assim, se uma competência \textsf{c$_{i}$} não existe na lista \textsf{?comps} ou um estudante \textsf{l$_{i}$} não existe na lista \textsf{?learners} o objetivo individual \textsf{(l$_{i}$ (c$_{i}$ ig$_{i}$))} não será incluído na lista termos \textsf{?result}.
+
+\begin{example}
+Seja o estado corrente \textsf{$S$ = \{(property l1 hasCompetencyLevel (c1 s1k0)), (property l2 hasCompetencyLevel (c1 s0k2)), (property l3 hasCompetencyLevel (c2 s4k0))\}}. O axioma \textsf{(getIndGoals ?result ((c1 s3k3) (c2 s4k3)) ((l1 l2) (l3 l4)))} devolve como resultado a lista de termos \textsf{((l1 (c1 s1k0s3k3)) (l2 (c1 s0k2s3k3)) (l3 (c2 s4k0s4k3)) (l4 (c2 s0k0s4k3)))} no símbolo variável \textsf{?result}. Note-se que se o nível de competência de um estudante não é definido no estado corrente \textsf{$S$} então o nível de competência para o estudante é \textsf{s0k0}.
+\end{example}
+
+\section{Filtragem de objetivos e grupos por competência cognitiva}
+
+O axioma \textsf{(filterGoalsByComp ?result ?goals ?c)} efetua a filtragem de objetivos educacionais \textsf{?goals} relativos à competência cognitiva \textsf{?c}, devolvendo o resultado no símbolo de variável \textsf{?result}. Enquanto, o axioma \textsf{(filterGroupsByComp ?result ?goals ?groups ?c)} efetua a filtragem dos grupos \textsf{?groups} associados aos objetivos educacionais \textsf{?goals} relativos à competência cognitiva \textsf{?c}.
+
+\begin{example}
+O axioma \textsf{(filterGoalsByComp ?result ((c1 s1k1) (c2 s2k3) (c1 s2k2)) c1)} devolve como resultado a lista de termos \textsf{((c1 s1k1) (c1 s2k2))} no símbolo de variável \textsf{?result}. Enquanto, o axioma  \textsf{(filterGoalsByComp ?result ((c1 s1k1) (c2 s2k3) (c1 s2k2)) ((l1 l2) (l3) (l5 l6 l7)) c1)} devolve como resultado a lista de termos \textsf{((l1 l2) (l5 l6 l7))}.
+\end{example}
+
+\subsubsection{Obter valor do tipo de recurso instrucional a ser apresentado}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:- (getCurrentLearningResourceType ?types)
+       ((getElement ?e ((class CurrentLDElement)))
+        (getPropertyValues ?types ?e hasLearningResourceType)
+        (different ?types ()))
+       \textit{;; fall-back}
+       ((assign ?types (call GetDefaultValue hasLearningResourceType))))
+\end{jshopcode}
+\caption{Axioma para obter o tipo de recurso instrucional a ser apresentado}
+\label{list:getCurrentLearningResourceType}
+\end{figure}
+
+O axioma \textsf{getCurrentLearningResourceType} mostrado na Figura \ref{list:getCurrentLearningResourceType} obtém a lista do tipo de recurso a ser apresentado no elemento de roteiro \textsf{?e} (linhas 3-5). Caso não seja definido o tipo de recurso instrucional no elemento de roteiro é usado valores padrão definidos no termo de chamada \textsf{(call GetDefaultValue hasLearningResourceType)} (linha 6).
+
+\section{Avaliar objetivos educacionais e níveis de competências}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:- (reachedGoals ((?comp ?level) . ?goals) (?group . ?groups))
+       ((getNumericalLevel (?gsl ?gkl) ?level)
+        (getLearnerCompetencyLevels ?levels ?group ?comp)
+        (forall (?sl ?kl) ((exist ?clevel ?levels)
+                           (getNumericalLevel (?sl ?kl) ?clevel))
+                ((call >= ?sl ?gsl)
+                 (call >= ?kl ?gkl)))
+        (reachedGoals ?goals ?groups)))
+\end{jshopcode}
+\caption{Axioma para avaliar objetivos educacionais e níveis de competência}
+\label{list:reachedGoals}
+\end{figure}
+
+O axioma \textsf{reachedGoals} mostrado na Figura \ref{list:reachedGoals} efetua a avaliação dos objetivos educacionais e os níveis de competência dos estudantes, retornando verdadeiro se todos os objetivos educacionais \textsf{?goals} foram atingidos pelos estudantes \textsf{?groups}. A avaliação é efetuada em cada um dos participantes \textsf{?group} (linha 3) validando se todos os valores numéricos  dos níveis de competência são maiores ou igual aos níveis dos objetivos educacionais (linhas 4-7).
+
+

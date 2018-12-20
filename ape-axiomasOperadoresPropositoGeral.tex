@@ -1,0 +1,118 @@
+
+\chapter{Axiomas e operadores de propósito geral}
+\label{ape:axiomasOperadoresPropositoGeral}
+
+\section{Teste de igualdade e não igualdade}
+
+Os axiomas da Figura \ref{list:sameAndDifferent} efetuam o teste de igualdade de e não igualdade de dois termos. O axioma de igualdade é verdadeiro somente se os termos passados como argumentos são iguais, enquanto, o axioma de não igualdade é verdadeiro se os termos não são iguais.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:- (same ?x ?x) ())
+   (:- (different ?x ?y) ((not (same ?x ?y))))
+\end{jshopcode}
+\caption{Teste de igualdade e não igualdade, axiomas \textsf{\emph{same}} e \textsf{\emph{different}}}
+\label{list:sameAndDifferent}
+\end{figure}
+
+\begin{example}
+O axioma \textsf{(same a a)} é satisfazível enquanto \textsf{(different a a)} não é satisfazível.
+\end{example}
+
+\begin{example}
+O axioma \textsf{(different a b)} é satisfazível enquanto \textsf{(same a b)} não é satisfazível.
+\end{example}
+
+\section{Manipulação de listas}
+
+A Figura \ref{list:basicListOperations} apresenta o conjunto de axiomas utilizados na manipulação de listas.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:- (first ?head (?head . ?tail))())
+   (:- (first nil nil)())
+   
+   (:- (rest ?tail (?head . ?tail))())
+   (:- (rest nil nil)())
+
+   (:- (removeElement ?result ?element ?list)
+       (removeH ?result nil ?element ?list))
+   (:- (removeH ?result ?tmpResult ?element nil)
+       (assign ?result (call Reverse ?tmpResult)))
+   (:- (removeH ?result ?tmpResult ?element (?element . ?tail))
+       (removeH ?result ?tmpResult ?element ?tail))
+   (:- (removeH ?result ?tmpResult ?element (?first . ?tail))
+       ((different ?first ?element))
+        (removeH ?result (?first . ?tmpResult) ?element ?tail)))
+
+   (:- (removeElements ?result ?list1 ?list2)
+       (removeElementsH ?result nil ?list1 ?list2))
+   (:- (removeElementsH ?result ?tmpResult ?list1 nil)
+       (assign ?result (call Reverse ?tmpResult)))
+   (:- (removeElementsH ?result ?tmpResult ?list1 (?head . ?tail))
+       ((removeElement ?list ?head ?list1)
+        (removeElementsH ?result ?tmpResult ?list ?tail)))
+
+   (:- (restrict ?result ?list1 ?list2)
+       (assign ?result (call Restrict ?list1 ?list2)))
+
+   (:- (exist ?element (?element . ?rest))())
+   (:- (exist ?element (?head . ?rest))(exist ?element ?rest))
+
+   (:- (length ?result ?list)(assign ?result (call GetLength ?list)))
+\end{jshopcode}
+\caption{Axiomas de manipulação de listas}
+\label{list:basicListOperations}
+\end{figure}
+
+O axioma \textsf{(first ?head \textit{list})} é utilizado para validar se o primeiro elemento da lista \textsf{\textit{list}} é igual ao valor da variável \textsf{?head}; ou para atribuir o valor do primeiro elemento da lista \textsf{\textit{list}} à variável \textsf{?head}.
+
+\begin{example}
+O axioma \textsf{(first a (a b c d e f))} é satisfazível porque o primeiro elemento \textsf{a} é igual ao parâmetro \textsf{?head}.
+\end{example}
+
+\begin{example}
+O axioma \textsf{(first ?p (a b c d e f))} é satisfazível e a variável \textsf{?p} é atribuída com o valor \textsf{a}.
+\end{example}
+
+\section{Substituição iterativa de um símbolo variável com os termos de uma lista}
+
+Na Figura \ref{assignIterator}, o axioma \textsf{(assignIterator ?var ?list)} efetua a substituição iterativa no símbolo variável \textsf{?var} de cada um dos termos de uma lista \textsf{?list}. O primeiro axioma atribui o primeiro termo da lista à variável \textsf{?var}, enquanto o segundo axioma é aplicado se o processo de planejamento falha efetuando a atribuição da variável \textsf{?var} no primeiro elemento da lista \textsf{?list}. O processo é repetido até o final da lista. Nesse caso, se o axioma não é satisfazível no último elemento da lista o processo de planejamento efetua um backtracking.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:- (assignIterator ?var (?head . ?tail)) (assign ?var ?head))
+   (:- (assignIterator ?var (?head . ?tail)) (assignIterator ?var ?tail))
+\end{jshopcode}
+\caption{Iteração em listas, axioma \textsf{\emph{assignIterator}}}
+\label{list:assignIterator}
+\end{figure}
+
+\begin{example}
+O axioma \textsf{(assignIterator ?var (a (b c d) e))} primeiro atribui à variável \textsf{?var} o termo \textsf{a}. Logo depois do backtracking, o termo \textsf{(b c d)} é atribuído e finalmente o termo \textsf{e} é atribuído.
+\end{example}
+
+\section{Manipulação do estado corrente}
+
+Os operadores apresentados na Figura \ref{list:addInWorldStateAndRemoveFromWorldState} são utilizados para efetuar adição e remoção de átomos lógicos na representação do estado do mundo. Assim, o operador \textsf{(!!addInWorldState ?atom)} é utilizado para adicionar o átomo \textsf{?atom}, enquanto o operador \textsf{(!!removeFromWorldState ?atom)} é utilizado para remover o átomo. A utilização de dois símbolos ``!!'' no operador primitivo representa que o operador é interno, desta maneira o operador não faz parte do plano de execução do agente.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:operator (!!addInWorldState ?atom)
+     ()
+     ()
+     (?atom))
+   
+   (:operator (!!removeFromWorldState ?atom)
+     ()
+     (?atom)
+     ())
+\end{jshopcode}
+\caption{Operadores \textsf{\emph{!!addInWorldState}} e \textsf{\emph{!!removeFromWorldState}}}
+    \label{list:addInWorldStateAndRemoveFromWorldState}
+\end{figure}
+

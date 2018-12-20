@@ -1,0 +1,1949 @@
+
+\chapter{Modelagem de planejamento instrucional em ACSC} %como um problema de planejamento hierárquico}
+\label{cap:modelagem}
+
+De acordo com \citet{oasis2006reference}, ``Um modelo de referência é um arcabouço abstrato utilizado para o entendimento de entidades e relações significativas existentes em um ambiente que possibilita o desenvolvimento de arquiteturas específicas usando padrões consistentes ou características próprias de cada ambiente''. Um modelo de referência que possibilite efetuar a modelagem do planejamento instrucional em ACSC como problema de planejamento hierárquico ainda não foi desenvolvido. Assim, usando como referência o modelo clássico de STI apresentado no capítulo anterior, a Figura \ref{fig:coursewareHTN} mostra a nossa modelagem proposta.
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.80\textwidth]{figuras/coursewareHTN}
+\caption{Planejamento instrucional em ACSC como um problema de planejamento hierárquico}
+\label{fig:coursewareHTN}
+\end{figure}
+
+Em nossa modelagem proposta, o problema de planejamento é definido pelo projetista instrucional mediante a seleção dos estudantes e dos objetivos educacionais que definem a rede de tarefa inicial ($w_{0}$); enquanto, o estado inicial ($s_{0}$) é definido mediante uma ferramenta de edição dos \textit{modelos de estudante e de domínio a ser ensinado}. O domínio de planejamento é definido mediante a representação do \textit{modelo pedagógico} como tarefas e métodos hierárquicos.
+
+\newpage
+Efetuada a definição do problema e do domínio de planejamento, o planejador hierárquico JSHOP2ip obtém um plano de solução usando axiomas de consultas aos modelos de estudante e de domínio a ser ensinado ($A$). Para sua execução em um AVA, o plano de solução mediante um componente de conversão será transformado em uma unidade de aprendizagem. A unidade de aprendizagem é definida como um pacote ZIP que contém um conjunto de roteiros colaborativos na especificação IMS-LD com todos os recursos instrucionais necessários.
+
+Neste capítulo, a seguir apresentamos a representação na linguagem JSHOP2ip do estado inicial na Seção \ref{sec:modelagemEstadoInicial}, a representação do problema de planejamento na Seção \ref{sec:problemaPlanejamento} e a representação do domínio de planejamento na Seção \ref{sec:dominioPlanejamento}. Finalmente, na Seção \ref{sec:componenteConversao} é apresentado detalhes do componente de conversão.
+
+%relação existente entre planejamento instrucional de roteiros colaborativos e planejamento hierárquico (Seção \ref{sec:relationInstructionalAndAutomated}). Apresentamos a representação computacional de roteiros colaborativos usando a especificação IMS-LD (Seção \ref{sec:representacaoRoteiros}). Nas Seções \ref{sec:problemaPlanejamento} e \ref{sec:dominioPlanejamento} são apresentadas as representações do problema e do domínio de planejamento hierárquico do modelo proposto na linguagem JSHOP2. Finalmente, na Seção \ref{sec:geracaoRoteiroACSC} apresentamos detalhes do gerador de roteiros colaborativos.
+
+%% ------------------------------------------------------------------------- %%
+
+\section{Estado Inicial: Modelo de domínio a ser ensinado e modelo de estudante}
+\label{sec:modelagemEstadoInicial}
+
+A modelagem do domínio a ser ensinado e das caraterísticas dos estudante é fundamentada na definição de competências como fatores de aprendizagem relativos ao planejamento instrucional em ACSC. Nesse contexto, o modelo de domínio a ser ensinado e o modelo de estudante utilizam a representação detalhada a seguir.
+
+\begin{definition}
+\label{def:recursoInstrucional}
+Os \emph{recursos instrucionais} $R = \{r_{1}, ..., r_{n}\}$ são representados mediante os átomos lógicos \textsf{(class Resource $r_{i}$)}, \textsf{(property $r_{i}$ hasTitle \textit{title})}, \textsf{(property $r_{i}$ hasType \textit{type})} e \textsf{(property $r_{i}$ hasHref \textit{href})}, onde:
+
+\begin{itemize}
+\item $r_{i}$ é o rotulo global único que identifica o recurso instrucional;
+\item \textsf{\textit{title}} é o nome dado ao recurso instrucional;
+\item \textsf{\textit{href}} especifica o endereço destino do recurso instrucional mediante uma URI; e
+\item \textsf{\textit{type}} é o tipo de conteúdo no endereço destino do recurso podendo ser conteúdo web (\textsf{webcontent}) ou conteúdo imsld (\textsf{imsldcontent}).
+\end{itemize}
+\end{definition}
+
+A Figura \ref{list:resourceJShop2} mostra a representação do recurso instrucional valor absoluto (linha 1) localizado na URI \textit{http://mathworld.wolfram.com/AbsoluteValue.html} (linha 4).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (class Resource res-f89260ab)
+   (property res-f89260ab hasTitle `Absolute Value')
+   (property res-f89260ab hasType webcontent)
+   (property res-f89260ab hasHref `http://mathworld.wolfram.com/AbsoluteValue.html')
+\end{jshopcode}
+\caption{Representação do recurso instrucional ``valor absoluto''}
+\label{list:resourceJShop2}
+\end{figure}
+
+\newpage
+\subsection{Modelo de domínio a ser ensinado}
+
+O modelo de domínio a ser ensinado é representado mediante uma estrutura de elementos de competência, níveis de competência e uma estrutura de elementos de conhecimento.
+
+\subsubsection{Estrutura de elementos de competência}
+
+A estrutura de competências apresentada a seguir e resultado da análise dos trabalhos propostos por \citet{wilkinson2001matter, sicilia2005ontology, melis2008interoperable}, que definem competência como a caraterística multidimensional composta de habilidades, conhecimento e atitudes que possibilitam a integração dos modelos de estudante e de domínio a ser ensinado. A habilidade é uma característica de aprendizagem adquirida por treinamento; enquanto uma atitude é um estado mental complexo que envolve opinião (convicção, crença e confiança), sentimentos (impressão, percepção e sentido), valores inatos e disposição mental para atuar adequadamente.
+
+As competências cognitivas são definidas como estruturas mentais que associam uma habilidade com um elemento de conhecimento para definir o processo de aprendizagem como: situações de trabalho que dão origem aos requerimentos de competências e análises de competências carentes dos participantes \citep{sicilia2005ontology}.
+
+\begin{definition}
+\label{def:estruturaElementosCompetencia}
+A \emph{estrutura de elementos de competência} é representada mediante a n-upla\\ $CS = \langle S, A, C, R_{S}, R_{A} \rangle$, na qual elementos do conjunto $S$ são habilidades, elementos do conjunto $A$ são atitudes, elementos do conjunto $C$ são competências cognitivas, elementos do conjunto $R_{S}$ são relações de associação entre habilidades e elementos do conjunto $R_{A}$ são relações de associação entre atitudes.
+
+\begin{description}[font=\normalfont]
+  \item[Uma \emph{habilidade} $s \in S$] com identificador $s_{i}$ é representado pelos átomos lógicos \textsf{(class Skill $s_{i}$)}, \textsf{(property $s_{i}$ hasTitle \textit{title})} e \textsf{(property $s_{i}$ hasResource \textit{res})}, no que \textsf{\textit{title}} é o nome da habilidade e \textsf{\textit{res}} é o identificador do recurso instrucional associado à habilidade.
+  
+  \item[Uma \emph{atitude} $a \in A$] com identificador $a_{i}$ é representado pelos átomos lógicos \textsf{(class Attitude $a_{i}$)}, \textsf{(property $a_{i}$ hasTitle \textit{title})} e \textsf{(property $a_{i}$ hasResource \textit{res})}, no que \textsf{\textit{title}} é o nome da atitude e \textsf{\textit{res}} é o identificador do recurso instrucional associado à atitude.
+  
+  \item[Uma \emph{competência cognitiva} $c \in C$] com identificador $c_{i}$ que associa a habilidade $s_{i}$ com o elemento de conhecimento $k_{i}$ é representado mediante átomos lógicos \textsf{(class Competency $c_{i}$)}, \textsf{(property $c_{i}$ hasTitle \textit{title})}, \textsf{(property $c_{i}$ hasSkill $s_{i}$)} e \textsf{(property $c_{i}$ hasKnowledge $k_{i}$)}, na qual:
+  \begin{itemize}
+  \item \textsf{title} é o nome dado à competência cognitiva;
+  \item \textsf{$s_{i} \in S$} é um identificador de habilidade pertence ao conjunto de habilidades; e
+  \item \textsf{$k_{i} \in K$} é um identificador de elemento de conhecimento pertencente à estrutura de elementos de conhecimento \textsf{$KS$}.
+  \end{itemize}
+  
+  \item[Uma \emph{relação de associação} $r_{s} \in R_{S}$] entre duas habilidades $s_{i}$ e $s_{j}$ é representado como um átomo lógico \textsf{(relation $s_{i}$ \textit{type} $s_{j}$)}, no que \textsf{\textit{type}} é o tipo de associação podendo ser de tipo pré-requisito (\textsf{isRequiredBy}) ou variação (\textsf{isVariantOf}).
+  
+  \item[Uma \emph{relação de associação} $r_{a} \in R_{A}$] entre duas atitudes $a_{i}$ e $a_{j}$ é representado como um átomo lógico \textsf{(relation $a_{i}$ \textit{type} $a_{j}$)}, no que \textsf{\textit{type}} é o tipo de associação podendo ser unicamente de tipo variação (\textsf{isVariantOf}).
+\end{description}
+\end{definition}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (class Skill s0)
+   (property s0 hasTitle `Pensar matematicamente')
+   (property s0 hasResource res-5a9163af)
+   . . .
+   (class Attitude a0)
+   (property a0 hasTitle `Interdependência positiva')
+   (property a0 hasResource res-2f2ae174)
+   . . .
+   (class Competency c0)
+   (property c0 hasTitle `Pensar matematicamente acerca de valor absoluto')
+   (property c0 hasSkill s0)
+   (property c0 hasKnowledge k0)
+   . . .
+   (relation s0 isRequiredBy s1)
+   (relation a0 isVariantOf a1)
+\end{jshopcode}
+\caption{Representação da estrutura de competências no domínio de matemática}
+\label{list:exampleCompetencyJShop2}
+\end{figure}
+
+A Figura \ref{list:exampleCompetencyJShop2} apresenta parte da representação da estrutura de competências definida no domínio de ensino de matemática, no qual são representadas a habilidade ``pensar matematicamente'' (linhas 1-3), a atitude ``interdependência positiva'' (linhas 5-7), a competência cognitiva ``pensar matematicamente acerca do tópico valor absoluto'' (linhas 9-12) e relações de associação entre habilidades e atitudes (linhas 14-15).
+
+\subsubsection{Níveis de competência}
+
+Os níveis de competência definem um conjunto de estágios possíveis de desenvolvimento de habilidades e de aquisição de conhecimento definidos em competências cognitivas.
+
+\begin{definition}
+\label{def:estruturaNiveisCompetencia}
+Os \emph{níveis de competência} $CL = \{cl_{1}, ..., cl_{n}\}$ são representados mediante átomos lógicos \textsf{(class Level $cl_{i}$)}, \textsf{(property $cl_{i}$ hasSkillLevel \textit{slevel})} e \textsf{(property $cl_{i}$ hasKnowledgeLevel \textit{klevel})}, onde: $cl_{i}$ é o identificador global único do nível de competência; \textsf{\textit{slevel}} é o estágio de desenvolvimento de uma habilidade; e \textsf{\textit{klevel}} é o estágio de aquisição de um conhecimento.
+\end{definition}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{figuras/learnersGrowthModel}
+  \caption{Modelo de crescimento do estudante \citep{isotani2007planejamento}}
+  \label{fig:learnersGrowthModel}
+\end{figure}
+
+O modelo de crescimento do estudante (\emph{Learner's Growth Model}, mostrado na Figura \ref{fig:learnersGrowthModel}) representa de modo simplificado o processo de aquisição de uma competência como um dígrafo acíclico, no qual os nós representam níveis de competência, enquanto arestas representam possíveis transições entre os estágios \citep{isotani2006integrated, inaba2003learning}. Assim, em nossa modelagem proposta definimos 20 níveis de competência, nos que:
+
+\newpage
+\begin{itemize}
+  \item o identificador de nível de competência definido como \textsf{s$x$k$y$}; e
+  \item os níveis de desenvolvimento de uma habilidade $x$ apresentam os cinco estágios de: sem habilidade (0, \textsf{nothing}), cognitivo inicial (1, \textsf{rough}), cognitivo explicativo (2, \textsf{explanatory}), associativo (3, \textsf{associative}) e autônomo (4, \textsf{autonomous}); enquanto, os níveis de aquisição de conhecimento $y$ apresentam quatro estágios de: sem conhecimento (0, \textsf{nothing}), crescimento natural (1, \textsf{accretion}), aperfeiçoamento (2, \textsf{tuning}) e restruturação (3, \textsf{restructuring}). 
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (class Level s0k0)
+   (property s0k0 hasSkillLevel nothing)
+   (property s0k0 hasKnowledgeLevel nothing)
+   . . .
+   (class Level s4k3)
+   (property s4k3 hasSkillLevel autonomous)
+   (property s4k3 hasKnowledgeLevel restructuring)
+\end{jshopcode}
+\caption{Representação de níveis de competência}
+\label{list:compLevelJShop2}
+\end{figure}
+
+A Figura \ref{list:compLevelJShop2} mostra parte da representação de níveis de competência que apresentada o nível sem habilidade e sem conhecimento (linhas 1-3) e o nível autônomo e restruturação (linhas 5-7).
+
+\subsubsection{Estrutura de elementos de conhecimento}
+
+A estrutura de elementos de conhecimento representa toda peça central de informação do domínio a ser ensinado contida em livros, resumos ou páginas web. Os quais são classificados como fundamentais e auxiliares.
+
+\newpage
+\begin{itemize}
+\item \textbf{Fundamental}. Um elemento de conhecimento de tipo fundamental contém informações centrais do domínio a ser ensinado que um aluno deve aprender durante o processo de ensino-aprendizagem. Exemplos de elementos de conhecimento de tipo fundamental são teoremas, fatos, e definições.
+
+\item \textbf{Auxiliar}. Um elemento de conhecimento do tipo auxiliar contém informações acera dos elementos de conhecimento de tipo fundamental. Os elementos de tipo auxiliar são empregados no processo de ensino-aprendizagem para atingir objetivos educacionais. Exemplo de elementos de tipo auxiliar são demonstrações, exemplos e exercícios. %Elementos de conhecimento de tipo motivam ao aluno a efetuar atividades envolventes e desafiantes.
+\end{itemize}
+
+\begin{definition}
+\label{def:estruturaElementosConhecimento}
+A \emph{estrutura de elementos de conhecimento} é representada mediante a n-upla $KS=\langle K, P, R \rangle$, na qual elementos do conjunto $K$ são elementos de conhecimento, elementos do conjunto $P$ são propriedades e elementos do conjunto $R$ são relações.
+
+\begin{description}[font=\normalfont]
+  \item[Um \emph{elemento de conhecimento} $k \in K$] com identificador $k_{i}$ é representado pelos átomos lógicos \textsf{(class Knowledge $k_{i}$)}, \textsf{(class \textit{type} $k_{i}$)}, no que \textsf{\textit{type}} é o tipo de elemento de conhecimento podendo ser auxiliar (\textsf{Auxiliary}) ou fundamental (\textsf{Fundamental}).
+  
+  \item[Uma \emph{propriedade} $p \in P$] de um elemento de conhecimento $k_{i}$ é representado por um átomo lógico \textsf{(property $k_{i}$ \textit{name} \textit{value})}, no que \textsf{\textit{name}} é o nome da propriedade e \textsf{\textit{value}} é o valor da propriedade. A Tabela \ref{tab:propValKnowledge} apresenta o conjunto de propriedades, o tipo de dado e seus possíveis valores.
+
+\begin{table}[htbp]\small
+\begin{center}
+\textsf{\begin{tabular}{|l|l|p{8cm}|}
+\hline
+\textbf{Propriedade}              & \textbf{Tipo de dado}   & \textbf{Espaço de valores (\textit{val})} \\ \hline \hline
+hasTitle                                    & Cadeia de caracteres & \\ \hline
+hasResource                          & Recurso                         & \\ \hline
+hasContext                              & Vocabulário                  & training, higher-education, school, other \\ \hline
+hasDifficult                               & Vocabulário                 & very-easy, easy, medium, difficult, very-difficult \\ \hline
+hasLearningResourceType & Vocabulário \citep{PISA2001knowledge}     &
+Para elementos de tipo auxiliar:
+                            explanation , introduction, remark,
+                            conclusion, interactivity, exercise,
+                            exploration, invitation, real-world-problem,
+                            evidence, proof, demonstration,
+                            illustration, counter-example, example. \newline 
+Para elementos de tipo fundamental: 
+			law, theorem, law-of-nature, definition,
+                            fact, process, policy, procedure.\\ \hline
+\end{tabular}}
+\end{center}
+\caption{Propriedades utilizadas em elementos de conhecimento}
+\label{tab:propValKnowledge}
+\end{table}
+
+  \item[Uma \emph{relação} $r \in R$ entre dois elementos de conhecimento $k_{i}$ e $k_{j}$] é representada como um átomo lógico \textsf{(relation $k_{i}$ \textit{type} $k_{j}$)}, no que \textsf{\textit{type}} é o tipo da relação podendo ser do tipo pré-requisito (\textsf{isRequiredBy}), agregação (\textsf{isPartOf}) e variação (\textsf{isVariantOf}).
+\end{description}
+\end{definition}
+
+\begin{figure}[htbp]
+\subfloat[]{\label{fig:exemploEstruturaConhecimentoA}
+\begin{minipage}[c][1\width]{0.5\textwidth}
+    \begin{tikzpicture}[scale=1]
+    %\draw[help lines] (0,0) grid (3,4);
+    \node (k0) at (3,4) [circle, draw] {$k_{0}$};
+    \node (k1) at (1,2) [circle, draw] {$k_{1}$};
+    \node (k2) at (5,2) [circle, draw] {$k_{2}$};
+    \node (k3) at (0,0) [circle, draw] {$k_{3}$};
+    \node (k4) at (2,0) [circle, draw] {$k_{4}$};
+    \node (k5) at (5,0) [circle, draw] {$k_{5}$};
+    \draw [->] (k1) to (k0);
+    \draw [->] (k2) to (k0);
+    \draw [->] (k3) to (k1);
+    \draw [->] (k4) to (k1);
+    \draw [->] (k5) to (k2);
+    \draw [dashed,->] (k1) to (k2);
+    \draw [dashed,->] (k3) to (k4);
+    \end{tikzpicture}
+\end{minipage}}
+\subfloat[]{\label{fig:exemploEstruturaConhecimentoB}\centering{}
+\begin{minipage}[c][1\width]{0.5\textwidth}
+\begin{center}\scriptsize
+\includegraphics[width=1.00\textwidth]{figuras/absoluteValue}
+\par\end{center}
+\end{minipage}}
+\caption{Elementos de conhecimento de tipo fundamental identificadas na página web ``valor absoluto''}
+\label{fig:exemploEstruturaConhecimento}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (class Knowledge $k_{0}$)
+   (class Fundamental $k_{0}$)
+   (property $k_{0}$ hasTitle `Valor absoluto')
+   (property $k_{0}$ hasResource res-f89260ab)
+   (property $k_{0}$ hasContext school)
+   (property $k_{0}$ hasContext higher-education)
+   (property $k_{0}$ hasDifficult medium)
+   (property $k_{0}$ hasLearningResourceType definition)
+   . . .
+   (relation $k_{1}$ isPartOf $k_{0}$)
+   (relation $k_{2}$ isPartOf $k_{0}$)
+   (relation $k_{1}$ isRequiredBy $k_{2}$)
+   (relation $k_{3}$ isPartOf $k_{1}$)
+   (relation $k_{4}$ isPartOf $k_{1}$)
+   (relation $k_{3}$ isRequiredBy $k_{4}$)
+   (relation $k_{5}$ isPartOf $k_{2}$)
+\end{jshopcode}
+\caption{Representação da estrutura de elementos de conhecimento da Figura \ref{fig:exemploEstruturaConhecimento}}
+\label{list:LearningObjectJShop2}
+\end{figure}
+
+A Figura \ref{fig:exemploEstruturaConhecimentoA} mostra o grafo da estrutura de elementos de conhecimento de tipo fundamental identificada na página web ``valor absoluto'' (Figura \ref{fig:exemploEstruturaConhecimentoB}), no qual as relações de agregação são identificadas com linhas sólidas e relações de pré-requisito são identificadas com linhas tracejadas. A Figura \ref{list:LearningObjectJShop2} mostra a representação da estrutura de elementos de conhecimento de tipo fundamental na linguagem JSHOP2ip.
+
+\subsubsection{Pré-requisitos e objetivos de aprendizagem}
+
+Os elementos de conhecimento de tipo auxiliar são relacionados com elementos de conhecimento de tipo fundamental mediante a definição das propriedades pré-requisitos e objetivos de aprendizagem. Os pré-requisitos de aprendizagem representam níveis mínimos de competência que os participantes devem possuir para tirar proveito da utilização de elementos de tipo auxiliar. Enquanto, os objetivos de aprendizagem representam níveis de competência atingidos pelos participantes após a utilização dos elementos.
+
+\begin{definition}
+Um \emph{pré-requisito de aprendizagem} de um elemento de conhecimento auxiliar $k_{i}$ é representado pelo átomo lógico \textsf{(property $k_{i}$ hasPrerequisite ($c_{j}$ $cl_{h}$))}, no que:
+\begin{itemize}
+  \item $c_{j}$ é uma competência cognitiva associada a um elemento de conhecimento de tipo fundamental; e 
+  \item $cl_{h}$ é um identificador de nível de competência pertencente ao conjunto de níveis de competência $CL$.
+ \end{itemize}
+\end{definition}
+
+\begin{definition}
+Um \emph{objetivo de aprendizagem} de um elemento de conhecimento auxiliar $k_{i}$ é representado pelo átomo lógico \textsf{(property $k_{i}$ hasLearningObjective ($c_{j}$ $cl_{h}$))}, no que:
+\begin{itemize}
+  \item $c_{j}$ é uma competência cognitiva associada a um elemento de conhecimento de tipo fundamental; e 
+  \item $cl_{h}$ é um identificador de nível de competência pertencente ao conjunto de níveis de competência $CL$.
+ \end{itemize}
+\end{definition}
+
+A Figura \ref{list:preLearningObjectiveJShop2} mostra as propriedades de pré-requisitos (linhas 18-19) e objetivos de aprendizagem (linhas 8-9, 20-21) de dois elementos de conhecimento de tipo auxiliar ``exemplo interativo de valor absoluto'' ($k_{10}$) e ``exercício 01 de valor absoluto'' ($k_{15}$) que são relacionados às competências cognitivas ``pensar matematicamente acerca de valor absoluto'' ($c_{0}$) e ``pensar matematicamente acerca da função signo'' ($c_{1}$).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (class Knowledge $k_{10}$)
+   (class Auxiliary $k_{10}$)
+   (property $k_{10}$ hasTitle `Exemplo interativo de valor absoluto')
+   (property $k_{10}$ hasResource res-e8af6083)
+   (property $k_{10}$ hasContext school)
+   (property $k_{10}$ hasDifficult medium)
+   (property $k_{10}$ hasLearningResourceType example)
+   (property $k_{10}$ hasLearningObjective ($c_{0}$ s2k1))
+   (property $k_{10}$ hasLearningObjective ($c_{0}$ s2k2))
+   . . .
+   (class Knowledge $k_{15}$)
+   (class Auxiliary $k_{15}$)
+   (property $k_{15}$ hasTitle `Exercício 01 de valor absoluto')
+   (property $k_{15}$ hasResource res-3fa56e21)
+   (property $k_{15}$ hasContext higher-education)
+   (property $k_{15}$ hasDifficult easy)
+   (property $k_{15}$ hasLearningResourceType excercise)
+   (property $k_{15}$ hasPrerequisite ($c_{1}$ s1k1))
+   (property $k_{15}$ hasPrerequisite ($c_{1}$ s0k2))
+   (property $k_{15}$ hasLearningObjective ($c_{0}$ s0k1))
+   (property $k_{15}$ hasLearningObjective ($c_{0}$ s0k2))
+\end{jshopcode}
+\caption{Representação da estrutura de elementos de conhecimento}
+\label{list:preLearningObjectiveJShop2}
+\end{figure}
+
+\newpage
+\subsection{Modelo de estudante}
+
+O modelo de estudante é definido como a sobreposição do modelo de domínio a ser ensinado. A sobreposição define o modelo de estudante como um nível de associação entre estudantes e elementos de conhecimento mediante um conjunto de registros.
+
+\begin{definition}
+\label{def:modeloEstudante}
+O \emph{modelo de estudante} é representada pela n-upla $LM=\langle L, CR, HR, PR \rangle$, na qual $L$ é o conjunto de estudantes, $CR$ é o conjunto de registros de competências, $HR$ é o conjunto de registros históricos e $PR$ é o conjunto de registros de preferências.
+
+\begin{description}[font=\normalfont]
+  \item[Um \emph{estudante} $l \in L$] com identificador $l_{i}$ é representado pelo átomo lógico \textsf{(class Learner $l_{i}$)}.
+  \item[Um \emph{registro de competência $cr \in CR$}] definem:
+  \begin{itemize}
+  \item uma habilidade com identificador $s$ possuída pelo estudante $l_{i}$ é representado pelo átomo lógico \textsf{(property $l_{i}$ hasSkill $s$)};
+  \item uma atitude com identificador $a$ possuída pelo estudante $l_{i}$ é representado pelo átomo lógico \textsf{(property $l_{i}$ hasAttitude $a$)}; e
+  \item um nível de competência $cl$ da competência cognitiva $c$ atingido pelo estudante $l_{i}$ é representado pelo átomo lógico \textsf{(property $l_{i}$ hasCompetencyLevel ($c$ $cl$))}.
+  \end{itemize}
+  \item[Um \emph{registro histórico $hr \in HR$}] que define o uso de um elemento de conhecimento $k$ por um estudante $l_{i}$ é representado pelo átomo lógico \textsf{(property $l_{i}$ hasAlreadySeen $k$)}.
+  \item[Um \emph{registro de preferência $pr \in PR$}] que define uma caraterística individual do estudante $l_{i}$ é representado pelo átomo lógico \textsf{(property $l_{i}$ \textit{name} \textit{value})}, no que \textsf{\textit{name}} é o nome da característica e \textsf{\textit{value}} é o valor da propriedade. A Tabela \ref{tab:preferenceLearnerModel} apresenta o conjunto de características, o tipo de dado e seus possíveis valores empregados no presente trabalho.
+  
+\begin{table}[htbp]\small
+\begin{center}
+\textsf{\begin{tabular}{|l|l|p{9cm}|}
+\hline
+\textbf{Propriedade}               & \textbf{Tipo de dado}   & \textbf{Espaço de valores (\textit{val})} \\ \hline \hline
+hasPersonality                        & Vocabulário                  & introversion, extraversion, ambiversion \\ \hline
+hasCLExperience                  & Vocabulário                  & very-low, low, medium, high, very-high \\ \hline
+hasEducationalLevel            & Vocabulário                  & training, higher-education, school, other \\ \hline
+hasMotivation                         & N-upla: ($c$, $l$)        & - $c$ é o identificador de uma competência cognitiva; e \newline - $l$ é o nível: very-low, low, medium, high, very-high.  \\ \hline
+hasAnxiety                         & N-upla: ($c$, $l$)        & - $c$ é o identificador de uma competência cognitiva; e \newline - $l$ é o nível: very-low, low, medium, high, very-high.  \\ \hline
+\end{tabular}}
+\end{center}
+\caption{Características utilizadas no registro de preferências dos estudantes}
+\label{tab:preferenceLearnerModel}
+\end{table}
+
+\end{description}
+\end{definition}
+
+\subsubsection{Registro das estruturas sociais}
+
+O modelo de estudante apresenta um registro de estruturas sociais que definem durante o processo de planejamento os grupos e papéis aos quais os estudantes pertencem.
+
+\begin{definition}
+O \emph{registro das estruturas sociais}  é representado mediante a n-upla $SR=\langle Gr, Ro \rangle$, na qual $Gr$ é o conjunto de grupos e $Ro$ é o conjunto de papéis.
+
+\begin{itemize}
+\item Um \emph{grupo} $gr \in Gr$ formado por o conjunto de estudantes $gr= \{l_{1}, ... , l_{n}\}$ é definido mediante átomos lógicos \textsf{(property $l_{i}$ hasGroup $gr$)}.
+
+\item Um \emph{papel} $ro \in Ro$ formado por o conjunto de estudantes $ro= \{l_{1}, ... , l_{n}\}$ é definido mediante átomos lógicos \textsf{(property $l_{i}$ hasRole $ro$)}.
+\end{itemize}
+\end{definition}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (class Learner l1)
+   (property l1 hasSkill s5)
+   (property l1 hasAttitude a0)
+   (property l1 hasCompetencyLevel (c0 s0k1))
+   (property l1 hasAlreadySeen k10)
+   . . .
+   (property l1 hasPersonality extraversion)
+   (property l1 hasMotivation (c0 very-high))
+   (property l1 hasGroup group1)
+   (property l1 hasRole tutee)
+\end{jshopcode}
+\caption{Exemplo de representação do modelo estudante}
+\label{list:learnerJShop2}
+\end{figure}
+
+\newpage
+A Figura \ref{list:learnerJShop2} mostra parte da representação do modelo de estudante, nesse exemplo é mostrada a informação do estudante com identificador \textsf{l1} quem apresenta: uma habilidade individual ``discussão'', \textsf{s5} (linha 2); uma atitude ``interdependência positiva'', \textsf{a0} (linha 3); um nível de competência sem habilidade e crescimento natural na competência cognitiva ``pensar matematicamente acerca de valor absoluto'', \textsf{(c0 s0k1)} (linha 4); e um registro de estrutura social que define a atribuição do papel aprendiz, \textsf{tutee} (linha 10).
+
+%% ------------------------------------------------------------------------- %%
+
+\section{Problema de planejamento instrucional}
+\label{sec:problemaPlanejamento}
+
+O problema de planejamento hierárquico $P = \langle s_{0}, w_{0}, D \rangle$ é representado pelo projetista instrucional usando o esquema mostrado na Figura \ref{list:planningProblem}, assim: um estado inicial $s_{0}$ representa o estado corrente dos modelos de estudante e de domínio a ser ensinado (linhas 3-8); e uma rede de tarefas inicial $w_{0}$ representa a tarefa de planejamento instrucional pública (linhas 10-11).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+(defproblem automatedldproblem automatedlddomain
+  \textit{;; estado inicial}
+  ((class Auxiliary lo550e840)
+   (relation lo550e840 isRequiredBy lo41d4716)
+   (property lo550e840 hasPrerequisite (c7d20a7e s1k3))
+   (property lo550e840 hasPrerequisite (c4520f73 s2k1))
+   (property lo550e840 hasLearningObjective (c217e210 s2k3))
+   . . . )
+  \textit{;; initial task}
+  ((createLDFundamentalUoL ((c217e210 s2k3) ... (c2a7e310 s1k2))
+                ((le37bc12a ... le21af138) ... (le37ac14a ... le11ad134)))))
+\end{jshopcode}
+\caption{Esquema do problema de planejamento}
+\label{list:planningProblem}
+\end{figure}
+
+
+\subsection{Objetivos educacionais}
+\label{subsec:objetivosEducacionais}
+
+Os objetivos educacionais $G=\{g_{1}, g_{2}, ...\}$ definem um conjunto de níveis de competências a serem atingidos pelos estudantes, os quais são definidos pelo projetista instrucional na tarefa de planejamento instrucional pública.
+
+\begin{definition}
+Um objetivo educacional $g \in G$ é representado como uma n-upla \textsf{(c l)}, na que:
+
+\begin{itemize}
+\item \textsf{c} é um identificador de uma competência cognitiva; e
+\item \textsf{l} é um nível de aquisição da competência cognitiva que representa estágios de desenvolvimento de habilidade e aquisição de conhecimento ``\textsf{s$x$k$y$}''.
+ \end{itemize}
+\end{definition}
+
+\begin{example}
+Os objetivos educacionais ``entendimento do laço \emph{while} no nível explicativo e aperfeiçoamento'', ``compreensão do laço \emph{for} no nível autônomo e restruturação'' e ``entendimento do laço \emph{while} no nível inicial e aperfeiçoamento'' são representados como a lista 
+
+\begin{center}
+\textsf{$G$=\{(comp1 s2k2), (comp2 s4k3), (comp1 s1k2)\}}, 
+\end{center}
+
+na qual: \textsf{comp1} é o identificador da competência cognitiva ``entendimento do laço \emph{while}'' e \textsf{comp2} é o identificador da competência cognitiva ``compreensão do laço \emph{for}''.
+\end{example}
+
+\subsection{Rede de tarefa inicial: Tarefa de planejamento instrucional pública}
+\label{subsec:redeTarefaInicial}
+
+A rede de tarefas inicial $w_{0}=(\{t_{0}\}, \{\})$ é definida como uma tarefa $t_{0}$ de planejamento instrucional pública $t_{0} \in T$. As tarefas de planejamento instrucional públicas $T=\{t_{1}, t_{2}, ...\}$ são definidas como meio de comunicação entre o sistema de planejamento e o projetista instrucional.
+
+\begin{definition}
+\label{def:tarefaProjetoInstrucional}
+Uma tarefa de planejamento instrucional pública $t \in T$ é definida como uma n-upla \textsf{(s G L)}, na qual:
+
+\begin{itemize}
+\item \textsf{s} é um identificador de tarefa de planejamento instrucional pública;
+\item \textsf{G = (g$_{1}$ g$_{2}$ ... g$_{n}$)} é uma lista de objetivos pedagógicos a ser atingidos; e
+\item \textsf{H = (h$_{1}$ h$_{2}$ ... h$_{n}$)} é uma lista de grupos de estudantes, na que cada grupo de estudantes \textsf{h$_{i}$} é representado por uma lista de identificadores \textsf{(l$_{1}$ l$_{2}$ ... l$_{m}$)}.
+\end{itemize}
+\end{definition}
+
+\begin{table}[htbp]\small
+\centering
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\textbf{Identificador}               & \textbf{Descrição} \\ \hline \hline
+\textsf{createLDFundamentalUoL}                   & Criação de uma unidade de aprendizagem. \\ \hline
+\textsf{createLDScript}                & Criação de um roteiro colaborativo. \\ \hline
+\textsf{createLDCLScenario}               & Criação de uma sessão de aprendizagem.\\ \hline
+%\textsf{createLDExerciseLearningObject}       & Criação de um exercício. \\ \hline
+%\textsf{createLDExampleLearningObject}       & Criação de um exemplo. \\ \hline
+\end{tabular}
+\caption{Identificadores de tarefas de planejamento instrucional públicas}
+\label{tab:tarefaInstrucionalPublica}
+\end{table}
+
+A Tabela \ref{tab:tarefaInstrucionalPublica} apresenta o conjunto de identificadores das tarefas de planejamento instrucional pública e uma breve descrição correspondente a cada tarefa.
+
+\begin{example}
+\label{exa:tarefaInstrucional}
+A tarefa de planejamento instrucional inicial ``criação de um roteiro colaborativo'' (\textsf{createLDScript}) definida para os grupos de estudantes \textsf{h$_{1}$=\{le1, le2\}} e \textsf{h$_{2}$=\{le3, le4, le5\}} é representada como a n-upla:
+
+\begin{center}
+\textsf{(createLDFundamentalScript ((comp2 s4k3) (comp1 s1k2)) ((le1 le2) (le3 le4 le5)))},
+\end{center}
+
+na qual, os objetivos são ``compreensão do laço \emph{for} no nível autônomo e restruturação'' \newline \textsf{(comp2 s4k3)} e ``entendimento do laço \emph{while} no nível inicial e aperfeiçoamento'' \textsf{(comp1 s1k2)}.
+\end{example}
+
+
+%% ------------------------------------------------------------------------- %%
+
+\section{Domínio de planejamento}
+\label{sec:dominioPlanejamento}
+
+O \emph{domínio de planejamento} $D$ é definido mediante:  (1) axiomas e operadores de propósito geral, (2) axiomas de consulta aos modelos de estudante e de domínio a ser ensinado, (3) axiomas de planejamento instrucional, (4) operadores e tarefas básicas que representam interações instrucionais, e (5) tarefas e métodos hierárquicos que representam o modelo pedagógico como estratégias de planejamento instrucional.
+
+\newpage
+\subsection{Axiomas e operadores de propósito geral}
+\label{subsec:axiomasGeral}
+
+Axiomas e operadores de propósito geral efetuam a manipulação de átomos no estado corrente e podem ser utilizados em quaisquer outro domínio de planejamento. A Tabela \ref{tab:axiomasOperadoresPropositoGeral} apresentada um resumo do conjunto de axiomas e operadores de propósito geral detalhados no Apêndice \ref{ape:axiomasOperadoresPropositoGeral}.
+
+\begin{table}[htbp]\small
+\begin{tabular}{|l|p{11cm}|}
+\hline
+\textbf{Axiomas e operador}                                                         & \textbf{Descrição} \\ \hline \hline
+\textsf{(same ?x ?y)}                                        & Teste de igualdade. \\ \hline
+\textsf{(different ?x ?y)}                                   & Teste de não igualdade. \\ \hline
+\textsf{(first ?first ?list)}                                              & Substituição do primeiro elemento da lista \textsf{?list} no símbolo variável \textsf{?first}. \\ \hline
+\textsf{(last ?last ?list)}                                              & Substituição do ultimo elemento da lista \textsf{?list} no símbolo variável \textsf{?last}. \\ \hline
+\textsf{(rest ?rest ?list)}                                              & Substituição dos elementos da lista \textsf{?list} excluindo o primeiro elemento no símbolo variável \textsf{?rest}. \\ \hline
+\textsf{(length ?length ?list)}                                              &  Calcula a longitude da lista \textsf{?list} no símbolo variável \textsf{?length}. \\ \hline
+\textsf{(exist ?e ?list)}                                            & Teste que verifica a existência de um elemento \textsf{?e} na lista \textsf{?list}.  \\ \hline
+\textsf{(remove ?var ?list1 ?list2)} & Elimina os termos da lista \textsf{?list1} que existem na lista \textsf{?list2} efetuando a substituição do resultado no símbolo variável \textsf{?var}. \\ \hline
+\textsf{(divide ?var ?list ?n)} & Divide a lista \textsf{?list} em um número \textsf{?n} de sublistas efetuando a substituição do resultado no símbolo variável \textsf{?var}. \\ \hline
+\textsf{(duplicate ?var ?list [?n])} & Duplicar a lista \textsf{?list} um número \textsf{?n} de vezes efetuando a substituição do resultado no símbolo variável \textsf{?var}. \\ \hline
+\textsf{(sublist ?var ?list ?n)} & Obtém os \textsf{?n} primeiros elementos da lista \textsf{?list}, devolvendo o resultado no símbolo variável \textsf{?var}. \\ \hline
+\textsf{(assignIterator ?var ?list)}                             & Substituição iterativa do símbolo variável \textsf{?var} com todos os elementos da lista \textsf{?list}. \\ \hline
+\textsf{(!!addInWorldState \textit{atom})}                                    & Efetua a adição de um átomo \textsf{\textit{atom}} no estado corrente. \\ \hline
+\textsf{(!!removeFromWorldState \textit{atom})}                       & Efetua a remoção de um átomo \textsf{\textit{atom}} no estado corrente. \\ \hline
+\end{tabular}
+\caption{Axiomas e operadores de propósito geral}
+\label{tab:axiomasOperadoresPropositoGeral}
+\end{table}
+
+\subsection{Axiomas de consulta aos modelos de estudante e de domínio a ser ensinado}
+\label{subsec:modelagemAxiomasSelecaoAcesso}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:- (\textit{axiomName} ?result ?t$_{1}$ ?t$_{2}$ ... ?t$_{n}$)
+       (:first (\textit{axiomName}FromCurrentState ?result ?t$_{1}$ ?t$_{2}$ ... ?t$_{n}$))
+       ((assign ?result (call \textit{AxiomName} ?t$_{1}$ ?t$_{2}$ ... ?t$_{n}$))))
+\end{jshopcode}
+\caption{Esquema de axiomas de consultas aos modelos de estudante e de domínio a ser ensinado}
+\label{list:getAxiom}
+\end{figure}
+
+Os axiomas apresentados a seguir % e detalhados no Apêndice \ref{ape:axiomasConsultaEstudanteDominio}
+empregam o esquema da Figura \ref{list:getAxiom} para realizar primeiro consultas no estado corrente (linha 2). Se não existem dados no estado corrente são efetuadas consultas em repositórios externos mediante termos de chamada \textsf{(call $f$ t$_{1}$ t$_{2}$ ... t$_{n}$)} (linha 3).
+
+\subsubsection{Seleção de elementos}
+
+O axioma \textsf{(getElements ?result ?query)} efetua a seleção de elementos dos modelos de estudante e de domínio a ser ensinado que satisfazem as condições da lista \textsf{?query}. Cada termo da lista \textsf{?query} pode ser definida como:
+
+\begin{itemize}
+\item Uma \textit{condição de classificação} representada pela n-upla \textsf{(class ?t)}, na qual \textsf{?t} é um termo constante ou uma lista de termos que definem a classificação do elemento; %Por exemplo, a classificação de atitudes é representada pela n-upla \textsf{(class Attitude)};
+\item Uma \textit{condição de propriedade} representada pela n-upla \textsf{(property ?name [?d] ?v)}, na qual \textsf{?name} é o nome da propriedade, \textsf{?d} é o identificador de um elemento de domínio a ser ensinado e \textsf{?v} é um termo constante ou uma lista de termos que definem valores possíveis da propriedade; e
+\item Uma \emph{condição de relação} representada pela n-upla \textsf{(relation ?name ?e)}, na qual \textsf{?e} é um termo constante ou uma lista de termos que definem os elementos ao qual os resultados encontram-se relacionados mediante a relação \textsf{?name}.
+\end{itemize}
+
+\begin{figure}[htbp]
+    \begin{center}
+    \begin{tikzpicture}[scale=1]
+    %\draw[help lines] (0,0) grid (0,2);
+    %\node (c1) at (5,6) [circle, draw] {$comp1$};
+    \node (cl43) at (5,6) [rectangle split, rectangle, draw] {comp1};
+    %\node (cl23) at (8,6) [rectangle split, rectangle, draw] {comp1};
+    \node (lo1) at (5,0) [circle, draw] {\textsf{lo1}};
+    \node (lo2) at (9,4.5) [circle split, draw] {\textsf{lo2} \nodepart{lower} \textit{exer}};
+    \node (lo3) at (8.5,0) [circle split, draw] {\textsf{lo3} \nodepart{lower} \textit{exer}};
+    \node (lo4) at (0,4) [circle split, draw] {\textsf{lo4} \nodepart{lower} \textit{exer}};
+    \node (lo5) at (1.5,0) [circle split, draw] {\textsf{lo5} \nodepart{lower} \textit{exer}};
+    \node (lo6) at (5,2) [circle, draw] {\textsf{lo6}};
+    %\draw [->] (cl43) to node[]{} (c1);
+    %\draw [->] (cl23) to node[]{} (c1);
+    \draw [->] (lo2) to node[fill=white]{($eo$ s2k3)} (cl43);
+    \draw [->] (lo3) to node[fill=white]{($eo$ s4k3)} (cl43);
+    \draw [->] (lo5) to node[fill=white]{($eo$ s4k3)} (cl43);
+    \draw [->] (lo4) to node[fill=white]{($eo$ s4k3)} (cl43);
+    \draw [->] (lo6) to node[fill=white]{($eo$ s4k3)} (cl43);
+    \draw [->] (lo3) to node[fill=white]{$is_{r}$} (lo1);
+    \draw [->] (lo5) to node[fill=white]{$is_{r}$} (lo1);
+    \draw [->] (lo6) to node[fill=white]{$is_{r}$} (lo1);
+    \end{tikzpicture}
+    \end{center}
+	\caption{Exemplo de seleção de elementos no domínio a ser ensinado}
+	\label{fig:sampleDomainForGetResource}
+\end{figure}
+
+\begin{example}
+Sejam os elementos e relações mostrados na Figura \ref{fig:sampleDomainForGetResource} parte do modelo de domínio a ser ensinado, na qual competências cognitivas são representado como retângulos, elementos de conhecimento de tipo auxiliar são representados por círculos (com tipo de recurso instrucional definido em itálico), as relações de objetivos de aprendizagem (\textsf{hasLearningObjective}) são marcadas com $eo$ e as relações de pré-requisitos (\textsf{isRequiredBy}) são marcadas com $is_{r}$. O axioma de seleção de elementos
+
+\begin{alltt}\sffamily
+(getElements ?result ((class Auxiliary)
+                            (relation isRequieredBy lo1)
+                            (property hasLearningResourceType exercise)
+                            (property hasLearningObjective comp1 s4k3))
+\end{alltt}
+
+devolve como resultado a lista de identificadores \textsf{(lo3 lo5)} no símbolo de variável \textsf{?result}.
+\end{example}
+
+O axioma \textsf{(getElement ?result ?query)} é uma variante do axioma \textsf{getElements} que efetua a seleção de um único elemento que satisfaz as condições da lista \textsf{?query}.
+
+\subsubsection{Valores de classificação de elementos}
+
+O axioma \textsf{(getTypes ?result ?e)} obtém os valores de classificação de um elemento \textsf{?e} ou de uma lista de elementos \textsf{?e}.
+
+\begin{example}
+O axioma \textsf{(getTypes ?result comp1)} usando o modelo de domínio a ser ensinado da Figura \ref{fig:sampleDomainForGetResource} devolve como resultado a lista \textsf{(Competency ForFundamental)}.
+\end{example}
+
+O axioma \textsf{(getType ?result ?e)} é uma variante do axioma \textsf{getTypes} que obtém um único valor de classificação de um elemento \textsf{?e}.
+
+\subsubsection{Valores de uma propriedade}
+
+O axioma \textsf{(getPropertyValues ?result ?e ?name [?d])} obtém os valores das propriedades com nome \textsf{?name} que pertence a um elemento \textsf{?e} ou a uma lista de elementos \textsf{?e}. O atributo opcional \textsf{?d} é um elemento do domínio a ser ensinado ao qual as propriedades são relacionadas; isto é que os valores obtidos são as substituições de \textsf{?v} nos átomos \textsf{(property ?e ?name (?d ?v))}.
+
+\begin{example}
+Seja o estado corrente \textsf{$S$=\{(class Auxiliary lo2), (property lo2 hasDifficult high), (property lo2 hasLearningObjective (c0 s1k2)), (property lo2 hasLearningObjective (c0 s2k3))\}}. O axioma \textsf{(getPropertyValues ?result lo2 hasLearningObjective c0)} devolve como resultado a lista de termos \textsf{(s1k2 s2k3)} no símbolo variável \textsf{?result}.
+\end{example}
+
+O axioma \textsf{(getPropertyValue ?result ?e ?name [?d])} é uma variante do axioma \textsf{getPropertyValues} que obtém um único valor da propriedade \textsf{?name} de um elemento \textsf{?e}.
+
+\subsubsection{Elementos relacionados}
+
+O axioma \textsf{(getRelateds ?result ?e ?name)} é empregado para obter os elementos relacionados a um elemento \textsf{?e} ou uma lista de elementos \textsf{?e} mediante a relação \textsf{?name}.
+
+O axioma \textsf{(getRelateds ?result ?e ?d ?name [?query])} efetua a seleção de elementos relacionados à lista de elementos \textsf{?e} que apresentam a relação \textsf{?name} em uma distância máxima \textsf{?d}. O parâmetro opcional \textsf{?query} é empregado para efetuar a filtragem dos resultados usando as condições definidas na lista \textsf{?query}.
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tikzpicture}[scale=1]
+    %\draw[help lines] (0,0) grid (0,2);
+    \node (lo1) at (0,2) [circle, draw] {$lo_{1}$};
+    \node (lo2) at (2,1) [circle, draw] {$lo_{2}$};
+    \node (lo3) at (2,3) [circle, draw] {$lo_{3}$};
+    \node (lo4) at (4,0) [circle, draw] {$lo_{4}$};
+    \node (lo5) at (4,2) [circle, draw] {$lo_{5}$};
+    \node (lo6) at (6,0) [circle, draw] {$lo_{6}$};
+    \node (lo7) at (6,2) [circle, draw] {$lo_{7}$};
+    \draw [->] (lo1) to node[]{} (lo2);
+    \draw [->] (lo1) to node[]{} (lo3);
+    \draw [->] (lo2) to node[]{} (lo4);
+    \draw [->] (lo2) to node[]{} (lo5);
+    \draw [->] (lo4) to node[]{} (lo6);
+    \draw [->] (lo6) to node[]{} (lo5);
+    \draw [->] (lo5) to node[]{} (lo7);
+\end{tikzpicture}
+\end{center}
+\caption{Exemplo de seleção de elementos relacionados, arestas representam relações \textsf{isRequiredBy}}
+\label{fig:sampleGetRelated}
+\end{figure}
+
+\begin{example}
+Seja parte do modelo de domínio a ser ensinado representado pelo grafo da Figura \ref{fig:sampleGetRelated}, no qual cada aresta representa a relação \textsf{isRequiredBy}. O axioma \textsf{(getRelateds ?result (lo1 lo2) isRequiredBy)} devolve como resultado os elementos \textsf{(lo3 lo2 lo4 lo5)} no símbolo de variável \textsf{?result}, enquanto o axioma \textsf{(getRelateds ?result (lo4) -1 isRequiredBy)} retorna como resultado os elementos \textsf{(lo5 lo6 lo7)}.
+\end{example}
+
+O axioma \textsf{(getRelated ?result ?e ?relation)} é uma variante do axioma \textsf{getRelateds} que obtém um elemento relacionado ao elemento \textsf{?e} mediante a relação \textsf{?name}.
+
+\subsubsection{Criação de um novo elemento no domínio a ser ensinado}
+
+O termo de chamada \textsf{(call BuildElement ?query [?id] [?n])} efetua a construção de um novo elemento no modelo de domínio a ser ensinado de acordo com as características da lista \textsf{?query}. O parâmetro opcional \textsf{?id} define o identificado a ser empregado para o elemento. Se o parâmetro opcional \textsf{?n} é definido será efetuada a construção de n-elementos usando as características da lista \textsf{?query} com \textsf{?id} como prefixo desses elementos.
+
+\begin{example}
+Seja o estado corrente \textsf{$S$=\{ \}}. O termo de chamada 
+
+\begin{alltt}\sffamily
+(assign ?result (call BuildElement ((class Output)
+                                            (class ResumeDiscussion)
+                                            (property hasParticipant l1)
+                                            (property hasParticipant l2)) out34))
+\end{alltt}
+
+devolve como resultado o identificador \textsf{out34} no símbolo de variável \textsf{?result} e muda o estado corrente para \textsf{$S$=\{(class Output out34), (class ResumeDiscussion out34), (property out34 hasParticipant l1), (property out34 hasParticipant l2)\}}.
+\end{example}
+
+
+\subsection{Axiomas de planejamento instrucional}
+\label{subsec:axiomasPlanejamentoInstrucional}
+
+Os axiomas de planejamento instrucional apresentados a seguir são utilizados para definir as precondições e condições relativas de cada método hierárquico. A Tabela \ref{tab:axiomasPlanejamentoInstrucional} apresentam um resumo dos axiomas de planejamento instrucional detalhados no Apêndice \ref{ape:axiomasPlanejamentoInstrucional}.
+
+\begin{landscape}
+\begin{table}[htbp]\small
+\begin{tabular}{|l|p{15cm}|}
+\hline
+\textbf{Axiomas}                                                         & \textbf{Descrição} \\ \hline \hline
+\textsf{(sortBy ?result ?e ?r)} &
+Obtém a ordenação topológica na variável \textsf{?result} dos elementos \textsf{?e} de acordo com a relação \textsf{?r}. \\ \hline
+\textsf{(sortByAlreadySeen ?result ?e ?l)} &
+Obtém a ordenação na variável \textsf{?result} dos elementos \textsf{?e} de acordo com os histórico de estudantes definidos na lista \textsf{?l}. \\ \hline
+\textsf{(filterByQuery ?result ?e ?q)} &
+Obtém na variável \textsf{?result} a filtragem dos elementos \textsf{?e} que satisfazem as condições  \textsf{?q}. \\ \hline
+\textsf{(buildPropertyQuery ?result ?n [?d] ?v ?q)} &
+Obtém na variável \textsf{?result} as condições de propriedades com nome \textsf{?n} para cada elemento da lista \textsf{?v} adicionando o resultado na lista \textsf{?q}. \\ \hline
+\textsf{(buildRelationQuery ?result ?n ?v ?q)} &
+Obtém na variável \textsf{?result} as condições de relação com nome \textsf{?n} para cada elemento da lista \textsf{?v} adicionando o resultado na lista \textsf{?q}. \\ \hline
+\textsf{(equivalent (?sl ?kl) ?level)} &
+Teste de igualdade dos níveis de desenvolvimento de habilidade \textsf{?sl} e de aquisição de conhecimento \textsf{?kl} no nível de competência \textsf{?level}. \\ \hline
+\textsf{(getLevel ?level (?sl ?kl))} &
+Obtém na variável  \textsf{?level} o nível de competência usando como parâmetros os níveis de desenvolvimento de habilidade \textsf{?sl} e de aquisição de conhecimento \textsf{?kl}. \\ \hline
+\textsf{(getNumericalLevel (?sl ?kl) ?level)} &
+Obtém nas variáveis \textsf{?sl} e \textsf{?kl} os valores numéricos do nível de competência. \\ \hline
+\textsf{(hasKnowledgeType ?c ?t)} &
+Teste que avalia a classificação \textsf{?t} do elemento de conhecimento associado à competência  \textsf{?c}. \\ \hline
+\textsf{(getLearnerCompetencyLevel ?result ?l ?c)} &
+Obtém na variável \textsf{?result} o nível de competência possuído pelo estudante \textsf{?l} relativo à competência \textsf{?c}.\\ \hline
+\textsf{(filterLearnersByCompetencyLevel ?result ?l ?c ?s)} &
+Obtém na variável \textsf{?result} a filtragem dos estudantes \textsf{?l} que têm um nível de competência igual ou maior que \textsf{?s} relativos à competência \textsf{?c}. \\ \hline
+\textsf{(getReadyAux ?a ?q ?l)} &
+Obtém na variável \textsf{?a} um elemento de conhecimento de tipo auxiliar que satisfaz a lista de condições \textsf{?q}, os pré-requisitos de \textsf{?a} são satisfeitos pela lista de estudantes \textsf{?l}. \\ \hline
+\textsf{(getOrBuildReadyAux ?a ?q ?l)} &
+Obtém na variável \textsf{?a} um elemento de conhecimento de tipo auxiliar que satisfaz a lista de condições \textsf{?q}, se os pré-requisitos de \textsf{?a} não são satisfeitos pelos estudantes \textsf{?l} um novo elemento é adicionado no modelo de domínio a ser ensinado. \\  \hline
+\textsf{(getLearnerPropertyQuery ?result ?c ?l [?d])} &
+Obtém na variável \textsf{?result} as condições de propriedades adaptadas às características individuais dos estudantes \textsf{?l} no contexto da competência \textsf{?c}. O parâmetro opcional \textsf{?d} é uma lista de dificuldades a ser utilizada la lista de condições. \\  \hline
+\textsf{(getCompsFromGoals ?result ?g)} &
+Obtém na variável \textsf{?result} a lista de competências dos objetivos educacionais \textsf{?g}. \\  \hline
+\textsf{(getCompFromGoal ?c ?g)} &
+Obtém na variável \textsf{?c} a competência comum aos objetivos educacionais \textsf{?g}. \\  \hline
+\textsf{(getGoalFromAuxiliary ?g ?a ?c [?s])} &
+Obtém na variável \textsf{?g} o objetivo educacional para um elemento de conhecimento \textsf{?a} no contexto da competência \textsf{?c}. O parâmetro \textsf{?s} define o nível de competência a ser usado no objetivo. \\  \hline
+\textsf{(getGoalsFromAuxiliaries ?g ?a ?c)} &
+Obtém na variável \textsf{?g} os objetivos educacionais relativos à lista de elementos de conhecimento \textsf{a} no contexto da competência \textsf{?c}. \\  \hline
+\textsf{(getIndGoals ?result ?l ?g [?c [?p]])} &
+Obtém na variável \textsf{?result} os objetivos individuais relativos à lista de estudantes \textsf{?l} e objetivos educacionais \textsf{?g}. Os parâmetros \textsf{?c} e \textsf{?p} definem as listas de competências e estudantes a serem usados como filtragem. \\  \hline
+\textsf{(filterGoalsByComp ?result ?g ?c)} &
+Obtém na variável \textsf{?result} a filtragem dos objetivos \textsf{?g} relativos à competência \textsf{?c}. \\  \hline
+\textsf{(getCurrentLearningResourceType ?t)} &
+Obtém na variável \textsf{?t} a lista dos tipos de recurso a ser apresentado no planejamento. \\  \hline
+\textsf{(reachedGoals ?g ?l)} &
+Teste que avalia se todos os estudantes da lista \textsf{?l} tem atingido os objetivo educacionais \textsf{?g}. \\  \hline
+\end{tabular}
+\caption{Axiomas de planejamento instrucional}
+\label{tab:axiomasPlanejamentoInstrucional}
+\end{table}
+\end{landscape}
+
+
+\subsubsection{Formação de grupos}
+
+O termo de chamada \textsf{(call GetCLGrouping ?indGoals [?nro])} efetua a formação de grupos utilizando as diferentes teorias de aprendizagem mediante o algoritmo de formação de grupos definido por \citet{isotani2009ontological} (nas página 113-114). O parâmetro \textsf{?indGoal} é a lista de objetivos individuais dos participantes e o parâmetro opcional \textsf{?nro} define o número de grupos a serem formados pelo algoritmo.
+
+A estrutura de dados empregada para representa a formação de grupos é  definida como a lista de termos \textsf{(clg$_{1}$ clg$_{2}$ ... clg$_{n1}$ [ilg$_{1}$ ilg$_{2}$ ... ilg$_{n2}$])} na qual cada termo \textsf{clg$_{i}$} representa um grupo de estudantes associado a uma teoria de aprendizagem e cada termo \textsf{ilg$_{j}$} representa um grupo de estudantes não associado a alguma teoria.
+
+Os grupos \textsf{clg$_{1}$, clg$_{2}$, ..., clg$_{n1}$} são representados  mediante a estrutura
+\begin{center}
+\textsf{(theory ((strategy$_{1}$ g$_{1}$ P$_{1}$) ... (strategy$_{n}$ g$_{n}$ P$_{n}$)))},
+\end{center}
+na qual, \textsf{theory} é o nome da teoria de aprendizagem empregada para definir a formação do grupo e a lista de termos \textsf{(strategy$_{i}$ g$_{i}$ P$_{i}$)} representa a relação de uma estratégia de aprendizagem \textsf{strategy$_{i}$} empregada pelos participantes \textsf{P$_{i}$} para atingir um objetivo educacional \textsf{g$_{i}$}.
+Os grupos \textsf{ilg$_1$, ilg$_{2}$, ..., ilg$_{n2}$} são representados mediante a estrutura
+\begin{center}
+\textsf{(independent ((indstrategy g$_{1}$ P$_{1}$) ... (indstrategy g$_{n2}$ P$_{n2}$)))},
+\end{center}
+na qual, a lista de termos \textsf{(indstrategy g$_{j}$ P$_{j}$)} representa a relação entre participantes \textsf{P$_{j}$} e seu correspondente objetivo \textsf{g$_{j}$}.
+
+\begin{example}
+O axioma
+
+\begin{alltt}\sffamily
+(assign ?result (call GetCLGrouping ((l1 (c1 s2k1s2k2)) (l2 (c1 s2k2s2k3)) (l3 (c1 s2k1s3k1))
+                                               (l4 (c1 s2k2s2k3)) (l5 (c1 s3k0s3k1)))))
+\end{alltt}
+
+devolve no símbolo de variável \textsf{?result} como resultado a lista de termos
+
+\begin{alltt}\sffamily
+((cognitive-flexibility ((learning-by-reflection (c1 s2k3) (l2 l4))
+                            (learning-by-selfexpression (c1 s3k1) (l3))))
+ (peer-tutoring ((learning-by-teaching (c1 s2k2) (l5))
+                     (learning-by-being-taught (c1 s3k1) (l1))))).
+\end{alltt}
+
+A lista representa a formação de dois grupos \textsf{$G_{1}$=\{l2, l3, l4\}} e \textsf{$G_{2}$=\{l1, l5\}} usando as teorias de aprendizagem \textsf{cognitive-flexibility} e \textsf{peer-tutoring}. No grupo \textsf{$G_{1}$}, os estudantes \textsf{l2} e \textsf{l4} empregam a estratégias de aprendizagem \textsf{learning-by-reflection} para atingir o objetivo \textsf{(c1 s2k3)}, enquanto o estudante \textsf{l3} emprega a estratégia de aprendizagem \textsf{learning-by-selfexpression}.
+\end{example}
+
+Os axiomas \textsf{(getGoalsFromCLGrouping ?result ?clg)} e \textsf{(getGroupsFromCLGrouping ?result ?clg)} obtém a lista de objetivos educacionais e grupos a partir de um termo da estrutura de formação de grupos \textsf{?clg}, devolvendo o resultado no símbolo de variável \textsf{?result}. Usando o primeiro elemento da estrutura mostrada no exemplo anterior relativo à teoria de aprendizagem \textsf{cognitive-flexibility}, o axioma \textsf{getGoalsFromCLGrouping} devolve como resultado a lista \textsf{((c1 s2k3) (c1 s3k1))}, enquanto \textsf{getGroupsFromCLGrouping} devolve como resultado a lista \textsf{((l2 l4) (l3))}.
+
+\subsection{Tarefas básicas e operadores que representam as interações instrucionais}
+\label{subsec:operadoresPlanejamento}
+
+As tarefas básicas e os operadores de planejamento apresentados a seguir representam as interações instrucionais. Os operadores e tarefas básicas (resumidas na Tabela \ref{tab:acoesInstrucionais}) são classificadas de acordo com as etapas de planejamento instrucional em edição, configuração e instanciação.
+
+\begin{table}[htbp]\small
+\centering
+\begin{tabular}{|l|p{10.5cm}|}
+\hline
+\textbf{Identificador}                   & \textbf{Descrição} \\ \hline \hline
+\multicolumn{2}{|l|}{(a) Etapa: \emph{Edição}} \\ \hline
+\textsf{!startLDElement}             & Criação da etiqueta de abertura de um elemento IMS-LD. \\ \hline
+\textsf{!endLDElement}              & Criação da etiqueta de fechamento de um elemento IMS-LD. \\ \hline
+\textsf{startLDElement!}              & Criação da etiqueta de abertura de um elemento IMS-LD, \newline incluindo informação dos objetivos individuais. \\ \hline
+\textsf{!!changeIndGoals}              & Alterar os objetivos individuais no elemento IMS-LD corrente. \\ \hline
+\textsf{!!changeCurrentLDElement}     & Alterar os elementos IMS-LD correntes. \\ \hline
+\textsf{!!changeLearningResourceType}     & Alterar o tipo de recurso instrucional no elemento IMS-LD corrente. \\ \hline
+\textsf{!!changeFundCompetency}     & Alterar a competência fundamental no elemento IMS-LD corrente. \\ \hline
+\textsf{!!changeCLGrouping}     & Alterar informação do agrupamento no elemento IMS-LD corrente. \\ \hline
+%\textsf{!!changeFundCompetency}     & Remoção de um participante de um grupo. \\ \hline
+\multicolumn{2}{|l|}{(b) Etapa: \emph{Configuração}} \\ \hline
+\textsf{!addUsersToRole}                & Atribuição de um papel a um participante. \\ \hline
+\textsf{addUsersToRole}                & Atribuição de um papel a um conjunto de participante. \\ \hline
+\textsf{!removeUserFromRole}     & Remoção de um papel de um participante. \\ \hline
+\textsf{removeUsersFromRole}     & Remoção de um papel a um conjunto de participantes. \\ \hline
+\textsf{!addUserToGroup}                & Adição de um participante a um grupo. \\ \hline
+\textsf{addUsersToGroup}                & Adição de um conjunto de participantes a um grupo. \\ \hline
+\textsf{!removeUserFromGroup}     & Remoção de um um participante de um grupo. \\ \hline
+\textsf{removeUsersFromGroup}                & Remoção de um conjunto de participante de um grupo. \\ \hline
+\multicolumn{2}{|l|}{(c) Etapa: \emph{Instanciação}} \\ \hline
+\textsf{!text}	        & Inserir um texto. \\ \hline
+\textsf{createLDTitle}	        & Criação de um rotulo com o nome do elemento IMS-LD. \\ \hline
+\textsf{!insertElement}	        & Inserção de um elemento do domínio a ser ensinado. \\ \hline
+\textsf{!insertResource}	        & Criação do elemento <resource> na unidade de aprendizagem. \\ \hline
+\textsf{insertResourceOnce}	        & Inserção de um recurso instrucional (uma única inserção por UoL). \\ \hline
+\textsf{!!addInWorldStateAsAlreadySeen}	        & Alterar registro histórico do modelo de estudante. \\ \hline
+\textsf{createLDItem}	        & Criação do elemento <item>. \\ \hline
+\textsf{createLDInstructItem}	        & Criação do elemento <item> no evento instrucional. \\ \hline
+\textsf{createLDLearningItem}	        & Criação do elemento <item> no evento de aprendizagem. \\ \hline
+\end{tabular}
+\caption{Tarefas básicas e operadores que representam as interações instrucionais}
+\label{tab:acoesInstrucionais}
+\end{table}
+
+\subsubsection{Tarefas básicas e operadores de planejamento utilizados na fase de edição}
+
+As tarefas básicas e operadores de planejamento apresentados a seguir irão definir a criação dos elementos de roteiros colaborativos descritos na especificação IMS-LD. Assim, os operadores \textsf{!startLDElement} e \textsf{!endLDElement} mostrados na Figura \ref{list:startEndLDElement} são utilizados para definir a criação de uma etiqueta de abertura e fechamento de um elemento XML, onde:
+
+\begin{itemize}
+\item O símbolo de variável \textsf{?tag} é um nome do marcador; e
+\item O símbolo de variável \textsf{?params} é uma lista \textsf{((attribute$_{1}$ value$_{1}$) ... (attribute$_{n}$ value$_{n}$))} que representam atributos \textit{attribute$_{i}$}=``\textit{value$_{i}$}'' no elemento XML.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:operator (!startLDElement ?tag)
+      ()
+      ()
+      ())
+   
+   (:operator (!startLDElement ?tag ?params)
+      ()
+      ()
+      ())
+   
+   (:operator (!endLDElement ?tag)
+      ()
+      ()
+      ())
+\end{jshopcode}
+\caption{Operadores \textsf{!startLDElement} e \textsf{!endLDElement} básicos}
+\label{list:startEndLDElement}
+\end{figure}
+
+Além dos operadores \textsf{!startLDElement} básicos apresentados na Figura \ref{list:startEndLDElement}, definimos os operadores \textsf{!startLDElement} mostrados nas Figuras \ref{list:startLDElement1} e \ref{list:startLDElement2}, que efetuam a criação da etiqueta de abertura de um elemento de roteiro com identificador \textsf{?id}. Os operadores adicionam no estado corrente informações de metadado (linhas 9-15), atitudes (linhas 38-39, Figura \ref{list:startLDElement2}) e habilidades (linhas 36-37, Figura \ref{list:startLDElement2}). As informações de metadado são classificação \textsf{?types} (linhas 9-10), objetivos educacionais \textsf{?goals} (linhas 11-13) e participantes \textsf{?learners} (linhas 14-15).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:operator (!startLDElement ?tag ?params (?types ?id ?goals ?groups))
+      \textit{;; preconditions}
+      ((assign ?learners (call ConcatList ?groups))
+       (getElements ?parents ((class CurrentLDElement))))
+      \textit{;; remove atoms}
+      ((forall (?e) ((class CurrentLDElement ?e))
+               ((class CurrentLDElement ?e))))
+      \textit{;; add atoms}
+      ((forall (?t) ((exist ?t ?types))
+               ((class ?t ?id)))
+       (forall (?g) ((exist ?g ?goals) (first ?c ?g))
+               ((property ?id hasGoal ?g)
+                (property ?id hasCompetency ?c)))
+       (forall (?l) ((exist ?l ?learners))
+               ((property ?id hasParticipant ?l)))
+       \textit{;; parent fundamental competencies}
+       (forall (?p ?c) ((exist ?p ?parents)
+                        (property ?p hasFundCompetency ?c))
+               ((property ?id hasFundCompetency ?c)))
+       \textit{;; parent learning resource type}
+       (forall (?p ?t) ((exist ?p ?parents)
+                        (property ?p hasLearningResourceType ?t))
+               ((property ?id hasLearningResourceType ?t)))
+       \textit{;; parent clgrouping}
+       (forall (?p ?cn ?sn ?g ?ls)
+               ((exist ?p ?parents)
+                (property ?p hasCLGroupingTheory ?cn)
+                (property ?p hasCLGroupingStrategy ?sn)
+                (property ?p hasCLGroupingGoal (?sn ?g))
+                (property ?p hasCLGroupingLearners (?sn ?ls)))
+               ((property ?id hasCLGroupingTheory ?cn)
+                (property ?id hasCLGroupingStrategy ?sn)
+                (property ?id hasCLGroupingGoal (?sn ?g))
+                (property ?id hasCLGroupingLearners (?sn ?ls))))
+       \textit{;; current uol}
+       (forall (?p ?u) ((exist ?p ?parents)
+                        (property ?p hasCurrentUoL ?u))
+               ((property ?id hasCurrentUoL ?u)))
+       \textit{;; relation}
+       (forall (?p) ((exist ?p ?parents))
+               ((relation ?id isPartOf ?p)))
+       (class CurrentLDElement ?id)))
+\end{jshopcode}
+\caption{Operador \emph{\textsf{!startLDElement}} com informação de meta-dados}
+\label{list:startLDElement1}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+(:operator (!startLDElement ?tag ?params (?types ?id ?goals ?skills ?attits ?groups))
+      \textit{;; preconditions}
+      ((assign ?learners (call ConcatList ?groups))
+       (getElements ?parents ((class CurrentLDElement))))
+      \textit{;; remove atoms}
+      ((forall (?e) ((class CurrentLDElement ?e))
+               ((class CurrentLDElement ?e))))
+      \textit{;; add ld information}
+      ((forall (?t) ((exist ?t ?types))
+               ((class ?t ?id)))
+       (forall (?g) ((exist ?g ?goals) (first ?c ?g))
+               ((property ?id hasGoal ?g)
+                (property ?id hasCompetency ?c)))
+       (forall (?l) ((exist ?l ?learners))
+               ((property ?id hasParticipant ?l)))
+       \textit{;; parent fundamental competencies}
+       (forall (?p ?c) ((exist ?p ?parents)
+                        (property ?p hasFundCompetency ?c))
+               ((property ?id hasFundCompetency ?c)))
+       \textit{;; parent learning resource type}
+       (forall (?p ?t) ((exist ?p ?parents)
+                        (property ?p hasLearningResourceType ?t))
+               ((property ?id hasLearningResourceType ?t)))
+       \textit{;; parent clgrouping}
+       (forall (?p ?cn ?sn ?g ?ls)
+               ((exist ?p ?parents)
+                (property ?p hasCLGroupingTheory ?cn)
+                (property ?p hasCLGroupingStrategy ?sn)
+                (property ?p hasCLGroupingGoal (?sn ?g))
+                (property ?p hasCLGroupingLearners (?sn ?ls)))
+               ((property ?id hasCLGroupingTheory ?cn)
+                (property ?id hasCLGroupingStrategy ?sn)
+                (property ?id hasCLGroupingGoal (?sn ?g))
+                (property ?id hasCLGroupingLearners (?sn ?ls))))
+       \textit{;; skills and attitudes}
+       (forall (?s) ((exist ?s ?skills))
+               ((property ?id hasSkill ?s)))
+       (forall (?a) ((exist ?a ?attits))
+               ((property ?id hasAttitude ?a)))
+       \textit{;; current uol}
+       (property ?id hasCurrentUoL ?id)
+       \textit{;; relation}
+       (forall (?p) ((exist ?p ?parents))
+               ((relation ?id isPartOf ?p)))
+       (class CurrentLDElement ?id))) 
+\end{jshopcode}
+\caption{Operador \emph{\textsf{!startLDElement}} com informações de meta-dados, atitudes e habilidades}
+\label{list:startLDElement2}
+\end{figure}
+
+
+Outras informações obtidas dos elementos de roteiro corrente \textsf{?parents} (linha 4) a ser incluída pelos operadores \textsf{!startLDElement} no estado corrente são competências relativas aos elementos de conhecimento fundamental \textsf{?c} (linhas 17-19), tipos de recurso instrucional \textsf{t} (linhas 21-23) e informações de agrupamento (linhas 25-34). A informações de agrupamento são nome da teoria de aprendizagem \textsf{?cn} (linha 31),  estratégias de aprendizagem \textsf{?sn} (linha 32), objetivos educacionais da estratégia \textsf{?g} (linha 33) e participantes da estratégia \textsf{?ls} (linha 34).
+
+Os operadores \textsf{!startLDElement} mudam os valores dos elementos de roteiro colaborativo corrente mediante a remoção dos átomos lógicos \textsf{(class CurrentLDElement ?e)} (linhas 6-7) e adição do átomo \textsf{(class CurrentLDElement ?id)} (linha 42, Figura \ref{list:startLDElement1}; linha 45, Figura \ref{list:startLDElement2}). Finalmente, os operadores efetuam a definição da estrutura de roteiro mediante a adição de átomos lógicos \textsf{(relation ?id isPartOf ?p)} (linhas 36-42, Figura \ref{list:startLDElement1}) (linhas 41-45, Figura \ref{list:startLDElement2}).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:operator (!endLDElement ?tagname ?id)
+      \textit{;; preconditions}
+      ((getPropertyValues ?indGoals ?id hasIndGoal)
+       (getPropertyValues ?ts ?id hasCLGroupingTheory)
+       (getPropertyValues ?ss ?id hasCLGroupingStrategy)
+       (getPropertyValues ?gs ?id hasCLGroupingGoal)
+       (getPropertyValues ?Ps ?id hasCLGroupingLearners))
+      \textit{;; remove atoms}
+      ((forall (?l ?ig) ((exist ?lig ?indGoals)
+                         (first ?l ?lig) (last ?ig ?lig))
+               ((property ?id hasIndGoal (?l ?ig))))
+       (forall (?l ?c ?s) ((exist ?lig ?indGoals)
+                           (first ?l ?lig) (last ?ig ?lig) (first ?c ?ig)
+                           (property ?l hasCompetencyLevel (?c ?s)))
+               ((property ?l hasCompetencyLevel (?c ?s))))
+       \textit{;; cl grouping}
+       (forall (?t ?s ?g ?P) ((exist ?t ?ts) (exist ?s ?ss)
+                              (exist ?g ?gs) (exist ?P ?Ps))
+               ((property ?id hasCLGroupingTheory ?t)
+                (property ?id hasCLGroupingStrategy ?s)
+                (property ?id hasCLGroupingGoal ?g)
+                (property ?id hasCLGroupingLearners ?P)))
+       \textit{;; relation}
+       (forall (?e) ((class CurrentLDElement ?e))
+               ((class CurrentLDElement ?e))))
+      \textit{;; add atoms}
+      ((forall (?l ?c ?s) ((exist ?lig ?indGoals)
+                           (first ?l ?lig) (last ?ig ?lig)
+                           (first ?c ?ig) (last ?g ?ig)
+                           (getPropertyValue ?s ?g hasGoalStage))
+               ((property ?l hasCompetencyLevel (?c ?s))))
+       \textit{;; relation}
+       (forall (?p) ((relation ?id isPartOf ?p))
+               ((class CurrentLDElement ?p)))))
+\end{jshopcode}
+\caption{Operador \emph{\textsf{!endLDElement}} para elementos de roteiros colaborativos}
+\label{list:endLDElement2}
+\end{figure}
+
+Além do operador \textsf{!endLDElement} básico apresentados na Figura \ref{list:startEndLDElement}, definimos o operador \textsf{!endLDElement} mostrado na Figura \ref{list:endLDElement2} para efetuar a criação da etiqueta de fechamento de um elemento do roteiro com identificador \textsf{?id}. O operador remove do estado corrente as informações de agrupamento (linhas 17-22) e os objetivos individuais (linhas 9-11). O operador também atualiza os níveis de competência dos estudantes (linhas 12-15, 27-31) mediante a substituição dos níveis de competência corrente por níveis definidos nos objetivos individuais \textsf{?indGoals}.% Finalmente, o operador adiciona informação da estrutura dos roteiros no estado corrente (linhas 33-34).
+
+\newpage
+\begin{example}
+Seja a lista de tarefas
+
+\begin{alltt}\sffamily
+T = ((!startLDElement learning-activity ((identifier la123f342))
+                              ((Session) la123f342 ((c1 s1k2) (c1 s1k1)) ((l1 l2) (l3 l4))))
+        (!endLDElement learning-activity la123f342))
+\end{alltt}
+
+no estado \textsf{S = \{(currentLDElement as4e12d23), (property as4e12d23 hasFundCompetency ?c0)\}}. O resultado \textsf{S$_{1}$} de aplicar a primeira tarefa de acordo com a função $\gamma$ de transição de estados é
+
+\begin{alltt}\sffamily
+\(\gamma(S,T[1])\) = \{(currentLDElement la123f342), (class Session la123f342),
+                   (relation la123f342 isPartOf rp4e12d23), (property la123f342 hasGoal (c1 s1k1)),
+                   (property la123f342 hasGoal (c1 s1k2)), (property la123f342 hasCompetency c1),
+                   (property la123f342 hasFundCompetency c0), (property la123f342 hasParticipant l1),
+                   (property la123f342 hasParticipant l2), (property la123f342 hasParticipant l3),
+                   (property la123f342 hasParticipant l4)\}.
+\end{alltt}
+
+No estado \textsf{S$_{1}$}  o elemento de roteiro \textsf{la123f342} é parte de um elemento \textsf{as4e12d23}. O elemento \textsf{la123f342} é de classificação sessão (\textsf{Session}) com objetivo educacionais \textsf{(c1 s1k1)} e \textsf{(c1 s1k2)} a ser atingido pelos participantes \textsf{l1}, \textsf{l2}, \textsf{l3} e \textsf{l4}.
+\end{example}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (startLDElement! ?tag ?params (?types ?id ?goals ?groups))
+      ((getIndGoals ?indGoals ?goals ?groups))
+      ((!startLDElement ?tag ?params (?types ?id ?goals ?groups))
+       (!!changeIndGoals ?indGoals)))
+
+   (:operator (!!changeIndGoals ?indGoals)
+      \textit{;; preconditions}
+      ((getElement ?e ((class CurrentLDElement))))
+      \textit{;; remove}
+      ((forall (?cl ?cig) ((property ?id hasIndGoal (?cl ?cig)))
+               ((property ?e hasIndGoal (?cl ?cig)))))
+      \textit{;; add atoms}
+      ((forall (?l ?ig) ((exist ?lig ?indGoals)
+                         (first ?l ?lig) (last ?ig ?lig))
+               ((property ?e hasIndGoal (?l ?ig))))))
+\end{jshopcode}
+\caption{Tarefa de criação de um elemento de roteiros que atualiza os níveis de competência}
+\label{list:startLDElement!}
+\end{figure}
+
+Para definir mudanças nos níveis de competência ao término de execução de um elemento de roteiro, a tarefa \textsf{startLDElement!} mostrada na Figura \ref{list:startLDElement!} utiliza o operador \textsf{!!changeIndGoals} (linha 4) para alterar a informação dos objetivos individuais no elemento corrente \textsf{?e} (linha 8).
+
+\newpage
+\begin{example}
+Seja a lista de tarefas
+
+\begin{alltt}\sffamily
+T = ((!startLDElement learning-activity ((identifier la123f342))
+                              ((Session) la123f342 ((c1 s1k2) (c1 s1k1)) ((l1 l2) (l3 l4))))
+        (!!changeIndGoals ((l1 (c1 s1k0s1k2)) (l2 (c1 s0k0s1k2)) (l3 (c1 s1k1s1k1)) (l4 ( s0k0s1k1))))
+        (!endLDElement learning-activity la123f342))
+\end{alltt}
+
+no estado corrente do mundo \textsf{S = \{(property l1 hasCompetencyLevel (c1 s1k0)), (property l3 hasCompetencyLevel (c1 s1k1))\}}. O resultado \textsf{S$_{2}$} de aplicar as tarefas \textsf{T[1]} e \textsf{T[2]} de acordo com a função $\gamma$ de transição de estados é
+
+\begin{alltt}\sffamily
+\(S\sb{2}\) = \{(currentLDElement la123f342), (class Session la123f342),
+         (property la123f342 hasCompetency c1),
+         (property la123f342 hasGoal (c1 s1k1)), (property la123f342 hasGoal (c1 s1k2)),
+         (property la123f342 hasParticipant l1), (property la123f342 hasParticipant l2),
+         (property la123f342 hasParticipant l3), (property la123f342 hasParticipant l4),
+         (property l1 hasCompetencyLevel (c1 s1k0)), (property l3 hasCompetencyLevel (c1 s1k1)),
+         (property la123f342 hasIndGoal (l1 (c1 s1k0s1k2))),
+         (property la123f342 hasIndGoal (l2 (c1 s0k0s1k2))),
+         (property la123f342 hasIndGoal (l3 (c1 s1k1s1k1))),
+         (property la123f342 hasIndGoal (l4 ( s0k0s1k1)))\}.
+\end{alltt}
+
+Logo, o estado \textsf{S$_{3}$=$\gamma$(S$_{2}$, $T[3]$)} representa o término da construção do elemento \textsf{la123f342}, no qual os estudantes \textsf{l1}, \textsf{l2}, \textsf{l3} e \textsf{l4} alcançam os níveis de competência inicial-crescimento (\textsf{s1k1}) e inicial-aperfeiçoamento (\textsf{s1k2}) na competência cognitiva \textsf{c1}.
+
+\begin{alltt}\sffamily
+\(S\sb{3}\) = \{(class Session la123f342), (property la123f342 hasCompetency c1)
+         (property la123f342 hasGoal (c1 s1k1)), (property la123f342 hasGoal (c1 s1k2)),
+         (property la123f342 hasParticipant l1), (property la123f342 hasParticipant l2),
+         (property la123f342 hasParticipant l3), (property la123f342 hasParticipant l4),
+         (property l1 hasCompetencyLevel (c1 s1k2)), (property l2 hasCompetencyLevel (c1 s1k2)),
+         (property l3 hasCompetencyLevel (c1 s1k1)), (property l4 hasCompetencyLevel (c1 s1k1))\}.
+\end{alltt}
+\end{example}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:operator (!!changeCurrentLDElement ?elements)
+      ((getElements ?currents ((class CurrentLDElement))))
+      ((forall (?c) ((exist ?c ?currents))
+               ((class CurrentLDElement ?c))))
+      ((forall (?e) ((exist ?e ?elements))
+               ((class CurrentLDElement ?e)))))
+\end{jshopcode}
+\caption{Operador \emph{\textsf{!!changeCurrentLDElement}} que altera o elemento corrente de planejamento}
+\label{list:changeCurrentLDElement}
+\end{figure}
+
+O operador \textsf{!!changeCurrentLDElement} mostrado na Figura \ref{list:changeCurrentLDElement} é utilizado para alterar a informação dos objetivos individuais no elemento de roteiro que está sendo objeto do processo de planejamento instrucional.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:operator (!!changeLearningResourceType ?types)
+      ((getElement ?e ((class CurrentLDElement)))
+       (getPropertyValues ?ctypes ?e hasLearningResourceType))
+      ((forall (?ct) ((exist ?ct ?ctypes))
+               ((property ?e hasLearningResourceType ?ct))))
+      ((forall (?t) ((exist ?t ?types))
+               ((property ?e hasLearningResourceType ?t)))))
+\end{jshopcode}
+\caption{Operador utilizado para alterar o tipo de recurso instrucional}
+\label{list:changeLearningResourceType}
+\end{figure}
+
+A Figura \ref{list:changeLearningResourceType} mostra o operadores \textsf{!!changeLearningResourceType} utilizado para efetuar a alteração da informação do tipo de recurso instrucional a ser apresentado. Enquanto, a Figura \ref{list:changeFundCompetency} mostra o operador \textsf{!!changeFundCompetency} utilizado para efetuar a alteração da informação da competência fundamental no elemento de roteiro corrente \textsf{?e}.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:operator (!!changeFundCompetency ?c)
+      ((getElement ?e ((class CurrentLDElement)))
+       (getPropertyValues ?comps ?e hasFundCompetency))
+      ((forall (?cc) ((exist ?cc ?comps))
+               ((property ?e hasFundCompetency ?cc))))
+      ((property ?e hasFundCompetency ?c)))
+\end{jshopcode}
+\caption{Operador utilizado para alterar a competência fundamental}
+\label{list:changeFundCompetency}
+\end{figure}
+
+Os operadores \textsf{!!changeCLGrouping} mostrados na Figura \ref{list:changeCLGrouping} efetua mudanças na informação de agrupamento do elemento de roteiro colaborativo corrente \textsf{?e} (linhas 2, 14, 26, 45). O operador emprega a estrutura de formação de grupos definida pelo termo de chamada  \textsf{GetCLGrouping}. Assim, se a estrutura é vazia (primeiro operador, linhas 1-11) ou independente (segundo operador, linhas 13-23) é efetuada a remoção das informações relativas ao agrupamento. O terceiro operador (linhas 25-38) adiciona as informações do agrupamento usando a estrutura \textsf{(?t ?sgPs)} (linhas 27-30). O quarto operador (linhas 40-57) efetua a substituição das informações de agrupamento usando informações extraídas do elemento de roteiro com identificador \textsf{?id} (linhas 41-44).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+(:operator (!!changeCLGrouping ())
+   ((getElement ?e ((class CurrentLDElement)))
+    (getPropertyValues ?ts ?e hasCLGroupingTheory)
+    (getPropertyValues ?ss ?e hasCLGroupingStrategy)
+    (getPropertyValues ?gs ?e hasCLGroupingGoal)
+    (getPropertyValues ?Ps ?e hasCLGroupingLearners))
+   ((forall (?t ?s ?g ?P) ((exist ?t ?ts) (exist ?s ?ss)
+                           (exist ?g ?gs) (exist ?P ?Ps))
+    ((property ?e hasCLGroupingTheory ?t) (property ?e hasCLGroupingStrategy ?s)
+     (property ?e hasCLGroupingGoal ?g) (property ?e hasCLGroupingLearners ?P))))
+   ())
+
+(:operator (!!changeCLGrouping (independent ?sgPs))
+   ((getElement ?e ((class CurrentLDElement)))
+    (getPropertyValues ?ts ?e hasCLGroupingTheory)
+    (getPropertyValues ?ss ?e hasCLGroupingStrategy)
+    (getPropertyValues ?gs ?e hasCLGroupingGoal)
+    (getPropertyValues ?Ps ?e hasCLGroupingLearners))
+   ((forall (?t ?s ?g ?P) ((exist ?t ?ts) (exist ?s ?ss)
+                           (exist ?g ?gs) (exist ?P ?Ps))
+    ((property ?e hasCLGroupingTheory ?t) (property ?e hasCLGroupingStrategy ?s)
+     (property ?e hasCLGroupingGoal ?g) (property ?e hasCLGroupingLearners ?P))))
+   ())
+
+(:operator (!!changeCLGrouping (?t ?sgPs))
+   ((getElement ?e ((class CurrentLDElement)))
+    (getPropertyValues ?cts ?e hasCLGroupingTheory)
+    (getPropertyValues ?css ?e hasCLGroupingStrategy)
+    (getPropertyValues ?cgs ?e hasCLGroupingGoal)
+    (getPropertyValues ?cPs ?e hasCLGroupingLearners))
+   ((forall (?ct ?cs ?cg ?cP) ((exist ?ct ?cts) (exist ?cs ?css)
+                               (exist ?cg ?cgs) (exist ?cP ?cPs))
+    ((property ?e hasCLGroupingTheory ?ct) (property ?e hasCLGroupingStrategy ?cs)
+     (property ?e hasCLGroupingGoal ?cg) (property ?e hasCLGroupingLearners ?cP))))
+   ((forall (?s ?g ?P) ((exist ?sgP ?sgPs) (first ?s ?sgP)
+                        (rest ?gP ?sgP) (first ?g ?gP)  (last ?P ?gP))
+    ((property ?e hasCLGroupingTheory ?t) (property ?e hasCLGroupingStrategy ?s)
+     (property ?e hasCLGroupingGoal (?s ?g)) (property ?e hasCLGroupingLearners (?s ?P))))))
+
+(:operator (!!changeCLGrouping ?id)
+   ((getPropertyValues ?ts ?id hasCLGroupingTheory)
+    (getPropertyValues ?ss ?id hasCLGroupingStrategy)
+    (getPropertyValues ?gs ?id hasCLGroupingGoal)
+    (getPropertyValues ?Ps ?id hasCLGroupingLearners)
+    (getElement ?e ((class CurrentLDElement)))
+    (getPropertyValues ?cts ?e hasCLGroupingTheory)
+    (getPropertyValues ?css ?e hasCLGroupingStrategy)
+    (getPropertyValues ?cgs ?e hasCLGroupingGoal)
+    (getPropertyValues ?cPs ?e hasCLGroupingLearners))
+   ((forall (?ct ?cs ?cg ?cP) ((exist ?ct ?cts) (exist ?cs ?css)
+                               (exist ?cg ?cgs) (exist ?cP ?cPs))
+    ((property ?e hasCLGroupingTheory ?ct) (property ?e hasCLGroupingStrategy ?cs)
+     (property ?e hasCLGroupingGoal ?cg) (property ?e hasCLGroupingLearners ?cP))))
+   ((forall (?t ?s ?g ?P) ((exist ?t ?ts) (exist ?s ?ss)
+                           (exist ?g ?gs) (exist ?P ?Ps))
+    ((property ?e hasCLGroupingTheory ?t) (property ?e hasCLGroupingStrategy ?s)
+     (property ?e hasCLGroupingGoal ?g) (property ?e hasCLGroupingLearners ?P)))))
+\end{jshopcode}
+\caption{Operador \emph{\textsf{!!changeCLGrouping}} que altera a informação de agrupamento}
+\label{list:changeCLGrouping}
+\end{figure}
+
+\newpage
+\begin{example}
+Seja a lista de tarefas
+
+\begin{alltt}\sffamily
+T = ((!!changeCLGrouping (peer-tutoring ((learning-by-teaching (c1 s1k2) (l1 l2))
+                                                       (learning-by-being-taugh (c1 s1k1) (l3 l4)))))
+       (!startLDElement role-part ((identifier rpf3a2))
+                              ((GroupActivity) rpf3a2 ((c1 s1k2) (c1 s1k1)) ((l1 l2) (l3 l4))))
+       (!!changeLearningResourceType (exercise))
+       (!endLDElement learning-activity rp13ae24))
+\end{alltt}
+
+no estado corrente do mundo \textsf{S = \{ \}}, o resultado \textsf{S$_{3}$ = $\gamma$($\gamma$($\gamma$(S, $T[1]$), $T[2]$), $T[3]$)} de aplicar as tarefas \textsf{T[1]}, \textsf{T[2]} e \textsf{T[3]} de acordo com a função $\gamma$ de transição de estados é
+
+\begin{alltt}\sffamily
+\(S\sb{3}\) = \{(currentLDElement rpf3a2), (class GroupActivity rpf3a2),
+         (property rpf3a2 hasCompetency c1), (property rpf3a2 hasLearningResourceType exercise),
+         (property rpf3a2 hasGoal (c1 s1k1)), (property rp13ae24 hasGoal (c1 s1k2)),
+         (property rpf3a2 hasParticipant l1), (property rp13ae24 hasParticipant l2),
+         (property rpf3a2 hasParticipant l3), (property rp13ae24 hasParticipant l4),
+         (property rpf3a2 hasIndGoal (l1 (c1 s1k0s1k2))),
+         (property rpf3a2 hasIndGoal (l2 (c1 s0k0s1k2))),
+         (property rpf3a2 hasIndGoal (l3 (c1 s1k1s1k1))),
+         (property rpf3a2 hasIndGoal (l4 (c1 s0k0s1k1))),
+         (property rpf3a2 hasCLGroupingTheory peer-tutoring),
+         (property rpf3a2 hasCLGroupingStrategy learning-by-teaching),
+         (property rpf3a2 hasCLGroupingGoal (learning-by-teaching (c1 s1k2))),
+         (property rpf3a2 hasCLGroupingLearners (learning-by-teaching (l1 l2))),
+         (property rpf3a2 hasCLGroupingStrategy learning-by-being-taugh),
+         (property rpf3a2 hasCLGroupingGoal (learning-by-being-taugh (c1 s1k2))),
+         (property rpf3a2 hasCLGroupingLearners (learning-by-being-taugh (l3 l4)))\}.
+\end{alltt}
+
+No estado \textsf{S$_{3}$}, o átomo \textsf{(property rpf3a2 hasLearningResourceType exercise)} é adicionado pela ação \textsf{$T[3]$=(!!changeLearningResourceType (exercise))} e os átomos das propriedades \textsf{hasCLGroupingTheory}, \textsf{hasCLGroupingStrategy}, \textsf{hasCLGroupingGoal} e \textsf{hasCLGroupingLearners} são adicionadas pela ação \textsf{$T[1]$=(!!changeCLGrouping (peer-tutoring ((learning-by-teaching (c1 s1k2) (l1 l2)) (learning-by-being-taugh (c1 s1k1) (l3 l4)))))}.
+\end{example}
+
+\newpage
+\subsubsection{Tarefas básicas e operadores de planejamento utilizados na fase de configuração}
+
+As tarefas básicas e os operadores de planejamento apresentados a seguir representam interações instrucionais a serem efetuadas na fase de configuração dos roteiros.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (addUsersToRole () ?role) () ())
+   (:method (addUsersToRole (?user . ?users) ?role)
+      ()
+      ((!addUserToRole ?user ?role)
+       (addUsersToRole ?users ?role)))
+
+   (:operator (!addUserToRole ?learner ?role)
+      ((not (property ?learner hasRole ?role)))
+      ()
+      ((property ?learner hasRole ?role)))
+   
+   (:method (removeUsersFromRole () ?role) () ())
+   (:method (removeUsersFromRole (?user . ?users) ?role)
+      ()
+      ((!removeUserFromRole ?user ?role)
+       (removeUsersFromRole ?users ?role)))
+   
+   (:operator (!removeUserFromRole ?user ?role)
+      ((property ?user hasRole ?role))
+      ((property ?user hasRole ?role))
+      ())
+\end{jshopcode}
+\caption{Tarefas básicas e operadores utilizados na adição e remoção de papéis}
+\label{list:addUserToRoleAndRemoveUserFromRole}
+\end{figure}
+
+A tarefa básica \textsf{addUsersToRole} (linhas 1-5) e o operador \textsf{!addUserToRole} (linhas 7-10) mostrados na Figura \ref{list:addUserToRoleAndRemoveUserFromRole} são utilizados para definir a atribuição de um papel \textsf{?role} ao conjunto participantes \textsf{?users} ou participante \textsf{?user}. A atribuição de um papel é representada mediante o átomo lógico \textsf{(property ?user hasRole ?role)}. A tarefa básica \textsf{removeUsersFromRole} (linhas 12-16) e o operador \textsf{!removeUserFromRole} são utilizados para definir a remoção de um papel \textsf{?role} em um conjunto de participantes \textsf{?users} ou participante \textsf{?user}.
+
+\begin{example}
+Sejam o estado corrente do mundo \textsf{S = \{\}} e a lista de tarefas 
+
+\begin{alltt}\sffamily
+T = ((!addUserToRole l1 tutor) (!addUserToRole l2 tutee) (!removeUserFromRole l1 tutor)).
+\end{alltt}
+
+O resultado de executar a primeira e segunda tarefa de acordo \`{a} função $\gamma$ de transição de estados é \textsf{$S_{2}$ = $\gamma(\gamma(S,T[1]),T[2])$ = \{(property l1 hasRole tutor), (property l2 hasRole tutee)\}} devido a que a tarefa \textsf{(!addUserToRole l1 tutor)} adiciona o átomo \textsf{(property l1 hasRole tutor)}, enquanto a tarefa \textsf{(!addUserToRole l2 tutee)} adiciona o átomo \textsf{(property l2 hasRole tutee)}.
+\end{example}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (addUsersToGroup () ?group) () ())
+   (:method (addUsersToGroup (?user . ?users) ?group)
+      ()
+      ((!addUserToGroup ?user ?group)
+       (addUsersToGroup ?users ?group)))
+   
+   (:operator (!addUserToGroup ?user ?group)
+      ((not (property ?user hasGroup ?group)))
+      ()
+      ((property ?user hasGroup ?group)))
+   
+   (:method (removeUsersFromGroup () ?group) () ())
+   (:method (removeUsersFromGroup (?user . ?users) ?group)
+      ()
+      ((!removeUserFromGroup ?user ?group)
+       (removeUsersFromGroup ?users ?group)))
+   
+   (:operator (!removeUserFromGroup ?user ?group)
+      ((property ?user hasGroup ?group))
+      ((property ?user hasGroup ?group))
+      ())
+\end{jshopcode}
+\caption{Tarefas básicas e operadores utilizado na adição e remoção de um grupo}
+\label{list:addUserToGroupAndRemoveUserFromGroup}
+\end{figure}
+
+A tarefa básica \textsf{addUsersToGroup} (linhas 1-5) e o operador \textsf{!addUserToGroup} (linhas 7-10) mostrados na Figura \ref{list:addUserToRoleAndRemoveUserFromRole} são utilizados para definir a adição de um participante \textsf{?user} ou conjunto de participantes \textsf{?users} ao grupo \textsf{?group}. A tarefa básica \textsf{removeUsersFromGroup} (linhas 12-16) e o operador \textsf{!removeUserFromGroup} são utilizados para definir a remoção de um participante \textsf{?user} ou conjunto de participantes \textsf{?users} de um grupo \textsf{?group}.
+
+\begin{example}
+Seja o estado \textsf{S = \{(property l1 hasGroup g1) (property l2 hasGroup g2)\}} e a lista 
+
+\begin{alltt}\sffamily
+T = ((!removeUserFromGroup l1 g1) (!addUserToGroup l2 g1) (!addUserToGroup l3 g1))
+\end{alltt}
+
+O resultado de aplicar a tarefa \textsf{$T[1]$} de acordo \`{a} função $\gamma$ de transição de estados é \textsf{$S_{1}$ = $\gamma(S,T[1])$ = \{(property l2 hasGroup g2)\}} devido \`{a} remoção do átomo \textsf{(property l1 hasGroup g1)}. O estado depois de efetuar as tarefas \textsf{$T[2]$} e \textsf{$T[3]$} é \textsf{$S_{3}$ = $\gamma(\gamma(S_{1},T[2]),T[3])$ = \{(property l2 hasGroup g2) (property l2 hasGroup g1) (property l3 hasGroup g1)\}} devido \`{a} adição do átomo \textsf{(property l2 hasGroup g1)} na tarefa \textsf{(!addUserToGroup l2 g1)} e a adição do átomo \textsf{(property l3 hasGroup g1)} na tarefa \textsf{(!addUserToGroup l3 g1)}.
+\end{example}
+
+\newpage
+\subsubsection{Tarefas básicas e operadores de planejamento utilizados na fase de instanciação}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:operator (!text ?types ?fparams ?sparams)
+      ()
+      ()
+      ())
+\end{jshopcode}
+\caption{Inserção de um texto}
+\label{list:text}
+\end{figure}
+
+O operador \textsf{!text} mostrado na Figura \ref{list:text} define a interação instrucional de inserção de um texto no roteiro. Os textos nos roteiros colaborativos são utilizados como apoio ao entendimento da estrutura e dos objetivos educacionais. Assim, o parâmetro \textsf{?type} define a estrutura à qual pertence o texto, o parâmetro \textsf{?fparams} definem parâmetros principais do texto, e \textsf{?sparams} definem parâmetros opcionais do texto. A tarefa \textsf{createLDTitle} mostrada na Figura \ref{list:createLDTitle} efetua a criação de um elemento <title> que contém a descrição do elemento IMS-LD.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDTitle ?types ?goals)
+      ((getCompsFromGoals ?comps ?goals)
+       (getTitles ?gtitles ?comps))
+      ((!startLDElement title)
+       (!text ?types ?gtitles ())
+       (!endLDElement title)))
+   
+   (:method (createLDTitle ?types ?goals ?elements)
+      ((getCompsFromGoals ?comps ?goals)
+       (getTitles ?gtitles ?comps)
+       (getTitles ?etitles ?elements))
+      ((!startLDElement title)
+       (!text ?types ?gtitles ?etitles)
+       (!endLDElement title)))
+\end{jshopcode}
+\caption{Tarefa básica de criação de um rótulo titulo com o nome do elemento IMS-LD}
+\label{list:createLDTitle}
+\end{figure}
+
+A obtenção do texto a ser inserido no roteiro emprega o esquema de valores da Figura \ref{list:esquemaText} pelo qual uma ação \textsf{(!text (t$_{0}$ t$_{1}$ ... t$_{n}$) (f$_{0}$ f$_{1}$ ... f$_{m_{1}}$) (s$_{0}$ s$_{1}$ ... s$_{m_{2}}$))} efetua a substituição de \{f0\}, \{f1\} ... \{fm$_{1}$\}, \{s0\}, \{s1\} ... \{sm$_{2}$\} pelos termos \textsf{f$_{0}$, f$_{1}$, ... f$_{m_{1}}$, s$_{0}$, s$_{1}$, ..., s$_{m_{2}}$} na variável \textsf{t$_{0}$.t$_{1}$...t$_{n}$}.
+
+\begin{figure}[htbp]
+\centering
+\begin{xmlcode}
+AnchoredInst.Phase = 'Anchored instrucion phase for \{f0\}'
+LearningByBeingTaught.Strategy = 'Learning by being taught strategy for \{f0\}'
+...
+\end{xmlcode}
+\caption{Esquema de valores empregados na geração de textos}
+\label{list:esquemaText}
+\end{figure}
+
+\newpage
+\begin{example}
+A  ação \textsf{T=((!text (AnchoredInst Phase) ('explain derivate') ()))} efetua a inserção do texto ``\textsf{Anchored instrucion phase for explain derivate}'' no roteiro colaborativo devido a que o parâmetro \{f0\} é substituído por '\textsf{explain derivate}' no valor \textsf{AnchoredInst.Phase}.
+\end{example}
+
+O operador \textsf{!insertElement} mostrados na Figura \ref{list:insertElement} efetua mudanças nos registro histórico dos estudantes \textsf{?learners} mediante a adição dos átomos lógicos \textsf{(property ?l hasAlreadySeen ?e)} e \textsf{(property ?e hasBeenSeen ?l)} (linhas 5-6) que representam a inserção de um elemento \textsf{?e} no roteiro colaborativo para cada um dos estudantes \textsf{?l} definidos na lista \textsf{?learners}.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:operator (!insertElement ?e ?learners)
+      ()
+      ()
+      ((forall (?l) ((exist ?l ?learners))
+               ((property ?e hasBeenSeen ?l)
+                (property ?l hasAlreadySeen ?e)))))
+\end{jshopcode}
+\caption{Inserção de um elemento de domínio a ser ensinado}
+\label{list:insertElement}
+\end{figure}
+
+O operador \textsf{!insertResource} mostrado na Figura \ref{list:insertResource} define a inserção de um recurso instrucional mediante a definição de um elemento <resource> com identificador \textsf{?r} e atributos \textsf{?attributes}. O operador efetua a adição do átomo lógico \textsf{(insertedIn ?r ?u)} (linha 5) que representa a inserção do recurso \textsf{?r} na unidade de aprendizagem \textsf{?u}. 
+   
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:operator (!insertResource ?r ?attributes)
+      ((getElement ?e ((class CurrentLDElement)))
+       (getPropertyValue ?u ?e hasCurrentUoL))
+      ()
+      ((insertedIn ?r ?u)))
+\end{jshopcode}
+\caption{Inserção de recurso instrucional}
+\label{list:insertResource}
+\end{figure}
+
+O operador \textsf{!insertResourceOnce} é empregado na tarefa básica \textsf{insertResourceOnce} mostrada na Figura \ref{list:insertResourceOnce} para efetuar a inserção de um único recurso instrucional por unidade de aprendizagem. A tarefa efetua a inserção de um recurso definindo os atributos tipo de conteúdo \textsf{?type} (linha 5) e endereço destino \textsf{?href} (linha 7) representado na especificação IMS-LD como:
+
+\begin{alltt}
+    <resource identifier="\textit{id}" type="\textit{type}" href="\textit{href}"/>
+\end{alltt}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (insertResourceOnce ?r)
+      ((getElement ?e ((class CurrentLDElement)))
+       (getPropertyValue ?u ?e hasCurrentUoL)
+       (not (insertedIn ?r ?u))
+       (getPropertyValue ?type ?r hasType)
+       (getPropertyValue ?href ?r hasHref))
+      ((!insertResource ?r ((type ?type) (href ?href))))
+      
+      \textit{;; fall-back}
+      ()
+      ())
+\end{jshopcode}
+\caption{Inserção de um único recurso instrucional por unidade de aprendizagem}
+\label{list:insertResourceOnce}
+\end{figure}
+
+O operador \textsf{!!addInWorldStateAsAlreadySeen} mostrado na Figura \ref{list:addInWorldStateAsAlreadySeen} efetua mudanças nos registros históricos do modelo de estudante mediante a inserção dos átomos lógicos \textsf{(property ?l hasAlreadySeen ?e)} e \textsf{(property ?e hasBeenSeen ?l)}, os quais definem que os elementos \textsf{?elements} foram visualizados pelos participantes \textsf{?learners} (linhas 4-7).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:operator (!!addInWorldStateAsAlreadySeen ?elements ?learners)
+      ()        
+      ()
+      ((forall (?l ?e) ((exist ?e ?elements)
+                        (exist ?l ?learners))
+               ((property ?e hasBeenSeen ?l)
+                (property ?l hasAlreadySeen ?e)))))
+\end{jshopcode}
+\caption{Alteração do registro histórico mediante a inserção de elementos de domínio}
+\label{list:addInWorldStateAsAlreadySeen}
+\end{figure}
+
+\newpage
+A tarefa básica \textsf{createLDItem} mostrada na Figura \ref{list:createLDItem} efetua a definição de um elemento <item> que efetua a inserção do recurso instrucional \textsf{?r} (linhas 6, 15) associado ao elemento \textsf{?e} do domínio a ser ensinado. O segundo método (linhas 9-16) é uma variante do primeiro que efetua mudanças nos registros históricos dos estudantes \textsf{?learners} mediante o operador \textsf{!insertElement} (linhas 14).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDItem ?e)
+      ((getPropertyValue ?r ?e hasResource))
+      ((!startLDElement item ((identifier (call GetUUID item))
+                              (identifierref ?r)))
+       (createLDTitle (Resource) () (?e))
+       (insertResourceOnce ?r)
+       (!endLDElement item)))
+   
+   (:method (createLDItem ?e ?learners)
+      ((getPropertyValue ?r ?e hasResource))
+      ((!startLDElement item ((identifier (call GetUUID item))
+                              (identifierref ?r)))
+       (createLDTitle (Resource) () (?e))
+       (!insertElement ?e ?learners)
+       (insertResourceOnce ?r)
+       (!endLDElement item)))
+\end{jshopcode}
+\caption{Tarefa básica de criação do elemento <item>}
+\label{list:createLDItem}
+\end{figure}
+
+As tarefas básicas \textsf{createLDInstructItem} (linhas 1-8) e \textsf{createLDLearningItem} (linhas 10-17) mostradas na Figura \ref{list:createLDILEventItem} são variantes da tarefa \textsf{createLDItem} empregadas na definição de eventos IL. Diferente da tarefa \textsf{createLDItem}, as tarefas \textsf{createLDInstructItem} e \textsf{createLDLearningItem} efetuam a inclusão de metadados de classificação \textsf{Instructional} e \textsf{Learning} (linhas 4-5, 13-14).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDInstructItem ?e ?learners)
+      ((getPropertyValue ?r ?e hasResource)
+       (assign ?id (call GetUUID item)))
+      ((!startLDElement item ((identifier ?id) (identifierref ?r))
+                        ((Instructional Item) ?id () (?learners)))
+       (createLDTitle (Instructional Item) () (?e))
+       (insertResourceOnce ?r)
+       (!endLDElement item ?id)))
+   
+   (:method (createLDLearningItem ?e ?learners)
+      ((getPropertyValue ?r ?e hasResource)
+       (assign ?id (call GetUUID item)))
+      ((!startLDElement item ((identifier ?id) (identifierref ?r))
+                        ((Learning Item) ?id () (?learners)))
+       (createLDTitle (Learning Item) () (?e))
+       (insertResourceOnce ?r)
+       (!endLDElement item ?id)))
+\end{jshopcode}
+\caption{Tarefa básica de criação do elemento <item> em eventos IL}
+\label{list:createLDILEventItem}
+\end{figure}
+
+\newpage
+\subsection{Representação das estratégias de planejamento instrucional como tarefas e métodos hierárquicos}
+\label{subsec:tarefasMetodosPlanejamentoInstrucional}
+
+As estratégias de planejamento instrucional são representadas no domínio de planejamento como um conjunto de tarefas e métodos hierárquicos, mediante: (1) o mapeamento das tarefas de planejamento instrucional em tarefas hierárquicas; (2) a definição de interações instrucionais nos métodos hierárquicos; (3) a representação de regras de planejamento instrucional como precondições lógicas e condições relativas; (4) a definição de tarefas opcionais e críticas; e (5) a definição de métodos de decomposição distributiva. No capítulo seguinte usaremos esses conceitos para efetuar a representação das estratégias de planejamento instrucional como tarefas e métodos hierárquicos.
+
+\subsubsection{Mapeamento das tarefas de planejamento instrucional em tarefas hierárquicas}
+
+Seja a n-upla \textsf{$\langle$V',C',P',F',T',N',M'$\rangle$} o vocabulário da linguagem JSHOP2ip, no qual: \textsf{V'} é um conjunto infinito de símbolos de variável, \textsf{C'} é um conjunto finito de símbolos de constante, \textsf{P'} é um conjunto finito de símbolos de predicado, \textsf{F'} é um conjunto finito de símbolos de função, \textsf{T'} é um conjunto finito de símbolos de tarefa composta, \textsf{N'} é um conjunto finito de símbolos de tarefa primitiva e \textsf{M'} é um conjunto infinito de símbolo de nome.
+
+\begin{definition}
+Uma tarefa de planejamento instrucional $t$ na linguagem JSHOP2ip é representada  mediante a estrutura 
+\textsf{($f_{1}(s)$ ($f_{2}(g_{1})$ ... $f_{2}(g_{n})$) ($(f_{3}(l_{1})$ ... $f_{3}(l_{m_{1}})$) ... ($f_{3}(l_{1})$ ... $f_{3}(l_{m_{n}})$)))}, na qual:
+
+\begin{itemize}
+  \item \textsf{$f_{1}$:$S$ $\rightarrow$ T'} é a função de mapeamento que associa cada nome de tarefa de planejamento instrucional $s \in S$ com um símbolo de tarefa \textsf{t $\in$ T'};
+  \item \textsf{$f_{2}$:$G$ $\rightarrow$ M' x M'} é a função de mapeamento que associa cada objetivo educacional, como um par de símbolos de nome \textsf{(m$_{i}$ m$_{j}$) $\in$ M' x M'}; e
+  \item \textsf{$f_{3}$:$L$ $\rightarrow$ M'} é a função de mapeamento que associa cada identificador de estudante $l \in L$ com um símbolo de nome \textsf{m $\in$ M'}.
+\end{itemize}
+\end{definition}
+
+\begin{example}
+A tarefa de planejamento instrucional $t$ de criação de um roteiro colaborativo ``\textit{Jigsaw}'' na que são definidos os objetivos educacionais ``compreensão do laço \textit{for} no nível autônomo e restruturação'' e ``entendimento do laço \textit{While} no nível explicativo e aperfeiçoamento'' definidos para os estudantes  learner1, learner2, learner3 e learner4 é representada na linguagem JSHOP2ip, como:
+
+\begin{alltt}\sffamily
+        (createLDJigsaw ((comp1 s4k3) (comp2 s2k2)) ((l1 l2) (l3 l4))).
+\end{alltt}
+
+A representação é efetuada mediante a definição das funções: 
+\begin{itemize}
+\item $f_{1}$(``criação do roteiro colaborativo \textit{jigsaw}'') = \textsf{createLDJigsawScript};
+\item $f_{2}$(``compreensão do laço \textit{for} no nível autônomo e restruturação'') = \textsf{(comp1 s4k3)};
+\item $f_{2}$(``entendimento do laço \textit{while} no nível explicativo e aperfeiçoamento'') = \textsf{(comp2 s2k2)};
+\item $f_{3}$(``learner1'') = \textsf{l1}; $f_{3}$(``learner2'') = \textsf{l2};  $f_{3}$(``learner3'') = \textsf{l3}; e $f_{3}$(``learner4'') = \textsf{l4}.
+\end{itemize}
+\end{example}
+
+\subsubsection{Definição de interações instrucionais nos métodos hierárquicos}
+
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+  (:method (createLD\textit{InstructionalTask} ?goals ?groups)
+    ()
+    ((\textit{InstructionalInteraction$_{1}$} \textit{t1} \textit{t2} ... \textit{t$n_{1}$})
+     \textit{. . .}
+     (create\textit{InstructionalTask} ?goals ?groups)
+     \textit{. . .}
+     (\textit{InstructionalInteraction$_{m}$} \textit{t1} \textit{t2} ... \textit{t$n_{m}$})))
+\end{jshopcode}
+\caption{Esquema de definição de interações instrucionais nos método hierárquicos}
+\label{list:methodAndInstructionalInteraction}
+\end{figure}
+
+Para efetuar a definição de interações instrucionais nos métodos hierárquicos que representam as estratégias de planejamento instrucional empregamos o esquema mostrado na Figura \ref{list:methodAndInstructionalInteraction}. Dessa maneira, cada uma das tarefas de planejamento instrucional \textsf{createLD\textit{InstructionalTask}} contém um conjunto de interações instrucionais \textsf{\textit{InstructionalInteraction$_{i}$}} a serem efetuadas antes (linhas 3-4) e depois (linhas 6-7) da tarefa \textsf{create\textit{InstructionalTask}} (linha 6). As interações instrucionais são tarefas básicas e operadores de planejamento apresentadas na Subseção  \ref{subsec:operadoresPlanejamento}.
+
+\begin{example}
+Um exemplo de definição de interações instrucionais no método hierárquico é mostrado na Figura \ref{list:createLDPracticeSessionsEx}. Na figura, as interações instrucionais associadas à tarefa \textsf{createLDPracticeSessions} são \textsf{!startLDElement} (linha 3), \textsf{startLDElement!} (linhas 4-6), \textsf{createLDTitle} (linha 7) e \textsf{!endLDElement} (linhas 9-10). A tarefa \textsf{createPracticeSession} (linhas 12-16) é definida como o conjunto de subtarefas \textsf{createLDPracticeWithExerciseSessions} (linhas 14-16).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDPracticeSessions ?goals ?groups)
+      ((assign ?id (call GetUUID as)))
+      ((!startLDElement activity-structure-ref ((ref ?id)))
+       (startLDElement! activity-structure ((identifier ?id)
+                                            (structure-type sequence))
+                        ((Practice Sessions) ?id ?goals ?groups))
+       (createLDTitle (Practice Sessions) ?goals)
+       (createPracticeSessions ?goals ?groups)
+       (!endLDElement activity-structure ?id)
+       (!endLDElement activity-structure-ref)))
+   
+   (:method (createPracticeSessions ?goals ?groups)
+      ()
+      ((createLDPracticeWithExerciseSession ?goals ?groups (easy))
+       (createLDPracticeWithExerciseSession ?goals ?groups (medium))
+       (createLDPracticeWithExerciseSession ?goals ?groups (difficult))))
+\end{jshopcode}
+\caption{Definição de interações instrucionais associadas à tarefa \emph{\textsf{createLDPracticeSessions}}}
+\label{list:createLDPracticeSessionsEx}
+\end{figure}
+\end{example}
+
+%\begin{table}[htbp]\footnotesize
+%\begin{center}
+%\begin{tabular}{|l|l|l|c|}
+%\hline
+%\textbf{PublicTaskSymbol} & \textbf{Tarefa} &
+%\textbf{Tarefa hierárquica} & \textbf{IMS-LD} (\emph{type}) \\ \hline \hline
+%\textsf{Script}               & \textsf{createScript}      & \textsf{(createLDScript ?ld ?goals ?learners)}   & <play> \\ \hline
+%\textsf{Phase}              & \textsf{createPhase}               & \textsf{(createLDPhase ?ld ?goals ?learners)}  & <act> \\ \hline
+%\textsf{GroupActivity} & \textsf{createGroupActivity}  & \textsf{(createLDGroupActivity ?ld ?goals ?learners)}  & <role-part> \\ \hline
+%\textsf{Session}          & \textsf{createSession}  & \textsf{(createLDSession ?ld ?goal ?learners)} & <activity-structure-ref> \\ \hline
+%\end{tabular}
+%\end{center}
+%\caption{Relação entre tarefas de planejamento instrucional, tarefas hierárquicas e marcadores IMS-LD}
+%\label{tab:startEndInstructionalTask}
+%\end{table}
+
+\newpage
+\subsubsection{Representação de regras de planejamento instrucional}
+
+As regras de planejamento instrucional são representadas como precondições lógicas e condições relativas nos métodos hierárquicos utilizando os axiomas e termos de chamada definidos anteriormente (Subseções \ref{subsec:axiomasGeral}, \ref{subsec:modelagemAxiomasSelecaoAcesso} e \ref{subsec:axiomasPlanejamentoInstrucional}).% Assim, cada  tarefa de planejamento instrucional apresenta um conjunto de precondições lógicas diferentes por cada método hierárquico.
+
+\begin{example}
+As regras de planejamento instrucional associadas ao método hierárquico mostrado na Figura \ref{list:createScriptRegras} representam as precondições lógicas:
+
+\begin{itemize}
+\item a avaliação do tipo de elemento de conhecimento associado à competência \textsf{?c} dos objetivos educacionais \textsf{?goals} deve ser Auxiliar (linhas 3-4);
+\item a avaliação do valor da propriedade dificuldade (\textsf{hasDifficult}) do elemento de conhecimento associado à competência \textsf{?c} deve ser difícil ou muito difícil (linhas 5-7); e
+\item a avaliação dos elementos de roteiros colaborativos do qual o elemento corrente \textsf{?e} é parte não deve ser um roteiro Pyramid \textsf{Script, Pyramid} (linhas 8-10).
+\end{itemize}
+
+\noindent E as regras de planejamento instrucional que representam as condições relativas são:
+
+\begin{itemize}
+\item a avaliação do número de participantes com experiência meia ou baixa na aprendizagem colaborativa (\textsf{hasCLExperience}) deve ser maior à metade de participantes para incrementar o nível de aplicabilidade do método em três unidades (linhas 12-16);
+\item a avaliação da existência da atitude interdependência positiva (\textsf{positive-interdependence}) ou uma variante na unidade de aprendizagem \textsf{?u} (linhas 18-22); e
+\item a avaliação da existência da habilidade discussão (\textsf{discussion}) ou uma variante na unidade de aprendizagem \textsf{?u} (linhas 23-27).
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDScript! ?goals ?groups)
+      relative-pyramid-uol
+      ((getCompFromGoals ?c ?goals)
+       (hasKnowledgeType ?c Auxiliary)
+       (getPropertyValue ?aux ?c hasKnowledge)
+       (getPropertyValue ?difficult ?aux hasDifficult)
+       (or (same ?difficult difficult) (same ?difficult very-difficult))
+       (getElement ?e ((class CurrentLDElement)))
+       (getRelateds ?lds (?e) -1 isPartOf ((class Script) (class Pyramid)))
+       (same ?lds ()))
+      \textit{;; complexity}
+      (:relative 3 ((assign ?learners (call ConcatList ?groups))
+                    (length ?nroLearners ?learners)
+                    (filterByQuery ?exps ?learners ((property hasCLExperience (medium low))))
+                    (length ?nroExpLearners ?exps)
+                    (call > ?nroExpLearners (call / ?nroLearners 2))))
+      \textit{;; skills and attitudes}
+      (:relative 1 ((getRelateds ?pi-variants (positive-interdependence) -1 isVariantOf)
+                    (getElement ?e ((class CurrentLDElement)))
+                    (getPropertyValue ?u ?e hasCurrentUoL)
+                    (getPropertyValue ?att1 ?u hasAttitude)
+                    (or (same ?att1 positive-interdependence) (exist ?att1 ?pi-variants))))
+      (:relative 1 ((getRelateds ?d-variants (discussion) -1 isVariantOf)
+                    (getElement ?e ((class CurrentLDElement)))
+                    (getPropertyValue ?u ?e hasCurrentUoL)
+                    (getPropertyValue ?skill1 ?u hasSkill)
+                    (or (same ?skill1 discussion) (exist ?skill1 ?d-variants))))
+      ((createLDPyramidScript ?goals ?groups)))
+\end{jshopcode}
+\caption{Exemplo de representação de regras de planejamento instrucional}
+\label{list:createScriptRegras}
+\end{figure}
+\end{example}
+
+\newpage
+\subsubsection{Definição de tarefas opcionais e críticas}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   \textit{;; optional}
+   (:method (create\textit{Task} ?goals ?groups)
+      ()
+      ((create\textit{Task}! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (create\textit{Task}! ?goals ?groups)
+      ()
+      ())
+   
+   \textit{;; fall-back}
+   (:method (create\textit{Task}! ?goals ?groups)
+      ()
+      ())
+\end{jshopcode}
+\caption{Esquema de representação de tarefas opcionais e críticas}
+\label{list:optionalMandatoryTask}
+\end{figure}
+
+As estratégias de planejamento instrucional apresentam a definição de tarefas opcionais e críticas. As tarefas de planejamento opcional são tarefas que sempre podem ser atingidas sem efetuar backtracking no caso de falha. Enquanto, as tarefas críticas definidas com o sufixo \textsf{!} efetuam backtracking no caso de falha. Assim, em nossa representação de estratégias de planejamento instrucional empregamos o esquema mostrado na Figura \ref{list:optionalMandatoryTask} para efetuar a definição de uma tarefa opcional e crítica.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   \textit{;; optional}
+   (:method (createShowSolutionILEventDescription ?goals ?groups)
+      ()
+      ((createShowSolutionILEventDescription! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (createShowSolutionILEventDescription! ?goals (?instructors ?learners))
+      ((getElement ?iactivity ((class Explanation)
+                               (class ILEventDescription)))
+       (getElement ?lactivity ((class ReceivingExplanation)
+                               (class ILEventDescription))))
+      ((createLDInstructItem ?iactivity ?instructors)
+       (createLDLearningItem ?lactivity ?learners)))
+   
+   \textit{;; fall-back}
+   (:method (createShowSolutionILEventDescription ?goals (?instructors ?learners))
+      ((assign ?iactivity (call BuildElement ((class Explanation)
+                                              (class ILEventDescription))))
+       (assign ?lactivity (call BuildElement ((class ReceivingExplanation)
+                                              (class ILEventDescription)))))
+      ((createLDInstructItem ?iactivity ?instructors)
+       (createLDLearningItem ?lactivity ?learners)))
+\end{jshopcode}
+\caption{Tarefas opcionais e críticas associadas à estratégia de criação da descrição do evento IL}
+\label{list:optionalMandatoryTaskShowSolution}
+\end{figure}
+
+A Figura \ref{list:optionalMandatoryTaskShowSolution} mostra como exemplo a definição das tarefas de planejamento instrucional opcional e crítica relativas à estratégia de criação de uma descrição do evento IL ``\textit{Show Solution}''. A tarefa crítica (linhas 7-13) efetua a busca de descrições explicação (\textsf{Explanation}) e receber explicação (\textsf{ReceivingExplanation}), enquanto a tarefa opcional no método \textit{fall-back} (linhas 16-22) efetua construção de descrições no caso de falha da tarefa crítica. A construção das descrições é efetuada usando termos de chamada \textsf{(call BuildElement ... )} (linhas 17-20).
+
+\subsubsection{Definição de métodos de decomposição distributiva}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (distributeLearningObject () ()) () ())
+   (:method (distributeLearningObject (?goal . ?goals) (?group . ?groups))
+      ()
+      ((createLDLearningObject ?goal ?group)
+       (distributeLearningObject ?goals ?groups)))
+\end{jshopcode}
+\caption{Método de decomposição distributiva da tarefa \textsf{createLDLearningObject}}
+\label{list:distributeLearningObject}
+\end{figure}
+
+Na representação de estratégias de planejamento instrucional, algumas tarefas de planejamento instrucional são decompostas em um número idêntico de subtarefas de planejamento instrucional. Por exemplo, o método de decomposição distributiva mostrada na Figura \ref{list:distributeLearningObject} decompõe à tarefa \textsf{distributeLearningObject} em um conjunto de tarefas \textsf{createLDLearningObject} (linha 4) uma tarefa por cada objetivo \textsf{?goal} e estudantes \textsf{?group} (linha 2).
+
+\newpage
+%% ------------------------------------------------------------------------- %%
+\section{Componente de conversão}
+\label{sec:componenteConversao}
+
+Uma vez o plano de solução seja obtido pelo planejador hierárquico, o componente de conversão efetua a tradução do plano em arquivos de manifesto ``\textit{imsmanifest.xml}'' que representam roteiros colaborativos na especificação IMS-LD. Logo, os arquivos de manifesto serão empacotados em um pacote ZIP com todos os recursos instrucionais necessários. 
+
+A seguir descrevemos as funções de conversão dos operadores de planejamento em elementos XML da especificação IMS-LD e apresentamos o algoritmo de geração de roteiros colaborativos.
+
+\subsection{Função de conversão dos operadores de planejamento}
+
+Seja \textsf{p=($h_{1}$ $h_{2}$ ... $h_{n}$)} o plano de solução obtido pelo planejador, no que cada ação $h_{i}$ é uma inst\^{a}ncia dos operadores \textsf{!startLDElement}, \textsf{!endLDElement}, \textsf{!insertResource} e \textsf{!text}. Definimos ``convert($h_{i}$)'' como a função que efetua:
+
+\begin{itemize}
+\item A conversão da ação
+
+\begin{alltt}\sffamily
+(!startLDElement \(tagname\) [((\(attribute\sb{1}\) \(value\sb{1}\)) (\(attribute\sb{2}\) \(value\sb{2}\)) ... (\(attribute\sb{n}\) \(value\sb{n}\))))
+\end{alltt}
+
+na etiqueta de abertura 
+
+\begin{alltt}
+        <imsld:\textit{tagname} \textit{attribute\(\sb{1}\)}="\textit{value\(\sb{1}\)}"
+                       \textit{attribute\(\sb{2}\)}="\textit{value\(\sb{2}\)}"
+                       ...
+                       \textit{attribute\(\sb{n}\)}="\textit{value\(\sb{n}\)}">
+\end{alltt}
+
+\item A conversão da ação \textsf{(!endLDElement $tagname$ [$id$])} na etiqueta de fechamento
+
+\begin{alltt}
+        </imsld:\textit{tagname}>
+\end{alltt}
+
+\item A conversão de cada ação \textsf{(!insertResource $id$ ((type $type$) (href $href$)))} na etiqueta
+
+\begin{alltt}
+<resource identifier="\textit{id}" type="\textit{type}" identifier-ref="\textit{href}"/>
+\end{alltt}
+\end{itemize}
+
+%Nos marcadores o atributo ``\textit{identifier}'' é definido em forma automática pelo gerador de roteiros colaborativos e no marcador opcional <automatedld:param>  o valor do atributo ``\textit{type}'' depende do tipo de dado no par\^{a}metro ``\textit{param$_{j}$}'', pudendo ser ``\textit{termConstant}'' (termo constante), ``\textit{termList}'' (lista de termos) ou ``\textit{termNumber}'' (termo numérico).
+
+\newpage
+\begin{example}
+As ações definidas no plano \textsf{P} mediante a função $convert(h_{i})$ definem a geração de elementos XML da especificação IMS-LD mostrada na Figura \ref{list:exampleStartEndLDElement}.
+
+\begin{alltt}\sffamily
+P = ((!startLDElement play ((identifier play-29241d03-c533) (isvisible true)))
+        (!startLDElement title)
+        (!text (Jigsaw Script) ('understand diff') ())
+        (!endLDElement title)
+        (!startLDElement act ((identifier act-ace2f2d3-d348)))
+        (!startLDElement title)
+        (!text (Individual Phase) () ())
+        (!endLDElement title)
+        (!startLDElement role-part)
+        (!startLDElement role-ref ((ref rp-84516a75-a565)))
+        (!endLDElement role-ref)
+        (!startLDElement learning-activity-ref ((ref la-34a2674e-9ef6)))
+        (!endLDElement learning-activity-ref)
+        (!endLDElement role-part)
+        (!endLDElement act)
+        (!endLDElement play))
+\end{alltt}
+
+\begin{figure}[htbp]
+\centering
+\centering
+\begin{xmlcode}
+<imsld:play identifier="play-29241d03-c533" isvisible="true">
+    <imsld:title>Jigsaw script for understand diff</imsld:title>
+    <imsld:act identifier="act-ace2f2d3-d348">
+        <imsld:title>Individual Phase</imsld:title>
+        <imsld:role-part>
+            <imsld:title>Individual Task</imsld:title>
+            <imsld:role-ref ref="rp-84516a75-a565" />
+            <imsld:learning-activity-ref ref="la-34a2674e-9ef6" />
+        </imsld:role-part>
+    </imsld:act>
+</imsld:play>
+\end{xmlcode}
+\caption{Exemplo de elementos XML obtidos usando o plano \textsf{P} e a função \emph{convert(h$_{i}$)}}
+\label{list:exampleStartEndLDElement}
+\end{figure}
+\end{example}
+
+
+\subsection{Algoritmo de geração de roteiros colaborativos}
+
+\begin{algorithm}
+%\dontprintsemicolon
+\Entrada{P=($h_{1}$ $h_{2}$ ... $h_{n}$) é um plano de ações e \emph{xmldoc} é um esquema de roteiros}
+\Saida{\emph{result} = $\langle \rangle$ é a lista de roteiros colaborativos na especificação IMS-LD}
+\BlankLine
+\Inicio{
+  \textit{queue} $\leftarrow$ $\langle \rangle$\;
+  \emph{xmldoc} $\leftarrow$ novo esquema de roteiro\;
+  \ParaCada{\emph{$h$ = (s $r_{1}$ $r_{2}$ ... $r_{n}$) $\in$ P}}{
+    \uSe{\emph{s = ``!endLDElement''}}{
+      \textit{element} $\leftarrow$ \textit{convert}($h$)\;
+      \Repita{$r_{1}$ = $r'_{1}$}{
+        $h'$ = (s' $r'_{1}$ $r'_{2}$ ... $r'_{n}$) $\leftarrow$ tirar último elemento da lista \textit{queue}\;
+        \textit{element} $\leftarrow$ \textit{convert}($h'$) + \textit{element}\;
+      }
+      \Selec{$r_{1}$}{
+      	\uCaso{\emph{leaner}}{
+	    \emph{xmldoc}(node[2]) $\leftarrow$ \emph{xmldoc}(node[2]) + \emph{element}\;
+	}\uCaso{\emph{learning-activity} ou \emph{support-activity} ou \emph{activity-structure}}{
+              \emph{xmldoc}(node[3]) $\leftarrow$ \emph{xmldoc}(node[3]) + \emph{element}\;
+         }\uCaso{environment}{
+              \emph{xmldoc}(node[4]) $\leftarrow$ \emph{xmldoc}(node[4]) + \emph{element}\;
+         }\Caso{learning-design} {
+              \emph{xmldoc}(node[1]) $\leftarrow$ \emph{xmldoc}(node[1]) + \emph{element} \;
+	     adicionar \emph{xmldoc} à lista \emph{result}\;
+	     \emph{xmldoc} $\leftarrow$ novo esquema de roteiro\;
+         }
+      }
+    }\uSenaoSe{\emph{s = ``!insertResource''}}{
+	\emph{xmldoc}(node[5]) $\leftarrow$ \emph{xmldoc}(node[5]) + \textit{convert}($h$)\;
+    }\Senao{
+      adicionar $h$ \`{a} lista \emph{queue}\;
+    }
+  }
+}
+\caption{Algoritmo de geração de roteiros colaborativos}
+\label{alg:JSHOP2Plan2IMSLD}
+\end{algorithm}
+
+O algoritmo de geração de roteiros colaborativos mostrado na Figura \ref{alg:JSHOP2Plan2IMSLD} utiliza o plano de ações \textsf{P} e a estrutura de roteiro mostrada na Figura \ref{list:estruturaIMSLD} para obter uma lista \emph{result} de roteiros colaborativos descritos na especificação IMS-LD.
+
+O algoritmo emprega a função de conversão de operadores de planejamento ``\emph{convert}(h)'' para definir etiquetas de abertura e fechamento de elementos XML (linhas 6-10). A posição da inserção dos elementos obtidos no esquema de roteiro é efetuada utilizando a função ``\emph{xmldoc}(node[n])'' (linhas 12-19, 25) que obtém um nó XML na posição \emph{n} da estrutura mostrada na Figura \ref{list:estruturaIMSLD}.
+
+No caso de que um operador de planejamento seja de fechamento do elemento <learning-design> (linhas 18-21) é efetuada a adição do roteiro na lista \emph{result} (linhas 20).
+
+\begin{figure}[htbp]
+\centering
+\begin{xmlcode}
+<?xml version="1.0" encoding="UTF-8"?>
+<imscp:manifest
+        xmlns:imscp="http://www.imsglobal.org/xsd/imscp_v1p1"
+        xmlns:imsld="http://www.imsglobal.org/xsd/imsld_v1p0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1 
+                            http://www.imsglobal.org/xsd/imscp_v1p1p3.xsd
+                            http://www.imsglobal.org/xsd/imsld_v1p0
+                            http://www.imsglobal.org/xsd/IMS_LD_Level_C.xsd"
+        identifier="imscp-f2434015-4ac43"> 
+    <imscp:metadata> 
+        <imscp:schema>IMS Metadata</imscp:schema> 
+        <imscp:schemaversion>1.2</imscp:schemaversion> 
+    </imscp:metadata> 
+    <imscp:organizations>
+        <imsld:learning-design identifier="ld-821ac668" version="1" level="C">
+            <imsld:components>
+                <imsld:roles>
+                    <imsld:learner identifier="learner">
+                        <imsld:title>Learner</imsld:title>
+                        \textit{<!-- role and group section [2] -->}
+                    </imsld:learner>
+                <imsld:roles>
+                <imsld:activities>
+                    \textit{<!-- activities section [3] -->}
+                </imsld:activities>
+                <imsld:environments>
+                    \textit{<!-- environments section [4] -->}
+                </imsld:environments>
+            </imsld:components>
+            \textit{<!-- learning design section [1] -->}
+        </imsld:learning-design>
+    </imscp:organizations>
+    <imscp:resources>
+        \textit{<!-- resource section [5] -->}
+    </imscp:resources>
+</imscp:manifest>
+\end{xmlcode}
+\caption{Estrutura de roteiro colaborativo na especificação IMS-LD}
+\label{list:estruturaIMSLD}
+\end{figure}
+
+
+%Os operadores \textsf{!insertResource} mostrado na Figura \ref{list:insertResource} definem ações que efetuam a definição de elementos ``<item>'' na especificação IMS-LD pelo gerador de roteiro colaborativos; na qual, o elemento ``<item>'' é uma referencia a um elemento recurso instrucional ``<resource>'' da especificação IMS-CP.
+
+%\begin{example}
+%Seja a lista de tarefas
+
+%\begin{alltt}\sffamily
+%T = ((!startLDElement learning-activity-ref ((isvisible true)))
+%        (!startLDElement activity-description)
+%        (!insertResource http://www.ime.usp.br/ld/resource/2343)
+%        (!endLDElement activity-description)
+%        (!startLDElement environment-ref)
+%        (!startLDElement learning-object ((type knowledge-object)))
+%        (!insertResource http://www.ime.usp.br/ld/resource/2345)
+%        (!insertResource http://www.ime.usp.br/ld/resource/2343)
+%        (!endLDElement learning-object)
+%        (!endLDElement environment-ref)
+%        (!endLDElement learning-activity-ref)),
+%\end{alltt}
+%
+%o gerador de roteiros colaborativos efetua a definição de marcadores XML da especificação IMS-LD mostrados na Figura \ref{list:exampleInsertResource}; na qual, a ação \textsf{(!insertResource http://www.ime.usp.br/ld/resource/2343)} gera os elementos \texttt{<item identifier=``I-ad2312f4-2343'' />} e \newline \texttt{<item identifier=``I-36ac415b-4345'' />}, os quais são referencias ao recurso instrucional \texttt{<resource ="RES-ld-2343" />} mediante o atributo \texttt{identifierref}.
+%\end{example}
+
+%\begin{figure}[htbp]
+%    \centering
+%        \fbox{\includegraphics[width=0.95\textwidth]{listagem/exampleInsertResource}}
+%    \caption{Exemplo de roteiro colaborativo gerado a partir de um plano de ações instrucionais}
+%    \label{list:exampleInsertResource}
+%\end{figure}
+
+
+%% ------------------------------------------------------------------------- %%
+

@@ -1,0 +1,189 @@
+
+\chapter{Trabalhos relacionados}
+\label{cap:trabalhosRelacionados}
+
+Esta dissertação apresenta a modelagem do planejamento instrucional em ACSC como problema de planejamento hierárquico nos Capítulos  \ref{cap:modelagem} e \ref{cap:modelagemEstrategias}, uma nova proposta em ACSC que possibilita o desenvolvimento de sistemas de tutores inteligentes como o gerador de curso colaborativos apresentado no Capítulo \ref{cap:implementacao}. A proposta se enfoca em facilitar a tarefa do projetista instrucional, fornecendo a geração automática de unidades de aprendizagem nas que são definidas roteiros colaborativos adaptados aos participantes, a tarefa é efetuada partir da definição de um estado inicial (definição dos modelos de domínio a ser ensinado e de estudante) e uma tarefa pública (definição dos objetivos educacionais e seleção de estudantes).
+
+Nas seguintes seções abordaremos trabalhos relacionados revisados na literatura, discutiremos as diferenças e melhoras efetuadas em nosso trabalho. Os trabalhos relacionados são divididos em sistemas de tutores inteligentes (detalhados na Seção \ref{sec:stiRelacionados}) e ferramentas de autoria das unidades de aprendizagem (detalhadas na Seção \ref{sec:ferramentasAutoriaRelacionados}).
+
+\section{Sistemas tutores inteligentes}
+\label{sec:stiRelacionados}
+
+Desde o sistema proposto por \citet{peachey1986using} que propuseram a integração de técnicas de planejamento em IA e planejamento instrucional, têm-se desenvolvido vários sistemas tutores inteligentes que efetuam o planejamento instrucional de forma automatizada mediante a obtenção de planos de interações instrucionais adaptados a cada estudante.
+
+Com o surgimento dos ambientes virtuais de aprendizagem, numerosas propostas de integração entre os sistemas tutores inteligentes e esses sistemas foram apresentados. Algumas propostas utilizam um etiquetado exaustivo de recursos instrucionais usando especificações IMS-MD e LOM, para a definição do modelo de domínio a ser ensinado. Algumas propostas usam planejamento hierárquico enquanto outras usam outras técnicas. No entanto, todas as propostas desenvolvidas ao longo destes 26 anos dependem dos seguintes supostos: 
+
+\begin{itemize}
+\item O estado inicial do problema é baseado na informação extraída dos bancos de dados dos ambientes virtuais de aprendizagem. A informação do modelo de estudante em todos os casos é obtida dos registros de informação do estudante.
+\item Os objetivos educacionais são traduzidos como objetivos do problema de planejamento.
+\item  As interações instrucionais do plano de solução são obtidos a partir de informações do modelo do domínio a ser ensinado, informação expressada nos metadados dos recursos.
+\end{itemize}
+
+%\subsection{Sistema proposto por Peacher e McCalla}
+
+%O sistema proposto por \citet{peachey1986using} é um dos primeiros trabalhos que utilizam técnicas de planejamento automatizado para efetuar um planejamento instrucional. O processo de planejamento instrucional é efetuado mediante a técnica de planejamento clássico, na qual o plano de ações representa a estrutura de
+%apresentação de conceitos que não foram assimilados pelos estudantes. Os modelos de domínio a ser ensinado e de estudante são representados como expressões lógicas que definem os conceitos da unidade de aprendizagem e o conhecimento dos conceitos assimilados pelos estudantes.
+
+%O modelo pedagógico é definido como um conjunto de operadores pedagógicos de ensino de um determinado conceito. Esses operadores são definidos como operadores de planejamento com um conjunto de precondições que avaliam o estado corrente do modelo de estudante e um conjunto de efeitos que mudam o modelo de estudante adicionando ou removendo informação dos conceitos assimilados pelos estudantes.
+
+
+\subsection{O sistema GTE}
+
+O sistema GTE (\emph{Generic Tutoring Environment}) é um sistema de tutor inteligente que possibilita ao projetista instrucional a definição declarativa do modelo pedagógico como tarefas e métodos instrucionais \citep{van1998gte}. Dessa maneira, GTE possibilita a representação das estratégias de planejamento instrucional de forma manual pelo projetista instrucional.
+
+O algoritmo de planejamento em GTE é similar ao algoritmo de planejamento hierárquico no que o plano de ações é obtido mediante a decomposição sucessiva de tarefas usando as estruturas dos métodos até o nível de tarefas primitivas consistente de interações instrucionais. \citet{van1998gte} argumenta que o algoritmo proposto fornece uma grande flexibilidade comparada com os algoritmos de planejamento, pois ela avalia continuamente o estado de execução de cada tarefa. A desvantagem é que nenhuma análise do algoritmo existe (pelo menos não publicado) e sua complexidade é desconhecida. %Em contraste, as bases formais de planejamento hierárquico foram desenvolvidos em meados dos anos 90 e os resultados complexidade estão disponíveis.
+
+A representação das estratégias instrucionais como um conjunto de tarefas e métodos no sistema GTE é avaliada em diferentes STIs como NOBIT \citep{cerri1992nobile}, EPOS \citep{erol1990epos}, TOSKA \citep{toska1991toska} e CAPRA \citep{fernadez1988building}. No entanto, apesar da grande quantidade de estratégias instrucionais modeladas com GTE nestes sistemas, não existem estratégias que possam ser utilizadas no domínio de ACSC.
+
+Neste trabalho de dissertação apresentamos a modelagem de estratégias extraídas do processo de planejamento instrucional usando padrões de roteiros no Capitulo \ref{cap:modelagemEstrategias} a serem utilizadas no domínio de ACSC.
+
+\subsection{O sistema DCG}
+
+Assim como GTE, o sistema DCG (\textit{Dynamic Courseware Generator}) \citep{vassileva1998dcg} é um dos STI mais antigos que utiliza tarefas e métodos de planejamento instrucional como representação do modelo pedagógico.
+
+A modelagem do domínio a ser ensino em DCG efetua a classificação entre conceitos e recursos instrucionais, essa classificação é similar à efetuada em nossa modelagem proposta. As relações entre conceitos são definidas mediante estruturas de grafos AND/OR, na qual: os nós representam conceitos ou recursos, enquanto as arestas representam relações de pré-requisito, agregação, composição e semelhança. Logo, os nós recursos são relacionados aos nós conceitos mediante relaciones que definem a função pedagógica de cada recurso (por exemplo: questionário, exercícios e testes).
+
+%\begin{figure}[htbp]
+%  \centering
+%  \includegraphics[width=0.65\textwidth]{figuras/dcg}
+%  \caption{Arquitetura do sistema DCG \citep{vassileva1998dcg}}
+%  \label{fig:dcg}
+%\end{figure}
+
+O processo de planejamento instrucional no sistema DCG é efetuado em duas fases. Na primeira fase, um plano de conteúdo é obtido mediante a seleção dos conceitos que irão ser abrangidos na unidade de aprendizagem. Assim, dado um estudante e um conceito objetivo, o plano de conteúdo é obtido no grafo de conceitos através das relações entre os conceitos conhecidos pelo estudante e o conceito objetivo. Na segunda fase, o plano de conteúdo define a sequência de apresentação dos recursos associados a cada um dos conceitos definidos pelo plano de conteúdo.
+
+\newpage
+Os planos de apresentação em DCG são obtidos mediante o uso de métodos de planejamento instrucional associados a cada um dos nós conceitos. Em nossa modelagem proposta de planejamento instrucional em ACSC, o plano de conteúdo é obtido usando as relações definidas entre elementos de conhecimento de tipo fundamental, enquanto o plano de apresentação consistente de elementos de conhecimento de tipo auxiliar são obtidos usando as diferentes estratégias apresentadas no Capítulo \ref{cap:modelagemEstrategias}. 
+
+O sistema DCG é avaliado em um gerador de curso que efetua o sequenciamento de recursos instrucionais a serem utilizados em páginas de ensino dos conceitos (cada conceito apresenta mais de uma página). A geração de cada uma das páginas é efetuada em forma dinâmica a solicitude do estudante efetuando assim uma avaliação continua do nível de conhecimento possuído. Enquanto isso permite um planejamento instrucional mais adaptado, o estudante não é capaz de ver a estrutura da unidade de aprendizagem de forma completa, pois para avançar ao próximo conceito deveram ser geradas todas as páginas de ensino do conceito atual limitando a livre navegação.
+
+O gerador de cursos colaborativos apresentado no Capítulo \ref{cap:implementacao} efetua a geração da unidade de aprendizagem de forma completa antes de ser apresentada para os estudantes. Esse tipo de geração tem a vantagem de que a estrutura da unidade de aprendizagem é gerada de forma completa podendo ser navegar livremente através da mesma.
+
+\subsection{O sistema PAIGOS}
+
+O sistema PAIGOS \citep{ullrich2008pedagogically} utiliza o algoritmo de planejamento JShop2 para efetuar a geração de planos baseada na descrição de estratégias pedagógicas como tarefa e métodos hierárquicos. Diferentemente dos sistemas DCG e GTE, em PAIGOS a modelagem do domínio a ser ensinado utiliza uma ontologia instrucional para efetuar a representação dos recursos instrucionais a serem sequenciados pelo planejador. Isso possibilita a reutilização das estratégias de planejamento instrucional em outros domínios sem efetuar mudanças no sistema.
+
+Diferentemente de DCG, o plano de conteúdo é obtido como parte da unidade de aprendizagem, a qual consiste de uma sequência de seções com textos que descrevem o propósito de cada uma. Assim, os estudantes são fornecidos com informações que possam ajudá-los a entender o porque do planejamento e possibilitam a liberdade de escolha da atividade a serem realizadas.
+
+Sete estratégias pedagógicas foram modeladas como tarefas e métodos hierárquicos baseadas em teorias de aprendizagem construtivistas e de planejamento instrucional com as quais foi avaliada a proposta em diferentes sistemas como LeActiveMath, MathCoach e TEAL.
+
+O sistema PAIGOS apresenta o mesmo problema de GTE, ele não apresenta a modelagem de estratégias que possam ser utilizadas no domínio de ACSC. Assim, as estratégias apresentadas no Capítulo \ref{cap:modelagemEstrategias} serão utilizadas no domínio de ACSC para projetar roteiros colaborativos.
+
+%\begin{figure}[htbp]
+%  \centering
+%  \includegraphics[width=0.60\textwidth]{figuras/leactivemath}
+%  \caption{Interface do sistema LeActiveMath \citep{ullrich2008pedagogically}}
+%  \label{fig:leactivemath}
+%\end{figure}
+
+%A Figura \ref{fig:leactivemath} mostra a interface do sistema LeActiveMath\footnote{Language-Enhanced, User-Adaptive, Interactive eLearning for Mathematics - \url{http://www.leactivemath.org}} que utiliza o sistema PAIGOS para a geração dos cursos dinâmicos no domínio de matemática. Na figura é mostrada a lista de seleção dos cenário de aprendizagem que pode ser planejado utilizando o sistema LeActiveMath.
+
+%Uma característica importante no sistema é o uso de \emph{métodos fallback}
+%que possibilitam a definição de métodos pedagógicos com as mínimas restrições
+%possíveis. Outro conceito importante é a definição de tarefas dinâmicas que
+%possibilitam gerar planos de solução parciais mediante ações instrucionais
+%que definem chamadas ao planejador PAIGOS durante o processo de execução
+%do curso.
+
+\newpage
+\subsection{O sistema PASER}
+
+O sistema PASER \citep{vrakas2007paser} é um STI que faz uso extensivo de metadados descritos nas especificações IMS-MD, IMS-RDCEO e IMS-LIP. Na modelagem do domínio a ser ensinado, os objetos de aprendizagem são descritos na especificação IMS-MD, enquanto os conceitos a serem ensinados são descritos como competências na especificação IMS-RDCEO; na modelagem de estudante são usadas as informações contidas nos perfis dos estudantes descritos na especificação IMS-LIP.
+
+O sistema PASER diferentemente dos sistemas apresentados anteriormente efetua a conversão dos modelos de domínio a ser ensinado e de estudante em descrições de domínio e de problema de planejamento na linguagem PDDL. No processo de conversão um módulo denominado R-DEVICE é responsável de efetuar a seleção de objetos de aprendizagem relevantes para um estudante baseado nos objetivos, preferências e conhecimentos possuídos pelo estudante, assim as descrições de domínio e de problema de planejamento é limitada unicamente a objetos relevantes.
+
+%\begin{figure}[htbp]
+%  \centering
+%  \includegraphics[width=0.60\textwidth]{figuras/PASER}
+%  \caption{Arquitetura do sistema PASER \citep{Vrakas07}}
+%  \label{fig:arquiteturaPASER}
+%\end{figure}
+
+Outra característica relevante em PASER similar à adotada em nossa proposta é que os planos de solução obtidos são convertidos em uma unidade de aprendizagem mediante um componente de conversão denominado CP-Producer que utiliza a especificação IMS-CP para descrever as sequências de conceitos e recursos instrucionais a serem usados pelos estudantes.
+
+\subsection{O sistema ADAPTAPLAN}
+
+O sistema ADAPTAPLAN (\emph{ADAPTAção baseada em aprendizagem, modelagem e PLANejamento de tarefas}) \citep{garrido2008planning} efetua planejamento instrucional automatizado mediante sequências individualizadas de atividades descritas na especificação IMS-LD. O processo de planejamento diferente dos sistemas de planejamento apresentados anteriormente efetua a conversão do plano obtido em elementos da especificação IMS-LD (nível A).
+
+%mediante um mecanismo de planejador que utiliza a técnica de resolução de problemas com satisfação de restrições (\textit{CSP}) \citep{Garrido06csp}.
+%\begin{figure}[htbp]
+%  \centering
+%  \includegraphics[width=0.60\textwidth]{figuras/adaptaplan}
+%  \caption{Processo de planejamento em ADAPTAPLAN \citep{Santos2007}}
+%  \label{fig:adaptaplan}
+%\end{figure}
+
+%Em ADAPTAPLAN, a modelagem do domínio a ser ensinado e de estudante  faz uso de metadados definidos nas especificações IMS-QTI, IMS-MD, IMS-LD e IMS-LIP. Assim, o processo de planejamento instrucional utiliza como entradas os objetivos educacionais, objetos de aprendizagem, serviços de apoio \`{a} aprendizagem, questionários e perfis dos estudantes definidos pelo projetista instrucional nestas especificações.
+
+As sequências de atividades obtidas para cada estudantes são generalizadas para todos os estudantes mediante a geração de restrições descrita na especificação IMS-LD (nível B). Embora a generalização das sequências de atividades possibilite a definição de atividades a serem efetuadas por um grupo de participantes, elas carecem de instruções prescritas de como deveriam ser efetuadas essas atividades (denominadas sessões de aprendizagem).
+
+Em nosso modelo de planejamento instrucional apresentado nesta dissertação as instruções são definidas nos eventos IL na que são especificadas as ações a serem efetuadas mediante recursos instrucionais.
+
+\newpage
+\section{Ferramentas de autoria de autoria das unidades de aprendizagem}
+\label{sec:ferramentasAutoriaRelacionados}
+
+A seguir apresentamos um resumo de ferramentas de autoria das unidades de aprendizagem encontradas na literatura.
+
+\subsection{COOL MODES}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.82\textwidth]{figuras/coolmodes}
+  \caption{Interface gráfica de COOL MODES \citep{miao2005cosmos}}
+  \label{fig:coolmodes}
+\end{figure}
+
+A ferramenta de autoria COOL MODES (\textit{COllaborative Open Learning MODEling System}) desenvolvida pelo grupo COLLIDE da universidade de Duisburg-Essen possibilita o desenvolvimento de roteiros colaborativos mediante a definição de diagramas baseados em grafos  \citep{pinkwart2003plug, miao2005cosmos}.
+
+A Figura \ref{fig:coolmodes} mostra a interface gráfica de COOL MODES, a interface é dividida em um diagrama de fases no lado esquerdo e um diagrama de atividades no lado direito. Nos diagramas cada nó é uma fase ou atividade e cada seta é uma transição possível. Em cada um dos nós são definidos informações (definidas como recursos instrucionais) dos papéis, objetos de aprendizagem e serviços de apoio \`{a} aprendizagem a serem empregados durante a execução do roteiro colaborativo.
+
+Nosso modelo proposto diferentemente de COOL MODES não precisa a definição de todas as fases, atividades, papeis e objetos de aprendizagem para o desenvolvimento de roteiros adaptados às características dos participantes.
+
+\subsection{COLLAGE}
+
+A ferramenta de projeto instrucional gráfica COLLAGE (\emph{COLlaborative LeArning desiGn Editor}) \citep{hernandez2006collage} desenvolvida pelo grupo de pesquisas em Sistemas Cooperativos da universidade de Valladolid de Espanha possibilita a criação de roteiros colaborativos mediante o uso de padrões de roteiros. Em vez de definir um roteiro colaborativo de zero como em COOL MODES, o usuário utiliza um padrão como apoio ao desenvolvimento de roteiros específicos.
+
+\newpage
+A Figura \ref{fig:collage} mostra a interface inicial de COLLAGE na qual o usuário define os objetivos pedagógicos a serem atingidos e a complexidade dos roteiro. Dessa maneira, o sistema identifica os padrões de interação que podem ser utilizados para atingir os objetivos pedagógicos. Na ferramenta, podem ser utilizados os padrões  \emph{brainstorming}, \emph{jigsaw}, \emph{pyramid}, \emph{simulation}, \emph{think pair share} e \emph{thinking aloud pair problem solving}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.55\textwidth]{figuras/collage}
+  \caption{Interface gráfica de COLLAGE}
+  \label{fig:collage}
+\end{figure}
+
+Embora o processo de planejamento instrucional de roteiros colaborativos adaptado às características individuais seja mais simples em COLLAGE, o sistema não apresenta forma de seleção automática dos padrões a serem utilizados, nem como  efetuar a combinação e concatenação deles. Nosso modelo de planejamento instrucional como problema de planejamento hierárquico apresenta solução a este problema ao definir a representação de regras de planejamento instrucional como precondições lógicas e condições relativas.
+
+\subsection{CHOCOLATO}
+
+O sistema CHOCOLATO (\emph{Concrete Helpful Ontology-aware COllaborative Learning Authoring TOol}) é uma ferramenta de autoria que possibilita a formação, planejamento e análise de sessões colaborativas. O sistema efetua essas tarefas mediante o uso de ontologias que auxiliam tanto ao projetista instrucional a formação de grupos, a atribuição de papéis aos estudantes e o planejamento de interações a serem efetuadas nas sessões colaborativas \citep{isotani2010authoring, isotani2007planejamento}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.52\textwidth]{figuras/chocolato}
+  \caption{Interface principal de CHOCOLATO \citep{isotani2010authoring}}
+  \label{fig:chocolato}
+\end{figure}
+
+A interface principal de CHOCOLATO apresentada na Figura \ref{fig:chocolato} mostra algumas das funcionalidades do sistema, onde é possível: (1) selecionar as estratégia de aprendizagem em função do objetivo grupal; (2) selecionar os tópicos, habilidades e conhecimento a ser ensinado; e (3) efetuar a formação de grupos e atribuição de papéis.
+
+Nossa proposta de planejamento utiliza o algoritmo de formação de grupos proposto em CHOCOLATO, assim como a representação de cenários colaborativos para efetuar a modelagem de microrroteiros apresentada na Seção \ref{sec:modelagemmicrorroteiro}.
+
+
+% --------------------------------------------------------------------------- %
+
+\section{Considerações finais}
+
+Os STIs apresentados facilitam o processo de planejamento instrucional usando técnicas de planejamento em IA favorecendo um processo eficiente (que consome menos tempo) e efetivo (adaptado às necessidades de cada estudante). No entanto, os planos obtidos não possibilitam a definição de atividades a serem efetuadas em grupos, nem informação de como os estudantes deveriam interagir entre eles para atingir objetivos educacionais definidos pelo projetista.
+
+As ferramentas de autoria possibilitam o desenvolvimento de unidades de aprendizagem, mas não fornecem um planejamento automatizado que possibilite reduzir o custo em tempo e esforço necessário para desenvolver roteiros colaborativos adaptados as características individuais dos estudantes. Assim, neste trabalho foi efetuado uma modelagem de planejamento instrucional nos Capitulo \ref{cap:modelagem} e \ref{cap:modelagemEstrategias} que possibilita integrar as vantagens dos STI no desenvolvimento das unidades de aprendizagem usando padrões de roteiros colaborativos.
+
+% ferramentas de autoria os planos a serem obtidos definem marcadores da especificação IMS-LD, os quais serão utilizados para representar macrorroteiros e microrroteiros colaborativos na unidade de aprendizagem.
+
+%Os sistemas de tutores inteligentes apresentados na revisão da literatura efetuam um planejamento instrucional automatizado usando diferentes técnicas de planejamento em IA. Enquanto, as ferramentas de autoria efetuam um planejamento instrucional em ACSC que não possibilita a automatização e adaptação dos roteiros de acordo com as características individuais de cada estudante.
+
+
+
+

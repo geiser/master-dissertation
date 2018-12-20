@@ -1,0 +1,678 @@
+
+\chapter{Planejamento em inteligência artificial}
+\label{cap:planejamentoIA}
+
+Planejamento em Inteligência Artificial (IA) consiste na construção de sequências de ações, chamados de planos, que ao ser executado por um agente a partir de um estado inicial, alcança um estado meta em que objetivos do agente são atingidos \citep{ghallab2004automated}. Este capítulo apresenta o modelo conceitual de planejamento em IA na Seção \ref{sec:modeloConceitualPlanejamento}. As técnicas de planejamento clássico e planejamento hierárquico são apresentadas nas Seções \ref{sec:planejamentoClassico} e \ref{sec:planejamentoHierarquico}. Na seção \ref{sec:JSHOP2}, apresentamos detalhes do sistema de planejamento hierárquico JSHOP2ip, sistema utilizado para representar a modelagem proposta.
+
+% O problema de planejamento em IA pode ser exemplificado em uma operação logística de entrega de pacotes, que consiste na análise da situação corrente, dos objetivos a serem atingidos e da descrição das tarefas para obter um plano de entrega de pacotes por meio de ações de comunicação e transporte. Durante a execução do plano, podem acontecer eventos inesperados sendo necessário efetuar replanejamento para completar satisfatoriamente a operação de logística.
+
+% --------------------------------------------------------------------------- %
+\section{Modelo conceitual de planejamento}
+\label{sec:modeloConceitualPlanejamento}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.53\textwidth]{figuras/planningConceitualModel} 
+\caption{Modelo conceitual de planejamento em inteligência artificial}
+\label{fig:planningConceitualModel}
+\end{figure}
+
+De forma geral, planejamento em IA apresenta o modelo conceitual da Figura \ref{fig:planningConceitualModel}, consistindo de:
+
+\begin{itemize}
+\item Um \emph{sistema de transição de estados} $\Sigma$ que muda de acordo com uma função de transição de estados, reagindo aos \emph{eventos} e \emph{ações} que acontecem no sistema;
+\item Um algoritmo de planejamento, chamado de \emph{planejador}, cujas entradas são a \emph{descrição do sistema $\Sigma$}, a situação inicial chamada de \emph{estado inicial} e um conjunto de \emph{objetivos} que se deseja atingir; e
+\item Um \emph{controlador} que executa ações no sistema $\Sigma$ definidas nos \emph{planos} do planejador. O controlador recebe informação acerca do \emph{estado da execução} de ações no sistema $\Sigma$ por meio de \emph{observações} que são em alguns casos transmitidas ao planejador.
+\end{itemize}
+
+O processo de planejamento que utiliza a informação fornecida pelo controlador acerca do estado da execução das atividades é chamado de \emph{planejamento online}, caso contrário, é conhecido como \emph{planejamento offline}.
+
+% --------------------------------------------------------------------------- %
+\section{Planejamento clássico}
+\label{sec:planejamentoClassico}
+
+Em planejamento clássico, o plano de solução para atingir os objetivos é obtido da busca no espaço de estados das ações que devem ser adicionadas ao plano, para que depois da execução um estado meta seja alcançado. A fim de manter uma semântica bem definida na representação do estado corrente e ações, a técnica de planejamento clássico utiliza um modelo simplificado e restrito pelas seguintes suposições \citep{ghallab2004automated}:
+
+\begin{description}
+\item[A0: $\Sigma$ é finito.] O sistema de transição de estados tem um número finito de estados.
+\item[A1: $\Sigma$ é completamente observável.] O sistema de planejamento sabe com exatidão qual é o estado atual do mundo.
+\item[A2: $\Sigma$ é determinístico.] A ação efetuada no sistema de transição de estado leva a um único estado possível.
+\item[A3: $\Sigma$ é estático.] No sistema de transição de estados, não existem eventos externos ao agente, o único que manipula o estado do mundo é o agente.
+\item[A4: Metas restritivas.] Os objetivos são representados por um conjunto de estados meta.
+\item[A5: Planos sequenciais.] O plano solução é uma sequência de ações a serem executadas na ordem indicada.
+\item[A6: Tempo implícito.] A ação efetuada pelo sistema é executada uma por vez e não há informações sobre a duração.
+\item[A7: Planejamento \textit{offline}.] O plano de ações obtido pelo planejador é executado pelo agente sem realimentação sobre o processo de execução do plano, isto quer dizer que uma vez obtido o plano ele não muda durante o processo de execução.
+\end{description}
+
+Os planejadores que utilizam a técnica de planejamento clássico recebem como entrada a descrição do problema de planejamento formalizada como a enupla $P=\langle D, s_0, G \rangle$, em que $D$ é a descrição do sistema de transição de estados $\Sigma$ nomeado \emph{domínio de planejamento}, $s_0$ é a representação do estado inicial e $G$ é a representação dos objetivos a serem atingidos.
+
+\newpage
+A descrição do \emph{domínio de planejamento} $D$ em planejamento clássico é formalizado como a enupla $\langle S, A, \gamma \rangle$, em que:
+
+\begin{itemize}
+\item $S$=\{$s_1$, $s_2$, ...\} é um conjunto finito ou recursivamente enumerável de estados;
+\item $A$=\{$a_1$, $a_2$, ...\} é um conjunto finito ou recursivamente enumerável de ações; e
+\item $\gamma$: $S$x$A$ $ \rightarrow S$ é a função de transição de estados que define como uma ação muda de estado.
+\end{itemize}
+
+O \emph{plano de solução} consiste em uma sequência de ações $\pi$=($a_{1}$, $a{2}$, ..., $a_{n}$) que, ao serem executadas pelo controlador a partir do estado inicial $s_{0}$, levam a um estado meta $s_{g}$ que satisfaz os objetivos definidos em $G$; isto é
+$\gamma(s_{0},a_{1}) = s_{1}$, $\gamma(s_{1},a_{2}) = s_{2}$, ..., $\gamma(s_{n-1},a_{n}) = s_{g}$.
+
+Os problemas de planejamento envolvem uma grande quantidade de estados e ações, portanto, é necessário utilizar meios simbólicos de uma linguagem $L$ para reduzir a representação explícita do domínio de planejamento. Assim, \citet{ghallab2004automated} apresentam três tipos de representação: a representação em teoria de conjuntos, a representação clássica e a representação com variáveis de estado. As duas primeiras são discutidas a seguir.
+
+\subsubsection{Representação em teoria de conjuntos}
+\label{subsec:representacaoTeoriaConjuntos}
+
+A teoria de conjuntos representa estados e ações como um conjuntos de proposições, no qual um elemento não representado explicitamente no estado $s$ é interpretado como falso.
+
+Seja $L$=\{$p_{1}$, $p_{2}$, ..., $p_{n}$\} um conjunto finito de símbolos de proposição utilizados para representar a descrição do sistema de transição de estados $\Sigma$,  um domínio­ de planejamento $D$ em teoria de conjuntos é representado como uma enupla $D=(S,A,\gamma)$, na qual:
+
+\begin{itemize}
+\item Cada estado $s_{i} \in S$ é composto por um subconjunto de $L$, no qual a proposição $p$ é verdadeira se e somente se $p \in s_{i}$, e $p$ é falsa se $p \notin s_{i}$.
+\item Cada ação $a_{i} \in A$ é uma expressão sintática de $L$, denotada pela enupla
+\begin{center}
+$a = \langle$ \emph{precond}($a$), \emph{efeitos}$^{-}$($a$), \emph{efeitos}$^{+}$($a$) $\rangle$,
+\end{center}
+na qual: as pré-condições \emph{precond}($a$) são proposições que devem ser verdadeiras no estado corrente $s_{i}$ para efetuar a ação $a$; os efeitos negativos \emph{efeitos}$^{-}$($a$) são proposições a serem removidas do estado corrente; e os efeitos positivos (\emph{efeitos}$^{+}$($a$)) são proposições a serem adicionadas.
+
+\item  A função de transição de estados é $\gamma(s,a)$=($s$ $\setminus$ \emph{efeitos}$^{-}$($a$)) $\cup$ \emph{efeitos}$^{+}$($a$). Dessa forma, cada ação $a$ aplicável num estado $s_{i}$ leva a um outro estado válido $s_{j} \in S$.
+\end{itemize}
+
+\begin{example}
+Utilizando os símbolos \textsf{t1-in-loc1} e \textsf{t2-in-loc2} para representar as localizações do transporte \textsf{t1}; e os símbolos \textsf{p1-in-loc1}, \textsf{p1-in-loc2} e \textsf{p1-in-t1} para representar localizações do pacote \textsf{p1}. O estado inicial \textsf{s$_{0}$} de um problema de planejamento logístico de transporte de pacotes mostrado na Figura \ref{fig:exemploPlanejamentoConjunto} é representado por \textsf{s$_{0}$=\{t1-in-loc1, p1-in-loc2\}}. No problema, a ação de mover o transporte \textsf{t1} da localização \textsf{loc1} até a localização \textsf{loc2} é representada pela enupla \textsf{a$_{1}$=$\langle$ \{t1-in-loc1\}, \{t1-in-loc1\}, \{t1-in-loc2\} $\rangle$}.
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.75\textwidth]{figuras/exemploPlanejamentoConjunto}
+\caption{Exemplo de representação em teoria de conjuntos}
+\label{fig:exemploPlanejamentoConjunto}
+\end{figure}
+
+\end{example}
+
+\subsubsection{Representação clássica}
+\label{subsec:representacaoClassica}
+
+A representação clássica generaliza a representação em teoria dos conjuntos utilizando notação proveniente de uma linguagem de primeira ordem, na qual existe um número finito de símbolos de predicados e constantes. Assim, conectivos lógicos são utilizados no lugar de proposições, enquanto os estados são representados como um conjunto de literais totalmente instanciados.
+
+\begin{definition}
+\label{def:repEstadoClassica}
+Um estado $s$ é um conjunto de átomos lógicos totalmente instanciados composto apenas de símbolos de constante.
+\end{definition}
+
+Dizemos que um átomo $p$ é verdadeiro no estado $s$ se e somente se $p \in s$; e dizemos que um estado $s_{g}$ atinge os objetivos $G$ ($s_{g}$ \emph{satisfaz} $G$), se e somente se todo átomo positivo de $G$ está em $s_{g}$ e nenhum átomo negativo de $G$ está em $s_{g}$.
+
+\begin{example}
+\label{exa:planejamentoLogistica}
+Considere o problema de planejamento logístico da Figura \ref{fig:exemploPlanejamentoClassico} em que há: cinco localizações \textsf{loc1}, \textsf{loc2}, \textsf{loc3}, \textsf{loc4} e \textsf{loc5}; dois transportes \textsf{t1} e \textsf{t2}; e três pacotes \textsf{p1}, \textsf{p2} e \textsf{p3}. Seja $L$=\{\textsf{loc1, loc2, loc3, loc4, loc5, t1, t2, p1, p2, p3}\} o conjunto de símbolos constantes, utilizamos o símbolo de predicado \textsf{(em $x$ $y$)} para representar a localização de um determinado transporte ou pacote $x$ no lugar $y$ e o símbolo de predicado \textsf{(disponível $x$)} para representar a disponibilidade do transporte $x$. Dessa maneira, o estado inicial $s_{0}$ mostrado na figura é representado por:
+
+\begin{alltt}\sffamily
+\(S\sb{0}\) = \{(em p1 loc1), (em p2 loc2), (em t1 loc5), (em t2 loc3), (disponível t1), (disponível t2)\}
+\end{alltt}
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.80\textwidth]{figuras/exemploPlanejamentoClassico}
+\caption{Exemplo de representação clássica}
+\label{fig:exemploPlanejamentoClassico}
+\end{figure}
+\end{example}
+
+\newpage
+Na representação clássica, operadores de planejamento são utilizados para generalizar o conjunto de ações $A$ do domínio de planejamento.
+
+\begin{definition}
+\label{def:operadorPlanejamento}
+Um operador de planejamento é definido formalmente pela tripla
+\begin{center}
+$o$ = $\langle$ \emph{nome}($o$), \emph{precond}($o$), \emph{efeitos}($o$)
+$\rangle$, tal que:
+\end{center}
+
+\begin{itemize}
+\item \emph{nome}($o$) é o nome do operador expresso da forma ($n$ $x_{1}$ $x_{2}$ ... $x_{k}$), em que $n$ é um símbolo constante que define um nome único entre os operadores e $x_{1}$, $x_{2}$, ..., $x_{k}$ são símbolos variáveis que definem a lista de argumentos;
+\item \emph{precond}($o$) é o conjunto de pré-condições expresso por literais que determinam a aplicabilidade das ações generalizadas pelo operador; e
+\item \emph{efeitos}($o$) é o conjunto de efeitos positivos, \emph{efeitos}$^{+}$($o$), e efeitos negativos, \emph{efeitos}$^{-}$($o$), do conjunto de ações generalizadas pelo operador.
+\end{itemize}
+
+A função de transição de estados $\gamma$ é representada em teoria de conjuntos como:
+
+\begin{center}
+$\gamma(s,a)$=($s$ $\setminus$ \emph{efeitos}$^{-}$($a$)) $\cup$ \emph{efeitos}$^{+}$($a$)
+\end{center}
+\end{definition}
+
+\begin{example}
+\label{exa:operadoresPlanejamento}
+No domínio de planejamento da Figura \ref{fig:exemploPlanejamentoClassico}, os operadores para efetuar a operação logística de transporte de pacotes são:
+
+\begin{tabular}{ll}
+
+\begin{tabular}{ll}
+            & \\
+\multicolumn{2}{l}{\textrm{(a)} \textit{mover transporte $t$ de $x$ até $y$}}\\
+nome:       & \textsf{(mover $t$ $x$ $y$)}\\
+precond:    & \textsf{(em $t$ $x$)}\\
+efeitos:    & \textsf{(not (em $t$ $x$)), (em $t$ $y$)}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+            & \\
+\multicolumn{2}{l}{\textrm{(b)} \textit{carregar no transporte $t$ um pacote $p$}}\\
+nome:       & \textsf{(carregar $t$ $p$)}\\
+precond:    & \textsf{(em $p$ $x$), (em $t$ $x$)}\\
+efeitos:    & \textsf{(not (em $p$ $x$)), (em $p$ $t$)}\\
+\end{tabular}
+\\
+\begin{tabular}{ll}
+            & \\
+\multicolumn{2}{l}{\textrm{(c)} \textit{descarregar do transporte $t$ um pacote $p$}}\\
+nome:       & \textsf{(descarregar $t$ $p$)}\\
+precond:    & \textsf{(em $p$ $t$), (em $t$ $x$)}\\
+efeitos:    & \textsf{(not (em $p$ $t$)), (em $p$ $x$)}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+            & \\
+\multicolumn{2}{l}{\textrm{(d)} \textit{reservar o transporte $t$}}\\
+nome:       & \textsf{(reservar $t$)}\\
+precond:    & \textsf{(disponível $t$)}\\
+efeitos:    & \textsf{(not (disponível $t$))}\\
+\end{tabular}
+\\
+\begin{tabular}{ll}
+            & \\
+\multicolumn{2}{l}{\textrm{(e)} \textit{deixar disponível o transporte $t$}}\\
+nome:       & \textsf{(disponibilizar $t$)}\\
+precond:    & \textsf{(not (disponível $t$))}\\
+efeitos:    & \textsf{(disponível $t$)}\\
+\end{tabular}
+& \\
+\end{tabular}
+\end{example}
+
+\begin{tabular}{|c|c|c|}
+\hline teste  & de planejamento & moderate \\
+\hline
+\hline table &  table of array & section of password \\ 
+\hline 
+\end{tabular} 
+
+s
+
+
+% --------------------------------------------------------------------------- %
+\newpage
+\section{Planejamento hierárquico}
+\label{sec:planejamentoHierarquico}
+
+Planejamento hierárquico, ou planejamento em rede hierárquica de tarefas (\emph{Hierarchical Task Network Planning}, HTN), é uma técnica de planejamento em IA na qual o problema de planejamento é resolvido por meio da decomposição sucessiva de tarefas em subtarefas até atingir um nível de tarefas primitivas, chamado de plano, \citep{ghallab2004automated}.
+
+Um exemplo de decomposição utilizando métodos hierárquicos é mostrado na Figura \ref{fig:sampleHTN02}, na qual a tarefa ``transportar dois pacotes $p_{1}$ e $p_{2}$'' é decomposta nas subtarefas ``transportar pacote $p_{1}$'' e ``transportar pacote $p_{2}$'' que não apresentam relações de ordem parcial entre elas.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figuras/sampleHTN02}
+  \caption{Exemplo de decomposição da tarefa transportar dois pacotes $p_{1}$ e $p_{2}$}
+  \label{fig:sampleHTN02}
+\end{figure}
+
+As definições de planejamento hierárquico apresentadas a seguir correspondem ao caso restrito de planejamento com redes simples de tarefas (\textit{Simple Task Network Planning}, STN). As redes simples de tarefas representam restrições na ordem de execução das tarefas, podendo ser tanto de ordem parcial quanto total, assemelhando-se a um plano parcialmente ordenado.
+
+%%%%%%%%%%%% (introduce planejamento hierárquico ) %%%%%
+
+\begin{definition}
+O problema de planejamento hierárquico é formalizado como a tripla \newline
+$P$ = $\langle s_{0}, w_{0}, D \rangle$, em que:
+\begin{itemize}
+\item $s_{0}$ é o estado inicial que utiliza a representação clássica (definição \ref{def:repEstadoClassica});
+\item $w_{0}$ é a rede de tarefas inicial; e
+\item $D$ é o domínio de planejamento.
+\end{itemize}
+\end{definition}
+
+\begin{definition}
+Uma rede simples de tarefas $w$ é formalizada como um dígrafo acíclico $w = (U,E)$, no qual: $U$ é um conjunto de nós tarefas nas quais cada nó $u \in U$ contém uma tarefa $t_{u}$; e $E$ é um conjunto de arestas que representam as restrições de ordem. Uma rede é totalmente instanciada se todas as tarefas \{$t_{u} | u \in U$\} são instanciadas; caso contrário, a rede é parcialmente instanciada. Uma rede de tarefas é primitiva se todas as tarefas \{$t_{u} | u \in U$\} são primitivas.
+\end{definition}
+
+\begin{example}
+A rede de tarefas inicial $w_{0}=(U,E)$ da Figura \ref{fig:sampleHTN02} é definida por $U=\{u_{1}\}$ e $E=\{\}$, onde: $u_{1}=\{t_{1}\}$ é um n\'{o} tarefa que contém a tarefa $t_{1}$ ``transportar dois pacotes $p_{1}$ e $p_{2}$ às localizações $l_{3}$ e $l_{4}$''.
+\end{example}
+
+\begin{definition}
+\label{def:tarefaHTN}
+Uma tarefa hierárquica é uma expressão da forma ($t$ $r_{1}$ ... $r_{k}$), na qual: $t$ é um símbolo único de tarefa, e  $r_{1}, ..., r_{k}$ são termos. Dessa maneira, distinguimos dois tipos de tarefas:
+
+\begin{itemize}
+\item uma \emph{tarefa primitiva} na qual $t$ é um símbolo de operador; e
+\item uma \emph{tarefa composta} na qual $t$ não é um símbolo de operador.
+\end{itemize}
+\end{definition}
+
+O domínio­ de planejamento $D=(O,M)$ consiste em um conjunto de operadores $O$ e métodos hierárquicos $M$ que representam explicitamente receitas de solução às tarefas aproveitando a natureza hierárquica inerente a muitos problemas.
+
+\begin{definition}
+\label{def:metodoHTN}
+Um método hierárquico é a enupla: $m=\langle$\emph{nome}($m$), \emph{tarefa}($m$), \emph{precond}($m$), \emph{rede}($m$)$\rangle$, na qual:
+
+\begin{itemize}
+\item $nome(m)$ é o nome do método;
+\item $tarefa(m)$ é uma tarefa não primitiva;
+\item $precond(m)$ é um conjunto de literais que especificam as pré-condições do método; e
+\item $rede(m)$ é uma rede de tarefas contendo as subtarefas na qual a tarefa é decomposta.
+\end{itemize}
+\end{definition}
+
+Na definição do método, $nome(m)$ é um nome único, $tarefa(m)$ é a tarefa na qual o método $m$ pode ser aplicado, $precond(m)$ especifica as condições que o estado corrente deve satisfazer para que o método $m$ seja aplicável e $rede(m)$ especifica a rede de subtarefas a serem realizadas para efetuar a tarefa $tarefa(m)$.
+
+\begin{example}
+\label{exa:metodoHTN}
+No domínio de planejamento logístico de entrega de pacotes da Figura \ref{fig:exemploPlanejamentoClassico}, identificamos os seguintes métodos hierárquicos:
+\\ \\
+\begin{tabular}{p{6cm}p{1cm}l}
+\multicolumn{3}{l}{\ \textrm{(a)} \textit{despachar o transporte $t$ à localização $l$}}\\
+\begin{tabular}{ll}
+  nome:     & \textsf{despachar-no-lugar}\\
+  tarefa:   & \textsf{(despachar $t$ $l$)}\\
+  precond:  & \textsf{(em $t$ $l$)}\\
+  rede:     & $u_{1}$=\textsf{(reservar $t$)}\\
+            & $E$=\{ \}\\
+            & \\
+\end{tabular}
+ & &
+\begin{tabular}{ll}
+  nome:     & \textsf{despachar-em-outro-lugar}\\
+  tarefa:   & \textsf{(despachar $t$ $l$)}\\
+  precond:  & \textsf{(em $t$ $x$), $x \not= l$}\\
+  rede:     & $u_{1}$=\textsf{(reservar $t$)}\\
+            & $u_{2}$=\textsf{(mover $t$ $x$ $l$)}\\
+            & $E$=\{($u_{1} \prec u_{2}$)\}\\
+\end{tabular} \\
+\end{tabular}
+\\ \\
+\begin{tabular}{p{6cm}p{1cm}l}
+\multicolumn{3}{l}{\ \textrm{(b)} \textit{retornar o transporte $t$ à localização $l$}}\\
+\begin{tabular}{ll}
+  nome:     & \textsf{retornar-no-lugar}\\
+  tarefa:   & \textsf{(retornar $t$ $l$)}\\
+  precond:  & \textsf{(em $t$ $l$)}\\
+  rede:     & $u_{1}$=\textsf{(disponibilizar $t$)}\\
+            & $E$=\{ \}\\
+            & \\
+\end{tabular}
+ & & 
+\begin{tabular}{ll}
+  nome:     & \textsf{retornar-em-outro-lugar}\\
+  tarefa:   & \textsf{(retornar $t$ $l$)}\\
+  precond:  & \textsf{(em $t$ $x$), $x \not= l$}\\
+  rede:     & $u_{1}$=\textsf{(mover $t$ $x$ $l$)}\\
+            & $u_{2}$=\textsf{(disponibilizar $t$)}\\
+            & $E$=\{($u_{1} \prec u_{2}$)\}\\
+\end{tabular} \\
+\end{tabular}
+\\ \\ \\
+\begin{tabular}{lp{1cm}l}
+\multicolumn{3}{l}{\ \textrm{(c)} \textit{transportar o pacote $p$ com $t$ da localização $l_{1}$ à localização $l_{2}$}}\\
+\begin{tabular}{ll}
+  nome:     & \textsf{transportar-pacote}\\
+  tarefa:   & \textsf{(transportar $p$ $t$ $l_{1}$ $l_{2}$)}\\
+  precond:  & \textsf{(em $p$ $l_{1}$), (em $t$ $l$)}\\
+  rede:     & $u_{1}$=\textsf{(despachar $t$ $l_{1}$)}\\
+            & $u_{2}$=\textsf{(carregar $t$ $p$)}\\
+            & $u_{3}$=\textsf{(mover $t$ $l_{1}$ $l_{2}$)}\\
+            & $u_{4}$=\textsf{(descarregar $t$ $p$)}\\
+            & $u_{5}$=\textsf{(retornar $t$ $l$)}\\
+            & $E$=\{($u_{1} \prec u_{2}$), ($u_{2} \prec u_{3}$),
+	    ($u_{3} \prec u_{4}$), ($u_{4} \prec u_{5}$)\}\\
+\end{tabular}                                               &   & \\
+\end{tabular}
+\\ \\ \\
+\begin{tabular}{lp{1cm}l}
+\multicolumn{3}{l}{\ \textrm{(d)} \textit{efetuar o transporte de dois pacotes $p_{1}$ e $p_{2}$ das localizações $l_{1}$ e $l_{2}$ às localizações $l_{3}$ e $l_{4}$}}\\
+\begin{tabular}{ll}
+  nome:     & \textsf{transportar-duplo}\\
+  tarefa:   & \textsf{(transportar-duplo $p_{1}$ $p_{2}$ $l_{1}$ $l_{2}$ $l_{3}$ $l_{4}$)}\\
+  precond:  & \textsf{(disponível $t_{1}$), (disponível $t_{2}$), $t_{1} \not= t_{2}$}\\
+  rede:     & $u_{1}$=\textsf{(transportar $p_{1}$ $t_{1}$ $l_{1}$ $l_{2}$)}\\
+            & $u_{2}$=\textsf{(transportar $p_{2}$ $t_{2}$ $l_{3}$ $l_{4}$)}\\
+            & $E$=\{ \}\\
+\end{tabular}                                               &   & \\
+\end{tabular}
+\end{example}
+
+No planejamento com redes simples de tarefas, as restrições associadas às tarefas são restrições de ordem e pré-condição, de maneira que o único tipo de procedimento de planejamento viável é a decomposição progressiva \citep{ghallab2004automated}. Quando um método $m$ é utilizado para decompor uma tarefa $t$, tal que $t$ é parte de um nó $u$ de uma rede de tarefas $w$, obtemos a nova rede de tarefas por meio da decomposição $\delta(w,u,m,\sigma)$. Na decomposição, um nó $u$ é removido da rede de tarefas $w$, uma cópia da rede de tarefas $w_{u}$ do método $m$ é inserida na rede $w$ no lugar de $u$ e as restrição de ordem $\prec$ que aplicava a $u$ passa a valer para todo $w_{u}$.
+
+\begin{definition}
+Seja $w=(U, E)$ uma rede simples de tarefas, na qual $u \in U$ é um nó sem predecessores e $m$ é um método relevante para a tarefa $t_{u}$ contida no n\'{o} $u$ em alguma substituição $\sigma$; seja \emph{succ}($u$)=$\{ u' \in U | (u,u') \in E\}$ o conjunto de todos os sucessores imediatos de $u$; seja \emph{succ$_{1}$}($u$) o conjunto de sucessores imediatos para os quais $u$ é o único predecessor; seja $(U',E')$ o resultado da remoção de $u$ e todas as arestas que contenham $u$; e seja ($U_{m}$,$E_{m}$) uma cópia da rede de tarefas \emph{rede}($m$) contendo as subtarefas na qual a tarefa do método $m$ é decomposta.
+
+Se $(U_{m},E_{m})$ não é vazio, então a função de decomposição $\delta$ de $u$ em $w$ sob a substituição $\sigma$ é o conjunto de redes de tarefas:
+\begin{center}
+$\delta$($w$,$u$,$m$,$\sigma$)=\{($\sigma(U' \cup U_{m})$, $\sigma(E_{v})$) $|$ $v$  $\in$ \emph{subtarefas}($m$)\},
+\end{center}
+onde:
+\begin{center}
+$E_{v} = E_{m} \cup (U_{m}$ x \emph{succ}$(u)) \cup \{(v,u') | u' \in$ \emph{succ}$_{1}(u)\}$
+\end{center}
+
+Caso contrário, $\delta(w,u,m,\sigma) = \{(\sigma(U'), \sigma(E'))\}$.
+\end{definition}
+
+\begin{example}
+Na Figura \ref{fig:exemploDecomposicaoHTN} é mostrado o processo de decomposição de tarefas hierárquicas para o problema de planejamento logístico de transporte de pacotes da Figura \ref{fig:exemploPlanejamentoClassico} utilizando os métodos hierárquicos definidos no Exemplo \ref{exa:metodoHTN}.
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tikzpicture}[scale=0.85]
+\draw (-0.5,0) -- (-0.5,-2);
+\draw (-5,-4) -- (-5,-6);
+\draw (4,-4) -- (4,-6);
+\draw (-9,-8) -- (-9,-10);
+\draw (-1,-8) -- (-1,-10);
+\draw (0,-8) -- (0,-11);
+\draw (8,-8) -- (8,-10);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (-0.5, -2) -- (-5,-4);
+\draw[arrows={-triangle 45}] (-0.5, -2) -- (4,-4);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (-5, -6) -- (-9,-8);
+\draw[arrows={-triangle 45}] (-5, -6) -- (-7,-8);
+\draw[arrows={-triangle 45}] (-5, -6) -- (-5,-8);
+\draw[arrows={-triangle 45}] (-5, -6) -- (-3,-8);
+\draw[arrows={-triangle 45}] (-5, -6) -- (-1,-8);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (4, -6) -- (0,-8);
+\draw[arrows={-triangle 45}] (4, -6) -- (2,-8);
+\draw[arrows={-triangle 45}] (4, -6) -- (4,-8);
+\draw[arrows={-triangle 45}] (4, -6) -- (6,-8);
+\draw[arrows={-triangle 45}] (4, -6) -- (8,-8);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (-9, -10) -- (-10,-12);
+\draw[arrows={-triangle 45}] (-9, -10) -- (-8,-12);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (-1, -10) -- (-2,-12);
+\draw[arrows={-triangle 45}] (-1, -10) -- (0,-12);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (0, -11) -- (-1,-13);
+\draw[arrows={-triangle 45}] (0, -11) -- (1,-13);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (8, -10) -- (8,-12);
+% draw arrow for order
+\draw[arrows={-angle 60}] (-7, -6.5) -- (-3,-6.5);
+\draw[arrows={-angle 60}] (2, -6.5) -- (6,-6.5);
+\draw[arrows={-angle 60}] (-9.5, -10.5) -- (-8.5,-10.5);
+\draw[arrows={-angle 60}] (-1.5, -10.5) -- (-0.5,-10.5);
+\draw[arrows={-angle 60}] (-0.5, -11.5) -- (0.5,-11.5);
+% draw task transportar-duplo
+\filldraw[fill=black] (-0.7,0) rectangle (-0.3,0.4);
+\draw (-0.5,-0.5) node [text badly centered, font=\footnotesize] {(transportar-duplo p1 p2 loc1 loc2 loc3 loc4)};
+\filldraw[fill=white] (-0.5,-2) circle (0.2);
+% draw task transportar-t1 and transporter-t2
+\filldraw[fill=black] (-5.2,-4) rectangle (-4.8,-4.4);
+\draw (-5,-5) node [text badly centered, font=\footnotesize] {(transportar p2 t1 loc2 loc4)};
+\filldraw[fill=black] (3.8,-4) rectangle (4.2,-4.4);
+\draw (4,-5) node [text badly centered, font=\footnotesize] {(transportar p1 t2 loc1 loc3)};
+\filldraw[fill=white] (-5,-6) circle (0.2);
+\filldraw[fill=white] (4,-6) circle (0.2);
+% draw task despachar, carregar, mover, descarregar e retornar
+\filldraw[fill=black] (-9.2,-8) rectangle (-8.8,-8.4); \draw (-9,-8.7) node [text badly centered, font=\footnotesize]{despachar};
+\filldraw[fill=black!20] (-7.2,-8) rectangle (-6.8,-8.4); \draw (-7,-8.7) node [text badly centered, font=\footnotesize]{carregar};
+\filldraw[fill=black!20] (-5.2,-8) rectangle (-4.8,-8.4); \draw (-5,-8.7) node [text badly centered, font=\footnotesize]{mover};
+\filldraw[fill=black!20] (-3.2,-8) rectangle (-2.8,-8.4); \draw (-3,-8.7) node [text badly centered, font=\footnotesize]{descarregar};
+\filldraw[fill=black] (-1.2,-8) rectangle (-0.8,-8.4); \draw (-1,-8.7) node [text badly centered, font=\footnotesize]{returner};
+\filldraw[fill=white] (-9,-10) circle (0.2);
+\filldraw[fill=white] (-1,-10) circle (0.2);
+% draw task despachar, carregar, mover, descarregar e retornar      
+\filldraw[fill=black] (-0.2,-8) rectangle (0.2,-8.4);
+\filldraw[fill=black!20] (1.8,-8) rectangle (2.2,-8.4);
+\filldraw[fill=black!20] (3.8,-8) rectangle (4.2,-8.4);
+\filldraw[fill=black!20] (5.8,-8) rectangle (6.2,-8.4);
+\filldraw[fill=black] (7.8,-8) rectangle (8.2,-8.4);
+\filldraw[fill=white] (0,-11) circle (0.2);
+\filldraw[fill=white] (8,-10) circle (0.2);
+% draw task reserver e mover
+\filldraw[fill=black!20] (-10.2,-12) rectangle (-9.8,-12.4);
+\draw (-10,-12.7) node [text badly centered, font=\footnotesize]{reservar};
+\filldraw[fill=black!20] (-8.2,-12) rectangle (-7.8,-12.4);
+\draw (-8,-12.7) node [text badly centered, font=\footnotesize]{mover};
+% draw task mover e disponibilizar
+\filldraw[fill=black!20] (-2.2,-12) rectangle (-1.8,-12.4);
+\draw (-2,-12.7) node [text badly centered, font=\footnotesize]{mover};
+\filldraw[fill=black!20] (-0.2,-12) rectangle (0.2,-12.4);
+\draw (0,-12.7) node [text badly centered, font=\footnotesize]{disponibilizar};
+% draw task reservar e mover
+\filldraw[fill=black!20] (-1.2,-13) rectangle (-0.8,-13.4);
+\draw (-1,-13.7) node [text badly centered, font=\footnotesize]{reservar};
+\filldraw[fill=black!20] (0.8,-13) rectangle (1.2,-13.4);
+\draw (1,-13.7) node [text badly centered, font=\footnotesize]{mover};
+% draw task disponibilizar
+\filldraw[fill=black!20] (7.8,-12) rectangle (8.2,-12.4);
+\draw (8,-12.7) node [text badly centered, font=\footnotesize]{disponibilizar};
+%draw legends
+\filldraw[fill=black] (-9.2,-0.6) rectangle (-8.8,-0.2); \draw (-8,-0.4) node [text badly centered, font=\footnotesize] {Tarefas};
+\filldraw[fill=white] (-9,-1) circle (0.2); \draw (-8,-1) node [text badly centered, font=\footnotesize] {Métodos};
+\filldraw[fill=black!20] (-9.2,-1.8) rectangle (-8.8, -1.4); \draw (-8,-1.6) node [text badly centered, font=\footnotesize] {Ações};
+\end{tikzpicture}
+\end{center} %\centering 
+%\includegraphics[width=0.95\textwidth]{figuras/exemploDecomposicaoHTN} 
+\caption{Exemplo de decomposição de tarefas hierárquicas}
+\label{fig:exemploDecomposicaoHTN}
+\end{figure}
+\end{example}
+
+% --------------------------------------------------------------------------- %
+\section{O sistema de planejamento JSHOP2ip}
+\label{sec:JSHOP2}
+
+\textit{Java Simple Hierarquical Ordered Planner 2 for Instructional Planning} (JSHOP2ip) é uma versão modificada do sistema de planejamento JSHOP2  que possibilita representar condições relativas nos métodos hierárquicos.
+As condições relativas são condições que não precisam ser satisfeitas para efetuar a decomposição de uma tarefa, mas aumentam ou diminuem a aplicabilidade de um método hierárquico quando existe mais de um método que possa ser aplicado.
+
+A seguir apresentamos as características compartilhadas dos sistemas JSHOP2 e JSHOP2ip, a extensão efetuada na linguagem JSHOP2 para representar condições relativas, e finalmente apresentamos o algoritmo de planejamento JSHOP2ip.
+
+\subsection{Características dos sistemas JSHOP2 e JSHOP2ip}
+
+JSHOP2 é um sistema de planejamento hierárquico independente de domínio, desenvolvido pelo grupo de Planejamento Automatizado da Universidade de Maryland, que utiliza o caso restrito de planejamento com redes simples de tarefas \citep{ilghami2006documentation}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.55\textwidth]{figuras/JSHOP2CompileProcess} 
+  \caption{Processo de planejamento no sistema de planejamento JSHOP2}
+  \label{fig:JSHOP2CompileProcess}
+\end{figure}
+
+O sistema JSHOP2ip também apresenta o processo de planejamento mostrado na Figura \ref{fig:JSHOP2CompileProcess} que utiliza um arquivo com a descrição do \emph{domínio de planejamento} para efetuar a compilação de operadores e métodos em um planejador dependente de domínio­ de código JAVA. Então, o plano de solução a um problema planejamento é obtido pelo planejador usando um arquivo com a descrição do \emph{problema de planejamento}. A compilação em código JAVA torna mais eficiente o processo de planejamento hierárquico ao serem empregadas estruturas de dados fixas para representar operadores e métodos \citep{nau2003shop2}.
+
+O termo de chamada \textsf{(call $f$ p$_{1}$ ... p$_{n}$)} nos sistemas de planejamento efetuam chamadas de funções externas, na qual $f$ é o nome da função externa e \textsf{p$_{1}$} ... \textsf{p$_{n}$} é a lista de parâmetros da função. O termo de chamada é empregado para realizar cálculos complexos ou efetuar consultas à informação localizada externamente durante o processo de planejamento.
+
+Para efetuar a representação do domínio e problema de planejamento, o sistema JSHOP2ip apresenta uma linguagem similar à linguagem LISP, que é detalhado no Apêndice \ref{ape:formalismoJSHOP2ip}.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+(defproblem logistic-problem logistics-domain
+  ((em p1 loc1)   \textit{;; estado inicial}
+   (em p2 loc2)
+   (em t1 loc5)
+   (em t2 loc3)
+   (disponivel t1)
+   (disponivel t2))
+  ((transportar-pacotes p1 p2 loc1 loc3 loc2 loc4)))   \textit{;; rede de tarefa inicial}
+\end{jshopcode}
+\caption{Representação do problema de logística de entrega de pacotes em JSHOP2}
+\label{list:problemaPlanejamento}
+\end{figure}
+
+Usando a linguagem JSHOP2, o problema de planejamento logístico de entrega de dois pacotes apresentado no Exemplo \ref{exa:planejamentoLogistica} é representado pelas estruturas mostradas na Figura \ref{list:problemaPlanejamento}, enquanto o domínio de planejamento para o planejamento logístico de entrega de dois pacotes é mostrado na Figura \ref{list:dominioPlanejamento} com a representação de métodos e operadores dos Exemplos  \ref{exa:operadoresPlanejamento} e \ref{exa:metodoHTN}.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+(defdomain logistics-domain(
+
+   (:method (transportar-pacotes ?p1 ?p2 ?l1 ?l2 ?l3 ?l4)
+     ((disponivel ?t1)    \textit{;; precodições}
+      (disponivel ?t2))
+     (:unordered (transportar ?p1 ?t1 ?l1 ?l2)
+                (transportar ?p2 ?t2 ?l3 ?l4)))
+   
+   (:method (transportar ?p ?t ?l1 ?l2)
+     ((em ?p ?l1)
+      (em ?t ?l))
+     ((despachar ?t ?l1)
+      (!carregar ?t ?p)
+      (!mover ?t ?l ?l1)
+      (!descarregar ?t ?p)
+      (retornar ?t ?l)))
+
+   (:method (despachar ?t ?l)
+     ((em ?t ?l))
+     ((!reservar ?t))
+     
+     ((em ?t ?x))
+     ((!reservar ?t)
+      (!mover ?t ?x ?l)))
+
+    (:method (retornar ?t ?l)
+      ((em ?t ?l))
+      ((!disponibilizar ?t))
+      
+      ((em ?t ?x))
+      ((!disponibilizar ?t)
+       (!mover ?t ?x ?l)))
+
+    (:operator (!mover ?t ?x ?y)
+      ((em ?t ?x))         \textit{;; precondições}
+      ((em ?t ?x))         \textit{;; efeitos negativos}
+      ((em ?t ?y)))        \textit{;; efeitos positivos}
+    \textit{...}
+))
+\end{jshopcode}
+\caption{Representação do domínio de logística de entrega de pacotes em JSHOP2}
+\label{list:dominioPlanejamento}
+\end{figure}
+
+\newpage
+\subsection{Extensão da linguagem JSHOP2 para JSHOP2ip}
+
+A extensão da linguagem JSHOP2 ao sistema de planejamento JSHOP2ip é efetuada na representação dos métodos hierárquicos mediante a estrutura:
+
+\begin{alltt}\sffamily
+              (:method h [name\(\sb{1}\)] L\(\sb{1}\) [R\(\sb{1\sb{1}}\) R\(\sb{1\sb{2}}\) ... R\(\sb{1\sb{m\sb{1}}}\)] T\(\sb{1}\)
+                             [name\(\sb{2}\)] L\(\sb{2}\) [R\(\sb{2\sb{1}}\) R\(\sb{2\sb{2}}\) ... R\(\sb{2\sb{m\sb{2}}}\)] T\(\sb{1}\)
+                             ...
+                             [name\(\sb{n}\)] L\(\sb{n}\) [R\(\sb{n\sb{1}}\) R\(\sb{n\sb{2}}\) ... R\(\sb{n\sb{m\sb{n}}}\)] T\(\sb{n}\))
+\end{alltt}
+
+onde:
+
+\begin{itemize}
+\item \textsf{h} é o \emph{átomo de tarefa} composta;
+\item cada \textsf{name$_{i}$} é um nome opcional de cada estrutura \textsf{(L$_{i}$ [R$_{i_{1}}$ R$_{i_{2}}$ ... R$_{i_{m_{i}}}$] T$_{i}$)};
+\item cada \textsf{L$_{i}$} (pré-condição do método) é uma pré-condição lógica;
+\item cada \textsf{[R$_{i_{1}}$ R$_{i_{2}}$ ... R$_{i_{m_{i}}}$]} é uma lista de condições relativas; e
+\item cada \textsf{T$_{i}$} é uma lista de tarefas na qual o método decomposição da tarefa \textsf{h}.
+\end{itemize}
+
+As condições relativas são representadas mediante a estrutura:
+
+\begin{center}
+\textsf{(:relative a L)}
+\end{center}
+
+onde:
+
+ \begin{itemize}
+  \item \textsf{a} é um valor numérico que representa a aplicabilidade ao ser satisfeita a condição \textsf{L}; e
+  \item \textsf{L} é uma expressão lógica.
+ \end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (transportar ?p ?t ?l1 ?l2)
+     ((em ?p ?l1)
+      (em ?t ?l))
+     (:relative 2 ((tipo-motor ?t diesel)))
+     ((despachar ?t ?l1)
+      (!carregar ?t ?p)
+      (!mover ?t ?l ?l1)
+      (!descarregar ?t ?p)
+      (retornar ?t ?l)))
+      
+   (:method (transportar ?p ?t ?l1 ?l2)
+     ((em ?p ?l1)
+      (em ?t ?l))
+     (:relative -1 ((tipo-motor ?t gas)))
+     ((!carregar-gas ?t)
+      (despachar ?t ?l1)
+      (!carregar ?t ?p)
+      (!mover ?t ?l ?l1)
+      (!descarregar ?t ?p)
+      (retornar ?t ?l)))
+\end{jshopcode}
+\caption{Exemplo de representação de condições relativas}
+\label{list:relativeConditionJSHOP2}
+\end{figure}
+
+A Figura \ref{list:relativeConditionJSHOP2} mostra um exemplo de representação das condições relativas associadas  aos métodos de transportar um pacote \textsf{?p} com o transporte \textsf{?t} da localização \textsf{?l1} à localização \textsf{?l2}. Nos métodos, as condições relativas são associadas ao tipo de motor do transporte \textsf{?t} (linhas 4,14); se durante o planejamento o motor do transporte \textsf{?t} é Diesel, o valor da aplicabilidade do primeiro método é incrementado em 2; no caso em que o tipo de motor do transporte \textsf{?t} seja gás, a aplicabilidade do segundo método é diminuída em 1.
+
+\newpage
+\subsection{Algoritmo de planejamento JSHOP2ip}
+\label{subsec:JSHOP2ipPlanner}
+
+\begin{algorithm}
+\Entrada{$P=\langle s, w, D \rangle$ é o problema de planejamento, $w = (U, C)$ é a rede de tarefas inicial e $D=\langle M, O\rangle$ é o domínio de planejamento}
+\Saida{$Plan = \{ a_{1}, a_{2}, ... \}$ é uma lista de ações}
+$Plan \leftarrow \emptyset$\;
+\Enqto{$w \neq \emptyset$}{
+	$t$ é uma tarefa sem predecessores e $t$ é parte de um nó $u \in U$\;
+	\eSe{$t$ é uma tarefa primitiva}{
+		$A \leftarrow $ \{ $(a,\sigma)$: $a$ é uma instancia de um operador $o \in O$ e $\sigma$ é uma substituição que unifica $\{nome(a), t\}$ e $s$ satisfaz as precondições de $a$, $precond(a)$ \}\;
+		\lSe{$A=\emptyset$}{\Retorna{falha}\;}
+		escolha não determinística do par $(a,\sigma) \in A$\;
+		$s \leftarrow \gamma(s, a)$ \tcp*[r]{transição de estado}
+		adicionar $a$ na lista $Plan$\;
+		modificar $w$ apagando $u$ e aplicando $\sigma$\;
+	}{
+		$M_{0} \leftarrow $ \{ $(m,\sigma)$: $m$ é uma instancia de um método $m \in M$ e $\sigma$ é uma substituição $\{head(m),t\}$ e $s$ satisfaz as precondições de $m$, $precond(m)$ \}\;
+		\lSe{$M_{0}=\emptyset$}{ \Retorna{falha}\; }
+		escolha do par $(m,\sigma) \in M_{0}$ com maior valor nas condições relativas\;
+		$w \leftarrow \delta(w,u,m,\sigma)$ \tcp*[r]{decomposição da tarefa $t$ no nó $u$}	
+	}
+}
+\Retorna{$Plan$}\;
+\caption{Versão simplificada do algoritmo JSHOP2ip}
+\label{list:algorithmJSHOP2ip}
+\end{algorithm}
+
+O algoritmo de planejamento JSHOP2ip mostrado na Figura \ref{list:algorithmJSHOP2ip} é uma versão modificada do algoritmo de planejamento JSHOP2 \citep{nau2003shop2}. No algoritmo, a lista de métodos $M_{0}$ é implementada como uma fila de prioridade para simplificar a escolha do método $m$ e a substituição $\sigma$ a ser aplicados à tarefa $t$ (linha 12-14). A ordem na fila de prioridade é determinada efetuando a avaliação das condições relativas que são satisfeitas no estado corrente. Se uma condição relativa \textsf{(:relative \textit{value} \textit{condition})} é satisfeita, o valor de aplicabilidade $a_{m}$ de um método $m$ é atualizado, isto é %$a_{m}$ = $a_{m}$ + \textsf{\textit{value}}.
+
+\begin{center}
+$a_{m}$ = $a_{m}$ + \textsf{\textit{value}}.
+\end{center}
+
+\newpage
+% --------------------------------------------------------------------------- %
+\section{Considerações finais}
+
+O planejamento instrucional em ACSC apresentado no Capítulo \ref{cap:planejamentoInstrucional} consiste no desenvolvimento de unidades de aprendizagem mediante a definição de roteiros colaborativos.
+
+Neste trabalho, o processo de planejamento instrucional usando padrões de roteiros  é simplificado a uma abordagem \emph{top-down} usando unicamente padrões de roteiros colaborativos dos níveis de fluxo de aprendizagem colaborativa (macrorroteiros) e dos níveis de atividade (microrroteiros). Se efetuarmos a modelagem das estratégias de criação de elementos de roteiros usando padrões de roteiros como tarefas e métodos hierárquicos, o processo de planejamento mantém uma forte semelhança com planejamento hierárquico.
+
+\begin{figure}[htbp]
+  \centering 
+  \includegraphics[width=0.80\textwidth]{figuras/propostaPlanejamentoACSC}
+  \caption{Estratégias de criação de elementos de roteiros}
+  \label{fig:propostaPlanejamentoACSC}
+\end{figure}
+
+A Figura \ref{fig:propostaPlanejamentoACSC} mostra o processo de planejamento instrucional usando estratégias de criação de elementos de roteiros extraídas do planejamento instrucional usando padrões de roteiro.
+
+O objetivo de projetar roteiros colaborativos é possibilitar aos estudantes alcançar objetivos educacionais definidos pelos projetistas instrucionais. Assim, na modelagem de planejamento instrucional como problema de planejamento hierárquico, os operadores de planejamento utilizado na fase de edição efetuaram mudanças dos níveis de competência dos estudantes. Para isso, os operadores deveram conter informações dos objetivos educacionais a serem alcançados pelos estudantes ao término das atividades e interações. A Figura \ref{fig:propostaPlanejamentoACSC} mostra como as informação dos objetivos são incluídas nos roteiros colaborativos $r_{1}$ e $r_{2}$.
+
+\newpage
+Diferente do processo  original, a fase de configuração é efetuada antes de sua execução em um AVA para definir a seleção e sequenciamento dos recursos instrucionais de acordo com as características individuais dos participantes. Os registros do modelo de estudante relativos à estrutura social são atualizados para definir a formação de grupos e atribuição de papéis.
+Na Figura \ref{fig:propostaPlanejamentoACSC}, a configuração da estrutura social é efetuada mediante a definição do grupo $gr_{1}$ no qual os estudantes $l_{1}$ e $l_{3}$ são selecionados durante o planejamento do roteiro $r_{1}$, logo no planejamento do roteiro $r_{3}$ a estrutura social dos estudantes $l_{1}$ e $l_{3}$ é modificada mediante a atribuição dos papéis \textit{tutor} e \textit{tutee} respetivamente.
+
+Na fase de instanciação de roteiros, informações do modelo de estudante relativas ao histórico são atualizadas ao ser definidos recursos instrucionais associados às atividades e interações. A Figura \ref{fig:propostaPlanejamentoACSC} mostra como os estudantes $l_{3}$ e $l_{1}$ mudam seus registro históricos ao serem definidos os recursos $e_{1}$ e $e_{2}$ durante a interação $i_{1}$.
+
+No capítulo seguinte mostraremos como é efetuada a modelagem de planejamento instrucional em ACSC usando as considerações apresentadas nesta seção.

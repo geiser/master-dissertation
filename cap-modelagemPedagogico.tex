@@ -1,0 +1,1170 @@
+
+
+\chapter{Modelo pedagógico: Estratégias de planejamento instrucional}
+\label{cap:modelagemEstrategias}
+
+Este capítulo apresenta a modelagem das estratégias de planejamento instrucional como tarefas e métodos hierárquicos. A modelagem emprega as definições apresentadas no Capítulo 4. Assim, as estratégias de planejamento instrucional que definem a criação de elementos básicos de roteiros são apresentadas na Seção \ref{sec:elementosRoteiros}. As estratégias que definem a criação de elementos de microrroteiro e macrorroteiros colaborativos são descritas nas Seções \ref{sec:modelagemmicrorroteiro} e \ref{sec:modelagemmacrorroteiro}. Finalmente, na Seção \ref{sec:modelagemuol} apresentamos a descrição das estratégias de criação da unidades de aprendizagem.
+
+\section{Elementos básicos de roteiros colaborativos}
+\label{sec:elementosRoteiros}
+
+Nesta seção efetuamos a descrição das estratégias de planejamento instrucional empregadas na criação do serviço de conferência, objeto de aprendizagem, ambiente de apoio à aprendizagem e grupo de estudantes.
+
+\subsection{Serviço de conferência}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDConferenceService ?goals ?groups)
+      ((assign ?id (call GetUUID serv)))
+      ((!startLDElement service ((identifier ?id) (isvisible true)))
+       (createConferenceService ?goals ?groups)
+       (!endLDElement service)))
+   
+   (:method (createConferenceService ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (length ?nroLearners ?learners)
+       (filterByQuery ?introverts ?learners
+                      ((property hasPersonality introversion)))
+       (length ?nroIntroverts ?introverts)
+       (call > ?nroIntroverts (call / ?nroLearners 2)))
+      ((createLDAsynchronousConference ?goals ?groups))
+      \textit{;; fall-back}
+      ()
+      ((createLDSynchronousConference ?goals ?groups)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação de um serviço de conferência}
+\label{list:createLDConferenceService}
+\end{figure}
+
+\newpage
+A Figura \ref{list:createLDConferenceService} mostra a representação da estratégia de criação de um serviço de conferência, definida como um elemento <service> (linhas 3, 5).
+A tarefa \textsf{createConferenceService} (linhas 7-17) avalia os registros de preferência dos estudantes (linhas 8-13), de modo que se a maioria dos estudantes são introvertidos é efetuada a criação de uma conferência assíncrona mediante à tarefa \textsf{createLDAsynchronousConference} (linha 14). Caso contrario é efetuada a criação de uma conferência síncrona mediante à tarefa \textsf{createLDSynchronousConference} (linha 17).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   \textit{;; mandatory}
+   (:method (createLDAsynchronousConference! ?goals ?groups)
+      ((getElement ?e ((class CurrentLDElement)))
+       (getPropertyValue ?u ?e hasCurrentUoL)
+       (buildPropertyQuery ?tmpQuery hasGoal ?goals
+                           ((class Service)
+                            (property hasCurrentUoL ?u)
+                            (property hasType asynchronous)))
+       (buildPropertyQuery ?query hasParticipant ?learners ?tmpQuery)
+       (getElement ?service ?query))
+      ((!startLDElement conference ((conference-type asynchronous)))
+       (createLDTitle (Asynchronous Conference) ?goals)
+       (!startLDElement participant ((role-ref role-learner)))
+       (!endLDElement participant)
+       (createLDItem ?service)
+       (!endLDElement conference)))
+
+   \textit{;; fall-back}
+   (:method (createLDAsynchronousConference ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (getElement ?e ((class CurrentLDElement)))
+       (getPropertyValue ?u ?e hasCurrentUoL)
+       (buildPropertyQuery ?tmpQuery hasGoal ?goals
+                           ((class Service)
+                            (property hasCurrentUoL ?u)
+                            (property hasType asynchronous)))
+       (buildPropertyQuery ?query hasParticipant ?learners ?tmpQuery)
+       (assign ?service (call BuildElement ?query)))
+      ((!startLDElement conference ((conference-type asynchronous)))
+       (createLDTitle (Asynchronous Conference) ?goals)
+       (!startLDElement participant ((role-ref role-learner)))
+       (!endLDElement participant)
+       (createLDItem ?service)
+       (!endLDElement conference)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação de um serviço de conferência assíncrona}
+\label{list:createLDAsynchronousConference}
+\end{figure}
+
+A Figura \ref{list:createLDAsynchronousConference} mostra a estratégia de criação de uma conferência assíncrona que define elementos <conference> (linhas 11, 16, 29, 34). O método \textit{mandatory} (linhas 2-16) efetua a busca de um serviço de apoio à aprendizagem (\textsf{Service}) de tipo assíncrono (\textsf{asynchronous}) (linhas 6-10). Enquanto, o método \textit{fall-back} (linhas 19-34) efetua a construção de um serviço de apoio à aprendizagem mediante o termo de chamada \textsf{(call BuildElement ?query)} (linha 28).
+
+\newpage
+\subsection{Objeto de aprendizagem}
+
+A estratégia de criação de um objeto de aprendizagem é representada mediante as tarefas e métodos hierárquicos mostrados na Figura \ref{list:createLearningObject}. O método  \textsf{\textit{fall-back}} (linhas 12-27) efetua a definição do elemento <learning-object> (linhas 14,18) e mediante à tarefa \textsf{createLearningObject} (linha 17)  efetua inserção de um elemento de conhecimento \textsf{?aux} (linha 22) relativo à competência cognitiva \textsf{?c} utilizando a tarefa \textsf{createLDItem} (linha 26).
+
+Enquanto, o método \textsf{\textit{mandatory}} (linhas 2-9) não efetua a definição de nenhum elemento de roteiro alterando unicamente o registro histórico do modelo de estudante utilizando a tarefa \textsf{!!addInWorldStateAsAlreadySeen} (linha 9). O método não efetua a criação de nenhum elemento devido a que um elemento de conhecimento relativo à competência \textsf{?c} foi inserido anteriormente no ambiente de apoio à aprendizagem corrente \textsf{?e} (linhas 3-7).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   \textit{;; mandatory}
+   (:method (createLDLearningObject! (?c ?l) ?learners)
+      ((getElement ?e ((class CurrentLDElement)))
+       (getRelateds ?lobjects (?e) 1 inverseIsPartOf
+                    ((class LearningObject)
+                     (property hasCompetency ?c)))
+       (different ?lobjects ())
+       (getPropertyValues ?auxs ?lobjects hasKnowledge))
+      ((!!addInWorldStateAsAlreadySeen ?auxs ?learners)))
+   
+   \textit{;; fall-back}
+   (:method (createLDLearningObject ?goal ?learners)
+      ((assign ?id (call GetUUID lo)))
+      ((!startLDElement learning-object ((identifier ?id))
+                        ((LearningObject) ?id (?goal) (?learners)))
+       (createLDTitle (LearningObject) (?goal))
+       (createLearningObject ?goal ?learners)
+       (!endLDElement learning-object ?id)))
+   
+   (:method (createLearningObject (?c ?l) ?learners)
+      ((hasKnowledgeType ?c Auxiliary)
+       (getPropertyValue ?aux ?c hasKnowledge)
+       (getRelateds ?variants (?aux) -1 isVariantOf
+                    ((class Auxiliary)
+                     (property hasLearningObjective ?c ?l))))
+      ((createLDItem ?aux ?learners)
+       (distributeItem ?variants ?learners)))
+       
+   (:method (distributeLearningObject () ()) () ())
+   (:method (distributeLearningObject (?goal . ?goals) (?group . ?groups))
+      ()
+      ((createLDLearningObject ?goal ?group)
+       (distributeLearningObject ?goals ?groups)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação de um objeto de aprendizagem}
+\label{list:createLearningObject}
+\end{figure}
+
+Finalmente, o método de decomposição distributiva \textsf{distributeLearningObject} (linhas 29-33) efetua a criação consecutiva de um conjunto de objeto de aprendizagem por cada objetivo educacional \textsf{?goals} (linhas 32-33).
+
+\subsection{Ambiente de apoio à aprendizagem}
+
+A estratégia de criação de um ambiente de apoio à aprendizagem é representada mediante o conjunto de tarefas e métodos hierárquicos mostrados na Figura \ref{list:createLDEnvironment} que efetuam a definição de um elemento <environment> (linha 4,8).
+A tarefa \textsf{createEnvironment} (linha 7) define o ambiente de apoio à aprendizagem como um conjunto de objetos de aprendizagem definidos pela tarefa \textsf{distributeLearningObject} (linhas 13) e um serviço de conferência definido pela tarefa \textsf{createLDConferenceService} (linha 14).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDEnvironment ?goals ?groups)
+      ((assign ?id (call GetUUID env)))
+      ((!startLDElement environment-ref ((ref ?id)))
+       (!startLDElement environment ((identifier ?id))
+                        ((Environment) ?id ?goals ?groups))
+       (createLDTitle (Environment) ?goals)
+       (createEnvironment ?goals ?groups)
+       (!endLDElement environment ?id)
+       (!endLDElement environment-ref)))
+   
+   (:method (createEnvironment ?goals ?groups)
+      ()
+      ((distributeLearningObject ?goals ?groups)
+       (createLDConferenceService ?goals ?groups)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação de um ambiente de apoio à aprendizagem}
+\label{list:createLDEnvironment}
+\end{figure}
+
+\subsection{Grupo de estudantes}
+
+As tarefas e métodos hierárquicos mostrados na Figura \ref{list:createLDGroup} representam a estratégia de criação de um grupo de estudantes no que a tarefa \textsf{createLDGroup} efetua a definição de elementos <role-ref> (linhas 12-13, 19,25).
+
+O método \textsf{\textit{mandatory}} (linhas 2-13) efetua a busca de um grupo de estudantes definido na unidade de aprendizagem corrente \textsf{?u} (linha 5) para todos os membros do grupo \textsf{?group} (linhas 3,6,10-11). Enquanto, o método \textsf{\textit{fall-back}} (linhas 16-25) efetua a criação de um novo grupo de estudantes mediante a definição do elemento <learner> (linhas 20,24). No método \textsf{\textit{fall-back}}, a tarefa \textsf{addUsersToGroup} (linhas 29) define a formação do grupo, e a tarefa \textsf{createLDInformation} (linha 30) define a inclusão de recursos instrucionais utilizando perfis de estudantes.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   \textit{;; mandatory}
+   (:method (createLDGroup! ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (getElement ?e ((class CurrentLDElement)))
+       (getPropertyValue ?u ?e hasCurrentUoL)
+       (buildPropertyQuery ?query hasParticipant ?learners
+                           ((class Group)
+                            (property hasCurrentUoL ?u)))
+       (getElement ?id ?query)
+       (forall (?l) ((exist ?l ?learners))
+               ((getPropertyValue ?id ?l hasGroup))))
+      ((!startLDElement role-ref ((ref ?id)))
+       (!endLDElement role-ref)))
+   
+   \textit{;; fall-back}
+   (:method (createLDGroup ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (assign ?id (call GetUUID group)))
+      ((!startLDElement role-ref ((ref ?id)))
+       (!startLDElement learner ((identifier ?id))
+                        ((Group) ?id () (?learners)))
+       (createLDTitle (Group) ())
+       (createGroup ?id ?learners)
+       (!endLDElement learner ?id)
+       (!endLDElement role-ref)))
+   
+   (:method (createGroup ?group ?learners)
+      ()
+      ((addUsersToGroup ?learners ?group)
+       (createLDInformation ?group ?learners)))
+   
+   (:method (createLDInformation ?group ?learners)
+      ()
+      ((!startLDElement information)
+       (distributeItem ?learners)
+       (!endLDElement information)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação de um grupo de estudantes}
+\label{list:createLDGroup}
+\end{figure}
+
+\newpage
+\section{Microrroteiros: Cenários colaborativos}
+\label{sec:modelagemmicrorroteiro}
+
+As tarefas e métodos hierárquicos definidos a seguir representam estratégias de planejamento instrucional que definem a criação dos elementos de microrroteiros colaborativos: eventos IL, fluxo de interações cíclicas e direcionadas, padrões de interação, papéis dos estudantes, estratégias de aprendizagem, fases e cenários colaborativos.
+As estratégias são apresentadas como esquemas de roteiros que definem a abstração de um conjunto de estratégias. Os termos em itálico nos esquemas são substituídos por termos constante para representar uma estratégia específica, assim, utilizando esses esquemas na Subseção \ref{subsec:exemploModelagemMicroroteiros} apresentamos exemplos da modelagem.
+
+\subsection{Eventos IL}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLD\textit{Name}ILEvent ?goals ?groups)
+      ((assign ?id (call GetUUID la)))
+      ((!startLDElement learning-activity-ref ((ref ?id)))
+       (startLDElement! learning-activity ((identifier ?id))
+                        ((\textit{Name} ILEvent) ?id ?goals ?groups))
+       (createLDTitle (\textit{Name} ILEvent) ?goals)
+       (create\textit{Name}ILEvent ?goals ?groups)
+       (!endLDElement learning-activity ?id)
+       (!endLDElement learning-activity-ref)))
+    
+   (:method (create\textit{Name}ILEvent ?goals ?groups)
+      ()
+      ((create\textit{Name}ILEvent! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (create\textit{Name}ILEvent! ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (getElement ?e ((class CurrentLDElement)))
+       (getPropertyValue ?u ?e hasCurrentUoL)
+       (getRelateds ?interactions (?e) -1 isPartOf
+                    ((class Interactions)
+                     (property hasCurrentUoL ?u)))
+       (buildPropertyQuery ?tmpQuery hasGoal ?goals
+                           ((class InteractionEnvironment)
+                            (property hasCurrentUoL ?u)))
+       (buildPropertyQuery ?query hasParticipant ?learners ?tmpQuery)
+       (getRelateds ?environments ?interactions 1 inverseIsPartOf ?query)
+       (different ?environments ()))
+      ((createLD\textit{Name}ILEventDescription ?goals ?groups)))
+   
+   \textit{;; fall-back}
+   (:method (create\textit{Name}ILEvent ?goals ?groups)
+      ()
+      ((createLD\textit{Name}ILEnvironment ?goals ?groups)
+       (createLD\textit{Name}ILEventDescription ?goals ?groups)))
+\end{jshopcode}
+\caption{Esquema de representação de estratégias de criação de eventos IL}
+\label{list:ILEventJShop2}
+\end{figure}
+
+As estratégias de criação de eventos IL são representadas usando o esquema da Figura \ref{list:ILEventJShop2} que efetua a definição de elementos <learning-activity> (linhas 4,8). No esquema, os benefícios educacionais são definidos pela tarefa \textsf{startLDElement!} (linha 4), as ações a serem efetuadas pelos participantes são definidas pela tarefa \textsf{createLD\textit{Name}ILEventDescription} (linha 35) e os objetos de aprendizagem com serviços a serem empregados durante a execução das ações são definidos pela tarefa \textsf{createLD\textit{Name}ILEnvironment} (linha 35).
+
+Se o resultado da busca de ambientes de apoio à aprendizagem no padrão de interação corrente (linhas 20-22, 27) com objetivos educacionais \textsf{?goals} e participantes \textsf{?learners} (linhas 23, 26) é diferente de vazio (linha 28), então o método \textsf{\textit{mandatory}} (linhas 16-29) de criação do evento é definida como ações pela tarefa \textsf{createLD\textit{Name}ILEventDescription} (linha 29).
+
+\subsubsection{Ações nos eventos IL}
+
+As estratégias de criação de ações nos eventos IL são representadas mediante o esquema da Figura \ref{list:ILEventDescriptionJShop2} que efetua a definição do elemento <activity-description> (linha 3,6). O método \textsf{\textit{mandatory}} (linhas 13-19) efetua a seleção de ações definidas no modelo de domínio. Enquanto, o método \textsf{\textit{fall-back}} (linhas 22-28) efetua a criação de ações a serem editadas.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+(:method (createLD\textit{Name}ILEventDescription ?goals ?groups)
+      ()
+      ((!startLDElement activity-description)
+       (createLDTitle (\textit{Name} ILEventDescription) ?goals)
+       (create\textit{Name}ILEventDescription ?goals ?groups)
+       (!endLDElement activity-description)))
+   
+   (:method (create\textit{Name}ILEventDescription ?goals ?groups)
+      ()
+      ((create\textit{Name}ILEventDescription! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (create\textit{Name}ILEventDescription! ?goals (?instructors ?learners))
+      ((getElement ?iaction ((class \textit{InstructionalAction})
+                             (class ILEventDescription)))
+       (getElement ?laction ((class \textit{LearningAction})
+                             (class ILEventDescription))))
+      ((createLDInstructItem ?iaction ?instructors)
+       (createLDLearningItem ?laction ?learners)))
+   
+   \textit{;; fall-back}
+   (:method (create\textit{Name}ILEventDescription ?goals (?instructors ?learners))
+      ((assign ?iaction (call BuildElement ((class \textit{InstructionalAction})
+                                            (class ILEventDescription))))
+       (assign ?laction (call BuildElement ((class \textit{LearningAction})
+                                            (class ILEventDescription)))))
+      ((createLDInstructItem ?iaction ?instructors)
+       (createLDLearningItem ?laction ?learners)))
+\end{jshopcode}
+\caption{Esquema de representação das estratégias de criação de ações associadas aos eventos IL}
+\label{list:ILEventDescriptionJShop2}
+\end{figure}
+
+O evento instrucional é associado à ação \textsf{\textit{InstrucionalAction}} (linhas 14, 23) mediante a tarefa \textsf{createLDInstructItem} (linhas 18, 27). Enquanto, o evento de aprendizagem é associado à ação \textsf{\textit{LearningAction}} (linhas 16, 25) mediante a tarefa \textsf{createLDLearningItem} (linhas 19, 28).
+
+\newpage
+\subsubsection{Ambiente de apoio à aprendizagem associados aos eventos IL}
+
+A estratégia de criação de ambiente de apoio à aprendizagem associado aos eventos IL é definida mediante o esquema da Figura \ref{list:ILEnvironmentJShop2} que efetuam a definição de elementos <environment> (linha 4,8) (linha 8).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLD\textit{Name}ILEnvironment ?goals ?groups)
+      ((assign ?id (call GetUUID env)))
+      ((!startLDElement environment-ref ((ref ?id)))
+       (!startLDElement environment ((identifier ?id))
+                        ((\textit{Name} ILEnvironment) ?id ?goals ?groups))
+       (createLDTitle (\textit{Name} ILEnvironment) ?goals)
+       (createEnvironment ?goals ?groups)
+       (!endLDElement environment ?id)
+       (!endLDElement environment-ref)))
+\end{jshopcode}
+\caption{Esquema de representação das estratégias de criação de ambiente de apoio à aprendizagem}
+\label{list:ILEnvironmentJShop2}
+\end{figure}
+
+
+\subsection{Fluxo de interações direcionadas e cíclicas}
+\label{subsec:cycleDirectInteraction}
+
+As estratégias de criação de um fluxo de interações direcionadas e cíclicas são representadas mediante o esquema da Figura \ref{list:InteractionJShop2}, no que o fluxo de interações são definidos como elementos <activity-structure> (linha 4,9).
+
+A criação de um fluxo de interações consiste na definição de eventos IL \textsf{\textit{EName$_{1}$}, ..., \textit{EName$_{n}$}} (linhas 30-32, 41-43), e interações direcionadas ou cíclicas \textsf{\textit{IName$_{1}$}, ..., \textit{IName$_{n}$}} (linhas 33-35, 44-46). O tipo de relação entre os eventos IL e outras interações é definida na tarefa \textsf{startLDElement!} (linha 4-5) mediante o atributo ``\textsf{structure-type}'' que define se a relação é cíclica (\textsf{selection}) ou direcionada (\textsf{sequence}) (linha 5).
+
+Os ambientes de apoio à aprendizagem associado ao fluxo de interações direcionadas e cíclicas são definidas pela tarefa \textsf{createLD\textit{Name}InteractionEnvironment} (linha 40). A criação do ambiente está sujeita ao método \textsf{\textit{mandatory}} (linhas 17-33) que evita sua construção, se já existe um ambiente definido por outro fluxo de interação superior no que é definido o fluxo de interação (linhas 19-29).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLD\textit{Name}Interactions ?goals ?groups)
+      ((assign ?id (call GetUUID as)))
+      ((!startLDElement activity-structure-ref ((ref ?id)))
+       (startLDElement! activity-structure ((identifier ?id)
+                                            (structure-type \textit{sequence}/\textit{selection}))
+               ((\textit{Name} Interactions) ?id ?goals ?groups))
+       (createLDTitle (\textit{Name} Interactions) ?goals)
+       (create\textit{Name}Interactions ?goals ?groups)
+       (!endLDElement activity-structure ?id)
+       (!endLDElement activity-structure-ref)))
+   
+   (:method (create\textit{Name}Interactions ?goals ?groups)
+      ()
+      ((create\textit{Name}Interactions! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (create\textit{Name}Interactions! ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (getElement ?e ((class CurrentLDElement)))
+       (getPropertyValue ?u ?e hasCurrentUoL)
+       (getRelateds ?interactions (?e) -1 isPartOf
+                    ((class Interactions)
+                     (property hasCurrentUoL ?u)))
+       (buildPropertyQuery ?tmpQuery hasGoal ?goals
+                           ((class InteractionEnvironment)
+                            (property hasCurrentUoL ?u)))
+       (buildPropertyQuery ?query hasParticipant ?learners ?tmpQuery)
+       (getRelateds ?environments ?interactions 1 inverseIsPartOf ?query)
+       (different ?environments ()))
+      ((createLD\textit{EName$_{1}$}ILEvent ?goals ?groups)
+       . . .
+       (createLD\textit{EName$_{n}$}ILEvent ?goals ?groups)
+       (createLD\textit{IName$_{1}$}Interactions ?goals ?groups)
+       . . .
+       (createLD\textit{IName$_{m}$}Interactions ?goals ?groups)))
+   
+   \textit{;; fall-back}
+   (:method (create\textit{Name}Interactions ?goals ?groups)
+      ()
+      ((createLD\textit{Name}InteractionEnvironment ?goals ?groups)
+       (createLD\textit{EName$_{1}$}ILEvent ?goals ?groups)
+       . . .
+       (createLD\textit{EName$_{n}$}ILEvent ?goals ?groups)
+       (createLD\textit{IName$_{1}$}Interactions ?goals ?groups)
+       . . .
+       (createLD\textit{IName$_{m}$}Interactions ?goals ?groups)))
+\end{jshopcode}
+\caption{Esquema de representação da estratégia de criação de um fluxo de interações}
+\label{list:InteractionJShop2}
+\end{figure}
+
+\newpage
+\subsection{Padrões de interação}
+\label{subsec:interactionPattern}
+
+
+A Figura \ref{list:interactionJShop2} mostra o esquema de tarefas e métodos hierárquicos utilizados para representar a estratégia de criação dos padrões de interação mediante a definição de elementos <activity-structure> (linha 8,13).
+A tarefa \textsf{create\textit{Name}Interactions} é definida mediante uma sequência de eventos IL ou fluxos de interações direcionadas e cíclicas (linhas 20-23). Além de eventos IL e fluxos de interações direcionadas e cíclicas, a tarefa define a criação de um ambiente de apoio à aprendizagem com os objetos de aprendizagem e serviços necessários (linha 19).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLD\textit{Name}Interactions ?goals ?groups)
+      ((getElement ?e ((class CurrentLDElement)))
+       (getRelateds ?strategies (?e) 1 inverseIsPartOf
+                    ((class Strategy)))
+       (assign ?id (call GetUUID as)))
+      ((!!changeCurrentLDElement ?strategies)
+       (!startLDElement activity-structure-ref ((ref ?id)))
+       (startLDElement! activity-structure ((identifier ?id)
+                                            (structure-type selection))
+                        ((\textit{Name} Interactions) ?id ?goals ?groups))
+       (createLDTitle (\textit{Name} Interactions) ?goals)
+       (create\textit{Name}Interactions ?goals ?groups)
+       (!endLDElement activity-structure ?id)
+       (!endLDElement activity-structure-ref)
+       (!!changeCurrentLDElement (?e))))
+   
+   (:method (create\textit{Name}Interactions ?goals ?groups)
+      ()
+      ((createLD\textit{Name}InteractionEnvironment ?goals ?groups)
+       . . .
+       (createLD\textit{EName$_{i}$}ILEvent ?goals ?groups)
+       . . .
+       (createLD\textit{IName$_{j}$}Interactions ?goals ?groups)))
+\end{jshopcode}
+\caption{Esquema de representação da estratégia de criação de padrões de interação}
+\label{list:interactionJShop2}
+\end{figure}
+
+
+O padrão de interação é definido como parte de estratégias de aprendizagem de um cenário, para isso, empregamos a tarefa \textsf{!!changeCurrentLDElement} (linhas 6,15) que é efetuada antes e depois da construção da estrutura de atividades (linhas 8,13).
+
+\subsection{Papéis dos estudantes}
+\label{subsec:learningRole}
+
+A Figura \ref{list:roleJShop2} mostra o esquema de tarefas e métodos hierárquicos empregados para representar  a estratégia de criação dos papéis dos estudantes definidos como elementos <role-ref> (linhas 17, 18, 24, 30).
+O método \textsf{\textit{mandatory}} (linhas 6-18) efetua a busca de um papel previamente definido na unidade de aprendizagem corrente para todos os estudantes. Enquanto, o método \textsf{\textit{fall-back}} (linhas 21-30) efetua a construção de um novo papel mediante a definição do elemento <learner> (linhas 25, 29).
+
+\newpage
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLD\textit{Name}Role ?goals ?groups)
+      ()
+      ((createLD\textit{Name}Role! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (createLD\textit{Name}Role! ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (getElement ?e ((class CurrentLDElement)))
+       (getPropertyValue ?u ?e hasCurrentUoL)
+       (buildPropertyQuery ?query hasParticipant ?learners
+                           ((class Role)
+                            (class \textit{Name})
+                            (property hasCurrentUoL ?u)))
+       (getElement ?id ?query)
+       (forall (?l) ((exist ?l ?learners))
+               ((getPropertyValue ?id ?l hasRole))))
+      ((!startLDElement role-ref ((ref ?id)))
+       (!endLDElement role-ref)))
+   
+   \textit{;; fall-back}
+   (:method (createLD\textit{Name}Role ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (assign ?id (call GetUUID role)))
+      ((!startLDElement role-ref ((ref ?id)))
+       (!startLDElement learner ((identifier ?id))
+            ((\textit{Name} \textit{Instructional/Learning} Role) ?id () (?learners)))
+       (createLDTitle (\textit{Name} Role) ())
+       (create\textit{Name}Role ?id ?learners)
+       (!endLDElement learner ?id)
+       (!endLDElement role-ref)))
+   
+   (:method (create\textit{Name}Role ?role ?learners)
+      ()
+      ((addUsersToRole ?learners ?role)
+       (createLD\textit{Name}Information ?role ?learners)))
+\end{jshopcode}
+\caption{Esquema de representação das estratégia de criação de papéis}
+\label{list:roleJShop2}
+\end{figure}
+
+A definição do papel instrucional (\textsf{Instructional}) ou de aprendizagem (\textsf{Learning}) é efetuada no metadado da tarefa \textsf{!startLDElement} (linha 26). A tarefa \textsf{create\textit{Name}Role} (linha 28) efetua a atribuição do papel ao conjunto de estudantes mediante a tarefa \textsf{addUsersToRole} (linha 34). A definição de informações é efetuada mediante a tarefa \textsf{createLD\textit{Name}Information} (linha 35).
+
+\subsection{Estratégias de aprendizagem}
+
+O esquema mostrado na Figura \ref{list:learningStrategyJShop2} é utilizado para representar a criação de estratégias de aprendizagem definidas como elementos <role-ref> (linhas 3,7). Assim, o método \textsf{create\textit{Name}Strategy} (linhas 9-12) efetua a criação da estratégia de aprendizagem como: a construção de um papel do estudante mediante a tarefa \textsf{createLD\textit{RName}Role} (linha 11), e a construção do padrão de interação mediante a tarefa \textsf{createLD\textit{RName}Interactions} (linha 12).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLD\textit{Name}Strategy ?goals ?groups)
+      ((assign ?id (call GetUUID rp)))
+      ((!startLDElement role-part ((identifier ?id))
+            ((\textit{Name} Strategy) ?id () ?groups))
+       (createLDTitle (\textit{Name} Strategy) ?goals)
+       (create\textit{Name}Strategy ?goals ?groups)
+       (!endLDElement role-part ?id)))
+   
+   (:method (create\textit{Name}Strategy ?goals ?groups)
+      ()
+      ((createLD\textit{RName}Role ?goals ?groups)
+       (createLD\textit{RName}Interactions ?goals ?groups)))
+   
+   (:method (createLD\textit{RName}Interactions ?goals ?groups)
+      ((getElement ?as ((class CurrentLDInteractions))))
+      ((!startLDElement activity-structure-ref ((ref ?as)))
+       (!endLDElement activity-structure-ref)))
+\end{jshopcode}
+\caption{Esquema de representação das estratégias de criação de estratégias de aprendizagem}
+\label{list:learningStrategyJShop2}
+\end{figure}
+
+\subsection{Fases nos cenários colaborativos}
+\label{subsec:CLPhase}
+
+
+O esquema de tarefas e métodos hierárquicos mostrado na Figura \ref{list:clPhaseJShop2} é utilizado para representar a criação das fases nos cenários colaborativos, as quais são definidas como elementos <act> (linha 4,10).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+(:method (createLD\textit{Name}Phase ?goals ?groups)
+   ((assign ?id (call GetUUID act))
+    (assing ?as (call GetUUID as)))
+   ((!startLDElement act ((identifier ?id))
+         ((\textit{Name} Phase) ?id ?goals ?groups))
+    (createLDTitle (\textit{Name} Phase) ?goals)
+    (!!addInWorldState (class CurrentLDInteractions ?as))
+    (create\textit{Name}Phase ?goals ?groups)
+    (!!removeFromWorldState (class CurrentLDInteractions ?as))
+    (!endLDElement act ?id)))
+   
+(:method (create\textit{Name}Phase (?$g_{1}$ ?$g_{2}$) (?$l_{1}$ ?$l_{2}$))
+   ()
+   ((createLD\textit{SName$_{1}$}Strategy (?$g_{1}$) (?$l_{1}$))
+    (createLD\textit{SName$_{2}$}Strategy (?$g_{2}$) (?$l_{2}$))
+    (createLD\textit{Name}Interactions (?$g_{1}$ ?$g_{2}$) (?$l_{1}$ ?$l_{2}$))))
+\end{jshopcode}
+\caption{Esquema de representação das estratégias de criação de fases nos cenários colaborativos}
+\label{list:clPhaseJShop2}
+\end{figure}
+
+O método \textsf{create\textit{Name}Phase} (linhas 12-16) consiste na definição de estratégias \textsf{\textit{SName$_{1}$}} e  \textsf{\textit{SName$_{2}$}} (linhas 14-15) mediante tarefas \textsf{create\textit{SName$_{1}$}Strategy} e a definição de um padrão de interação mediante a tarefa \textsf{createLD\textit{Name}Interactions} (linha 16). O uso da tarefa \textsf{!!addInWorldState} (linhas 7, 9) efetua a definição de \textsf{?as} como o identificador do padrão de interação associado às estratégias.
+
+\subsection{Cenários colaborativos}
+
+O esquema de tarefas e métodos hierárquicos mostrados na Figura \ref{list:LDCLScenarioJShop2} é utilizado para representar as estratégias de criação de cenários colaborativos, os quais são definidos como elementos <play> (linhas 8,12, 33,38).
+O método \textsf{\textit{fall-back}} (linhas 6-12) efetua a criação do cenário colaborativo no caso de que as competências dos objetivos educacionais sejam relativas a elementos de conhecimento de tipo auxiliar. Enquanto, o método \textsf{\textit{fall-back}} (linhas 15-38) efetua a criação do cenário colaborativo no caso de que a competência \textsf{?c} dos objetivos seja relativa a um elementos de conhecimento de tipo fundamental.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLD\textit{Name}CLScenario ?goals ?groups)
+      ()
+      ((createLD\textit{Name}CLScenario! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (createLD\textit{Name}CLScenario! ?goals ?groups)
+      ((assign ?id (call GetUUID play)))
+      ((!startLDElement play ((identifier ?id))
+                        ((\textit{Name} CLScenario) ?id ?goals ?groups))
+       (createLDTitle (\textit{Name} CLScenario) ?goals)
+       (create\textit{Name}CLScenario ?goals ?groups)
+       (!endLDElement play ?id)))
+   
+   \textit{;; fall-back}
+   (:method (createLD\textit{Name}CLScenario ((?c ?l$_{1}$) ... (?c ?l$_{n}$)) (?g$_{1}$ ... ?g$_{n}$))
+      ((hasKnowledgeType ?c Fundamental)
+       (or (equivalent (slevel$_{1}$ klevel$_{1}$) ?l$_{1}$)
+           . . .
+           (equivalent (slevel$_{m_{1}}$ klevel$_{m_{1}}$) ?l$_{1}$))
+       . . .
+       (or (equivalent (slevel$_{1}$ klevel$_{1}$) ?l$_{n}$)
+           . . .
+           (equivalent (slevel$_{m_{n}}$ klevel$_{m_{n}}$) ?l$_{n}$))
+       \textit{;; get goals}
+       . . .
+       (getLearnerPropertyQuery ?tmpq$_{n}$ ?c ?g$_{n}$)
+       (buildPropertyQuery ?q$_{n}$ hasLearningResourceType ?types
+                           ((class Auxiliary)
+                            (property hasLearningObjective ?c ?l$_{n}$) . ?tmpq$_{n}$))
+       (getOrBuildReadyAux ?aux$_{n}$ ?q$_{n}$ ?g$_{n}$)
+       (getGoalFromAuxiliary ?goal$_{n}$ ?aux$_{n}$ ?c ?l$_{n}$)
+       (assign ?id (call GetUUID play)))
+      ((!startLDElement play ((identifier ?id))
+               ((\textit{Name} CLScenario) ?id (?goal$_{1}$ ... ?goal$_{n}$) (?g$_{1}$ ... ?g$_{n}$)))
+       (!!changeFundCompetency ?c)
+       (createLDTitle (\textit{Name} CLScenario) (?goal$_{1}$ ... ?goal$_{n}$))
+       (create\textit{Name}CLScenario (?goal$_{1}$ ... ?goal$_{n}$) (?g$_{1}$ ... ?g$_{n}$))
+       (!endLDElement play ?id)))
+\end{jshopcode}
+\caption{Esquema de representação das estratégias de criação de cenários colaborativos}
+\label{list:LDCLScenarioJShop2}
+\end{figure}
+
+\newpage
+O método \textsf{fall-back} efetua a busca ou criação de elementos de conhecimento de tipo auxiliar \textsf{?aux$_{1}$} ...  \textsf{?aux$_{n}$} (linhas 24-30) que satisfazem as características individuais dos grupos de estudantes \textsf{?g$_{1}$} .. \textsf{?g$_{n}$} (linha 26), tipos de recurso instrucional \textsf{?types} (linhas 27) e objetivos de aprendizagem  (linha 29). Efetuada a obtenção dos elementos de tipo auxiliar é efetuada a obtenção dos objetivos educacionais \textsf{goal$_{1}$} ... \textsf{?goal$_{n}$} mediante o axioma \textsf{getGoalFromAuxiliary} (linha 31), efetuando a definição das fases na tarefa \textsf{create\textit{Name}CLScenario}.
+
+Antes de efetuar a definição das fases no cenário utilizamos o operador \textsf{!!changeFundCompetency} (linha 35) para alterar o valor da competência fundamental no elemento de roteiro corrente. Outra característica dos métodos de decomposição das tarefas \textsf{createLD\textit{Name}CLScenario} e \textsf{create\textit{Name}CLScenario} são as restrições de níveis de competência definidas mediante axiomas \textsf{equivalent} que avaliam os níveis de competência definidos nos objetivos.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (create\textit{Name}CLScenario ((?c ?l$_{1}$) ... (?c ?l$_{n}$)) (?g$_{1}$ ... ?g$_{n}$))
+      ((hasKnowledgeType ?fc Auxiliary)
+       (or (equivalent (slevel$_{1}$ klevel$_{1}$) ?l$_{1}$)
+           . . .
+           (equivalent (slevel$_{m_{1}}$ klevel$_{m_{1}}$) ?l$_{1}$))
+       . . .
+       (hasKnowledgeType ?pc Auxiliary)
+       (or (equivalent (slevel$_{1}$ klevel$_{1}$) ?l$_{n}$)
+           . . .
+           (equivalent (slevel$_{m_{n}}$ klevel$_{m_{n}}$) ?l$_{n}$))
+       \textit{;; get fund comp}
+       (getElement ?e ((class CurrentLDElement)))
+       (getPropertyValue ?c ?e hasFundCompetency)
+       (getCurrentLearningResourceType ?types)
+       \textit{;; get goals}
+       . . .
+       (getLearnerPropertyQuery ?tmpq$_{i}$ ?c ?g$_{i}$)
+       (getLevel ?level$_{i}$ (?slevel$_{i}$ ?klevel$_{i}$) )
+       (buildPropertyQuery ?q$_{i}$ hasLearningResourceType ?types
+                           ((class Auxiliary)
+                            (property hasLearningObjective ?c ?level$_{i}$) . ?tmpq$_{i}$))
+       (getOrBuildReadyAux ?aux$_{i}$ ?q$_{i}$ ?g$_{i}$)
+       (getGoalFromAuxiliary ?goal$_{i}$ ?aux$_{i}$ ?c ?level$_{i}$))
+      ((createLD\textit{Name}Phase (?goal$_{1}$ ?goal$_{2}$) (?g$_{1}$ ?g$_{2}$))
+       . . .
+       (createLD\textit{Name}Phase (?goal$_{k-1}$ ?goal$_{k}$) (?g$_{k-1}$ ?g$_{k}$))))
+\end{jshopcode}
+\caption{Esquema de representação dos métodos associados à tarefa \textsf{create\textit{Name}CLScenario}}
+\label{list:CLScenarioJShop2}
+\end{figure}
+
+Os métodos hierárquicos associados à tarefa \textsf{create\textit{Name}CLScenario} utilizam o esquema da Figura \ref{list:CLScenarioJShop2} para definir as fases do cenário colaborativo como um conjunto de tarefas \textsf{createLD\textit{Name}Phase} (linhas 24-26), detalhada na subseção \ref{subsec:CLPhase}. Os objetivos educacionais \textsf{?goal$_{1}$} ... \textsf{?goal$_{k}$} nessas tarefas são obtidos mediante o uso dos axiomas \textsf{getLearnerPropertyQuery} (linha 17), \textsf{buildPropertyQuery} (linhas 19-21), \textsf{getOrBuildReadyAux} (linha 22), e \textsf{getGoalFromAuxiliary} (linhas 23).
+
+\section{Macrorroteiros: CLFPs}
+\label{sec:modelagemmacrorroteiro}
+
+As tarefas e métodos hierárquicos apresentados a seguir representam as estratégias de planejamento instrucional que definem a criação dos elementos de macrorroteiros: sessões de aprendizagem, atividades de grupo, fases e roteiros.
+As estratégias são apresentadas como esquemas de roteiros que definem a abstração de um conjunto de estratégias. Os termos em itálico nos esquemas são substituídos por termos constante para representar uma estratégia específica, assim, utilizando esses esquemas na Subseção \ref{subsec:exemploModelagemMacroroteiros} apresentamos exemplos da modelagem.
+
+\subsection{Sessões de aprendizagem}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLD\textit{Name}Session ?goals ?groups)
+      ((assign ?id (call GetUUID la)))
+      ((!startLDElement learning-activity-ref ((ref ?id)))
+       (startLDElement! learning-activity ((identifier ?id))
+                        ((\textit{Name} Session) ?id ?goals ?groups))
+       (create\textit{Name}Session ?goals ?groups)
+       (!endLDElement learning-activity)
+       (!endLDElement learning-activity-ref)))
+   
+   (:method (create\textit{Name}Session ?goals ?groups)
+      ()
+      ((create\textit{Name}Session! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (create\textit{Name}Session! ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       . . .  )
+      ((createLD\textit{OName}Output ?goals ?groups)
+       (createLDInputs ?inputs ?learners)
+       (create\textit{Name}Activity ?goals ?groups)))
+   
+   \textit{;; fall-back}
+   (:method (create\textit{Name}Session ?goals ?groups)
+      ()
+      ((createLD\textit{OName}Output ?goals ?groups)
+       (create\textit{Name}Activity ?goals ?groups)))
+\end{jshopcode}
+\caption{Esquema de representação das estratégias de criação de sessões de aprendizagem}
+\label{list:sessionJShop2}
+\end{figure}
+
+As estratégias de criação de sessões de aprendizagem são representados usando o esquema de tarefas e métodos hierárquicos apresentados na Figura \ref{list:sessionJShop2}. O esquema efetua a definição de elementos <learning-activity>  (linhas 4, 7), no qual: a atividade de aprendizagem a ser efetuada pelos participantes é definida pela tarefa \textsf{create\textit{Name}Activity} (linhas 20, 26), os recursos de saída são definidos pela tarefa \textsf{createLD\textit{OName}Output} (linhas 18, 25) e os recursos de entrada são definidos pela tarefa \textsf{createLDInputs} (linha 19).
+
+\newpage
+\subsubsection{Recursos de entrada}
+
+A Figura \ref{list:inputsJShop2} mostra a representação da estratégia de criação de recursos de entrada em sessões de aprendizagem definidas como elementos <prerequisites> (linhas 5, 7), na que os recursos de entrada são definidos como a distribuição dos elementos de entrada \textsf{?inputs} para os participantes \textsf{?learners} mediante a tarefa \textsf{distributeItem} (linha 11).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDInputs () ?learners) () ())
+   
+   (:method (createLDInputs ?inputs ?learners)
+      ()
+      ((!startLDElement prerequisites)
+       (createInputs ?inputs ?learners)
+       (!endLDElement prerequisites)))
+   
+   (:method (createInputs ?inputs ?learners)
+      ()
+      ((distributeItem ?inputs ?learners)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação de recursos de entrada em sessões}
+\label{list:inputsJShop2}
+\end{figure}
+
+\subsubsection{Recursos de saída}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLD\textit{Name}Output ?goals ?groups)
+      ()
+      ((!startLDElement learning-objectives)
+       (create\textit{Name}Output ?goals ?groups)
+       (!endLDElement learning-objectives)))
+   
+   (:method (create\textit{Name}Output ?goals ?groups)
+      ((getElement ?e ((class CurrentLDElement)))
+       (buildPropertyQuery ?tmpQuery hasParticipant (call ConcatList ?groups)
+                           ((class Output)
+                            (class \textit{Name})
+                            (relation isPartOf ?e)))
+       (buildPropertyQuery ?query hasGoal ?goals ?tmpQuery)
+       (assign ?output (call BuildElement ?query)))
+      ((createLDItem ?output)))
+\end{jshopcode}
+\caption{Esquema de representação das estratégias de criação de recursos de saída em sessões}
+\label{list:outputJShop2}
+\end{figure}
+
+As estratégias de criação de recursos de saída nas sessões de aprendizagem são definidas mediante o esquema da Figura \ref{list:outputJShop2} que definem a criação de elementos <learning-objectives> (linhas 3,5). A estratégia consiste na criação de um novo elemento no modelo de domínio a ser ensinado mediante o termo de chamada \textsf{(call BuildElement ...)} (linha 14). O elemento de saída \textsf{Output} (linha 10) é definido para um conjunto de participantes \textsf{?groups} (linha 9) como parte do elemento corrente \textsf{?e} (linha 12).
+
+\subsubsection{Atividades}
+
+A tarefa \textsf{create\textit{Name}Activity} mostrada na Figura \ref{list:activitySessionJShop2} é empregada para definir as estratégias de criação de atividades a serem efetuadas em sessões. As atividades são definidas como: um ambiente de apoio à aprendizagem mediante a tarefa \textsf{createLD\textit{Name}Environment} (linha 3); e uma descrição da sessão mediante a tarefa \textsf{createLD\textit{Name}SessionDescription} (linha 4).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (create\textit{Name}Activity ?goals ?groups)
+      ()
+      ((createLD\textit{Name}Environment ?goals ?groups)
+       (createLD\textit{Name}SessionDescription ?goals ?groups)))
+\end{jshopcode}
+\caption{Esquema de representação de estratégias de criação das atividades em sessões}
+\label{list:activitySessionJShop2}
+\end{figure}
+
+   O esquema de tarefas e métodos hierárquicos apresentados na Figura \ref{list:sessionDescriptionJShop2} possibilitam a definição de estratégias de criação de descrições em sessões de aprendizagem como elementos <activity-description> (linha 3-6).
+O método \textsf{\textit{mandatory}} (linhas 13-16) efetua a seleção de descrição de atividades apropriadas no modelo de domínio. Enquanto, o método \textsf{\textit{fall-back}} (linhas 19-22) efetua a construção de descrições das atividades no caso de que não existam no modelo de domínio a ser ensinado.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLD\textit{Name}SessionDescription ?goals ?groups)
+      ()
+      ((!startLDElement activity-description)
+       (createLDTitle (\textit{Name} SessionDescription) ?goals)
+       (create\textit{Name}SessionDescription ?goals ?groups)
+       (!endLDElement activity-description)))
+   
+   (:method (create\textit{Name}SessionDescription ?goals ?groups)
+      ()
+      ((create\textit{Name}SessionDescription! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (create\textit{Name}SessionDescription! ?goals ?groups)
+      ((getElement ?act ((class \textit{Name})
+                         (class ActivityDescription))))
+      ((createLDItem ?act)))
+   
+   \textit{;; fall-back}
+   (:method (create\textit{Name}SessionDescription ?goals ?groups)
+      ((assign ?act (call BuildElement ((class \textit{Name})
+                                        (class ActivityDescription)))))
+      ((createLDItem ?act)))
+\end{jshopcode}
+\caption{Esquema de representação de estratégias de criação de descrições de sessões}
+\label{list:sessionDescriptionJShop2}
+\end{figure}
+
+
+\newpage
+\subsection{Atividades de grupo}
+
+As tarefas e métodos hierárquicos apresentados na Figura \ref{list:groupActivityJShop2} possibilitam a representação de estratégias de criação de atividades de grupo como elementos <role-part> (linhas 3-7).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLD\textit{Name}GroupActivity ?goals ?groups)
+      ((assign ?id (call GetUUID rp)))
+      ((startLDElement! role-part ((identifier ?id))
+                        ((\textit{Name} GroupActivity) ?id ?goals ?groups))
+       (createLDTitle (\textit{Name} GroupActivity) ?goals)
+       (create\textit{Name}GroupActivity ?goals ?groups)
+       (!endLDElement role-part ?id)))
+   
+   (:method (create\textit{Name}GroupActivity ?goals ?groups)
+      ()
+      ((createLDGroup ?goals ?groups)
+       (createLD\textit{Name}Sessions ?goals ?groups)))
+   
+   (:method (createLD\textit{Name}Sessions ?goals ?groups)
+      ((assign ?id (call GetUUID as)))
+      ((!startLDElement activity-structure-ref ((ref ?id)))
+       (startLDElement! activity-structure ((identifier ?id)
+                                            (structure-type sequence))
+                        ((\textit{Name} Sessions) ?id ?goals ?groups))
+       (createLDTitle (\textit{Name} Sessions) ?goals)
+       (create\textit{Name}Sessions ?goals ?groups)
+       (!endLDElement activity-structure ?id)
+       (!endLDElement activity-structure-ref)))
+       
+   (:method (create\textit{Name}Sessions ?goals ?groups)
+      ()
+      ((createLD\textit{SName$_{1}$}Session ?goals ?groups)
+       . . .
+       (createLD\textit{SName$_{n}$}Session ?goals ?groups)))
+\end{jshopcode}
+\caption{Esquema de representação de estratégias de criação de atividades de grupo}
+\label{list:groupActivityJShop2}
+\end{figure}
+
+A estratégia define a atividade de grupo como a associação de uma lista de sessões com um grupo de estudantes mediante as tarefas \textsf{createLDGroup} e \textsf{createLD\textit{Name}Sessions} (linhas 11-12). A lista de sessões definida mediante a tarefa \textsf{createLD\textit{Name}Sessions} consiste em uma sequência de tarefas \textsf{createLD\textit{SName$_{1}$}Session} ... \textsf{createLD\textit{SName$_{n}$}Session} (linhas 27-29).
+
+\subsection{Fases}
+\label{subsec:faseroteiro}
+
+Na modelagem de estratégias de criação de fases não foi possível definir um esquema de representação comum devido a que cada uma efetua a formação de grupos usando diferentes informações do estado corrente.
+A Figura \ref{list:rolePhaseJShop2} mostra a representação da estratégia de criação da fase aprendizagem de papéis (\textit{Role}) pertencente ao macrorroteiro simulação (\textit{Simulation}). A estratégia define a fase como um conjunto de atividades de grupos definidos mediante as tarefas \textsf{distributeRoleGroupActivityByComps} (linhas 16-32) e \textsf{distributeRoleGroupActivityByCLGroups} (linhas 34-40).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDRolePhase ?goals ?groups)
+      ((assign ?act (call GetUUID act)))
+      ((!startLDElement act ((identifier ?act))
+                        ((Role Phase) ?act () ?groups))
+       (createLDTitle (Role Phase) ?goals)
+       (createRolePhase ?goals ?groups)
+       (!endLDElement act ?act)))
+  
+   (:method (createRolePhase ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (length ?nro ?goals)
+       (duplicate ?grouping ?learners ?nro)
+       (getCompsFromGoals ?comps ?goals))
+      ((distributeRoleGroupActivityByComps ?goals ?grouping ?comps)))
+   
+   (:method (distributeRoleGroupActivityByComps ?goals ?groups ()) () ())
+   (:method (distributeRoleGroupActivityByComps ?goals ?groups (?c . ?comps))
+      ((getElement ?e ((class CurrentLDElement)))
+       (getRelated ?script ?e isPartOf)
+       (getRelateds ?phases (?script) 1 inverseIsPartOf
+                    ((class Phase)
+                     (class Individual)))
+       (getElements ?levels ((class Level)))
+       (getRelateds ?activities ?phases 1 inverseIsPartOf
+                    ((class Individual)
+                     (class GroupActivity)
+                     (property hasGoal ?c ?levels)))
+       (getPropertyValues ?participants ?activities hasParticipant)
+       (getIndGoals ?indGoals ?goals ?groups (?c) ?participants)
+       (assign ?clgrouping (call GetCLGrouping ?indGoals)))
+      ((distributeRoleGroupActivityByCLGroups ?clgrouping)
+       (distributeRoleGroupActivityByComps ?goals ?groups ?comps)))
+   
+   (:method (distributeRoleGroupActivityByCLGroups ()) () ())
+   (:method (distributeRoleGroupActivityByCLGroups (?clg . ?clgroups))
+      ((getGoalsFromCLGroup ?goals ?clg)
+       (getLearnersFromCLGroup ?groups ?clg))
+      ((!!changeCLGroupInfo ?clg)
+       (createLDRoleGroupActivity ?goals ?groups)
+       (distributeRoleGroupActivityByCLGroups ?clgroups)))
+\end{jshopcode}
+\caption{Representação da fase aprendizagem de papéis (\textit{Role})}
+\label{list:rolePhaseJShop2}
+\end{figure}
+
+\newpage
+A formação de grupos é definida pelo termo de chamada \textsf{GetCLGrouping} (linha 30) que obtém o agrupamento \textsf{?clgrouping} a partir de participantes que tenham atingido objetivos educacionais relativos à competência \textsf{?c} nas atividades de grupo da fase individual (linhas 18-28). O conjunto de competências e estudantes com a qual deve ser efetuada a formação de grupos são obtidos com os axiomas \textsf{getCompsFromGoals} (linha 13) e \textsf{duplicate} (linha 12) no método \textsf{createRolePhase} (linhas 9-14).
+
+\subsection{Macrorroteiros colaborativos}
+
+O esquema de tarefas e método hierárquicos mostrado na Figura \ref{list:LDScriptJShop2} é utilizado para representar as estratégias de criação dos macrorroteiros colaborativos definidos como elementos <play> (linhas 8, 13, 30, 35).
+O método \textsf{\textit{fall-back}} (linhas 16-35) efetua a criação do macrorroteiro no caso de que a competência \textsf{?c} dos objetivos educacionais \textsf{?fgoals} seja uma competência de tipo fundamental (linhas 17-18). Enquanto, o método \textsf{\textit{mandatory}} (linhas 6-13) é utilizado no caso de uma competência de tipo auxiliar.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLD\textit{Name}Script ?goals ?groups)
+      ()
+      ((createLD\textit{Name}Script! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (createLD\textit{Name}Script! ?goals ?groups)
+      ((assign ?id (call GetUUID play)))
+      ((!startLDElement play ((identifier ?id))
+                        ((\textit{Name} Script) ?id ?goals ?groups))
+       (!!changeCLGrouping ())
+       (createLDTitle (\textit{Name} Script) ?goals)
+       (create\textit{Name}Script ?goals ?groups)
+       (!endLDElement play ?id)))
+   
+   \textit{;; fall-back}
+   (:method (createLD\textit{Name}Script ?fgoals ?groups)
+      ((getCompFromGoals ?c ?fgoals)
+       (hasKnowledgeType ?c Fundamental)
+       (assign ?learners (call ConcatList ?groups))
+       (getLearnerPropertyQuery ?tmpq1 ?c ?learners)
+       (buildPropertyQuery ?tmpq2 hasLearningObjective ?c ?levels ?tmpq1)
+       (getCurrentLearningResourceType ?types)
+       (buildPropertyQuery ?query hasLearningResourceType ?types
+                           ((class Auxiliary) . ?tmpq2))
+       . . .
+       (\textit{getElement} ?aux ?query)
+       (getLevelsFromGoals ?levels ?fgoals)
+       (getGoalsFromAuxiliary ?goals ?aux ?c ?levels)
+       (assign ?id (call GetUUID play)))
+      ((!startLDElement play ((identifier ?id))
+                        ((\textit{Name} Script) ?id ?goals ?groups))
+       (!!changeFundCompetency ?c)
+       (createLDTitle (\textit{Name} Script) ?goals)
+       (create\textit{Name}Script ?goals ?groups)
+       (!endLDElement play ?id)))
+\end{jshopcode}
+\caption{Esquema de representação das estratégias de criação de criação de macrorroteiros}
+\label{list:LDScriptJShop2}
+\end{figure}
+
+O método \textsf{\textit{fall-back}} efetua a busca ou criação de um elemento de conhecimento \textsf{?aux} de tipo auxiliar (linhas 19-26) mediante o axioma \textsf{getElements} ou \textsf{getOrBuildReadyAux} (linha 26) que satisfazem as condições \textsf{?query}, condições de propriedades definidas pelas características individuais dos estudantes mediante o axioma \textsf{getLearnerPropertyQuery} (linhas 19-20), os objetivos educacionais (linhas 21),  tipos de recurso instrucional \textsf{?types} (linhas 22-24) e outras condições dependente do macrorroteiro.
+
+Mediante os axiomas \textsf{getLevelsFromGoals} e \textsf{getGoalFromAuxiliary} (linhas 27-28) obtemos os objetivos \textsf{?goals} a ser utilizado na tarefa \textsf{create\textit{Name}Script} (linha 34). Antes de efetuar a tarefa \textsf{create\textit{Name}Script} utilizamos o operador \textsf{!!changeFundCompetency} (linha 32) para alterar a competência fundamental dos elementos de roteiros a serem definidos. 
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (create\textit{Name}Script ?goals ?groups)
+      ((getCompFromGoals ?c ?goals)
+       (hasKnowledgeType ?c Auxiliary)
+       . . . )
+      ((createLD\textit{PName$_{1}$}Phase ?goals$_{1}$ ?groups)
+       . . .
+       (createLD\textit{PName$_{n}$}Phase ?goals$_{2}$ ?groups)))
+\end{jshopcode}
+\caption{Esquema de representação dos métodos associados à tarefa \textsf{create\textit{Name}Script}}
+\label{list:createNameScriptJShop2}
+\end{figure}
+
+A Figura \ref{list:createNameScriptJShop2} mostra o esquema dos métodos associados à tarefa \textsf{create\textit{Name}Script} que efetuar a criação das fases \textsf{\textit{PName$_{1}$}} ... \textsf{\textit{PName$_{n}$}}  do roteiro mediante as tarefas \textsf{createLD\textit{PName$_{1}$}Phase} ... \textsf{createLD\textit{PName$_{n}$}Phase} (linhas 13-43).
+
+\subsection{Integração de macrorroteiros e microrroteiros}
+
+No presente trabalho, a integração de macrorroteiros e microrroteiros utiliza a abordagem proposta por \citet{villasclaras2009looking} (Figura \ref{fig:integracaoMacroMicro}), de maneira que: os macrorroteiros são utilizados para definir o sequenciamento das atividades e a formação de grupos; enquanto, os microroteiros são utilizados para definir o fluxo de interação e o conjunto de ações individuais dos estudantes. Assim, a integração do microrroteiro é efetuada na definição das atividades e configuração de papéis do macrorroteiro.
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.40\textwidth]{figuras/integracaoMacroMicro} 
+\caption{Integração de macrorroteiros e microrroteiros \citep{villasclaras2009looking}}
+\label{fig:integracaoMacroMicro}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLD\textit{Name}Session ?goals ?groups)
+      ()
+      ((createLD\textit{Name}Session! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (createLD\textit{Name}Session! ?goals ?groups)
+      ((getElement ?e ((class CurrentLDElement)))
+       (getPropertyValue ?u ?e hasCurrentUoL)
+       (getPropertyValues ?skills ?u hasSkill)
+       (getPropertyValues ?attits ?u hasAttitude)
+       (buildPropertyQuery ?sQuery hasSkill ?skills 
+                            ((class UoL)
+                             (class \textit{Name}Session)))
+       (buildPropertyQuery ?aQuery hasAttitude ?attits ?sQuery)
+       (assign ?learners (call ConcatList ?groups))
+       (buildPropertyQuery ?query hasParticipants ?learners ?aQuery)
+       (assign ?id (call BuildElement ?query))
+       (getPropertyValue ?res ?id hasResource)
+       (getPropertyValue ?href ?res hasHref))
+      ((!startLDElement unit-of-learning-href ((ref ?href)))
+       (!startLDElement learning-design ((uri ?href) (level B) (identifier ?id))
+                        ((\textit{Name}Session UoL) ?id ?goals ?skills ?attits ?groups))
+       (createLDTitle (\textit{Name} Session UoL) ?goals)
+       (!startLDElement method)
+       (create\textit{Name}Session ?goals ?groups)
+       (!endLDElement method)
+       (!endLDElement learning-design ?id)
+       (!endLDElement unit-of-learning-href)))
+   
+   (:method (create\textit{Name}Activity ?goals ?groups)
+      ()
+      ((create\textit{Name}Activity! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (create\textit{Name}Activity! ?goals ?groups)
+      ((getElement ?e ((class CurrentLDElement)))
+       (getType UoL ?e))
+      ((createLDScriptCLScenario! ?goals ?groups)))
+\end{jshopcode}
+\caption{Tarefas e métodos hierárquicos que definem a integração de macro e microrroteiros}
+\label{list:integrationActivityJShop2}
+\end{figure}
+   
+Baseados na definição de objetivos educacionais e informações de agrupamento nos elementos de roteiros, a integração de micro e macrorroteiros é efetuada na modelagem de estratégias de criação de sessões de aprendizagem mediante a definição das tarefas e métodos hierárquicos mostrados na Figura \ref{list:integrationActivityJShop2}.
+
+O método \textsf{\textit{mandatory}} da tarefa \textsf{createLD\textit{Name}Session!} (linhas 6-28) efetua a definição da sessão de aprendizagem como um elemento <learning-design> (linhas 21, 27). Logo, a integração é efetuada mediante o método \textsf{\textit{mandatory}} da tarefa \textsf{create\textit{Name}Activity!} (linhas 35-38), no que a integração é definida na tarefa \textsf{createLDScriptCLScenario!} (linha 38).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+(:method (createLDScriptCLScenario! ?goals ?groups)
+   ()
+   ((createLDCLScenario! ?goals ?groups)))
+
+(:method (createLDCLScenario! ?goals ?groups)
+   anchored-instruction
+   ((getElement ?e ((class CurrentLDElement)))
+    (getPropertyValue anchored-instruction ?e hasCLGroupingTheory)
+    (getGoalLearnersFromCLGrouping ?igoal ?instructors ?e learning-by-diagnosing ?goals)
+    (getGoalLearnersFromCLGrouping ?hgoal ?holders ?e learning-by-being-taught ?goals))
+   ((createLDAnchoredInstructionCLScenario (?igoal ?hgoal) (?instructors ?holders)))
+   . . .
+   peer-tutoring
+   ((getElement ?e ((class CurrentLDElement)))
+    (getPropertyValue peer-tutoring ?e hasCLGroupingTheory)
+    (getGoalLearnersFromCLGrouping ?ogoal ?tutors ?e learning-by-teaching ?goals)
+    (getGoalLearnersFromCLGrouping ?egoal ?tutees ?e learning-by-being-taught ?goals))
+   ((createLDPeerTutoringCLScenario (?ogoal ?egoal) (?tutors ?tutees))))
+\end{jshopcode}
+\caption{Métodos associados à tarefa \textsf{createJigsawScript}}
+\label{list:createLDScriptCLScenario}
+\end{figure}
+
+A tarefa de integração \textsf{createLDScriptCLScenario!} mostrada na Figura \ref{list:createLDScriptCLScenario} efetua a seleção do microrroteiro definido como sessão colaborativa de aprendizagem mediante os axiomas \textsf{getPropertyValue} (linhas 8,15) e \textsf{getGoalLearnersFromCLGrouping} (linhas 9-10, 16-17) que utilizam as informações de agrupamento definida no elemento de roteiro corrente \textsf{?e} (linhas 7,14). O axioma \textsf{getPropertyValue} avalia o valor corrente da teoria de aprendizagem, enquanto o axioma \textsf{getGoalLearnersFromCLGrouping} obtém objetivos educacionais e participantes. Por exemplo, no método \textsf{peer-tutoring} (linhas 14-18) obtemos os objetivos \textsf{?ogoal}, \textsf{?egoal} e participantes \textsf{?tutors}, \textsf{?tutees} relativos à estratégias \textsf{learning-by-teaching} e \textsf{learning-by-being-taught} do elemento corrente.
+
+\subsection{Combinação dos padrões de macrorroteiro}
+
+De acordo com as relações de aperfeiçoamento definidas na estrutura de classificação de padrões de roteiros colaborativos (Subseção 3.3.1), um padrão de macrorroteiro pode ser aperfeiçoado por um outro padrão de macrorroteiro . Isto quer dizer que dois padrões de macrorroteiro podem ser: \emph{combinados} efetuando a substituição de uma sessão com um outro padrão com o que apresenta uma relação de \emph{aperfeiçoar}. A Figura \ref{fig:combinacaoCLFP} exemplifica a combinação dos padrões de fluxo de aprendizagem colaborativa, na qual a sessão de especialização no padrão \textit{Jigsaw} é aperfeiçoada com o padrão \textit{Pyramid}.
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.65\textwidth]{figuras/combinacaoCLFP} 
+\caption{Exemplificação da combinação dos macrorroteiro Jigsaw e Pyramid}
+\label{fig:combinacaoCLFP}
+\end{figure}
+
+Ao igual que na integração de macrorroteiros e microrroteiros, a combinação dos padrões de macrorroteiros é definida na modelagem de estratégias de criação de sessões de aprendizagem. Assim, a Figura \ref{list:createLDScriptCLScenarioMandatory} mostra que a combinação é definida no método \textsf{\textit{mandatory}} (6-8) de decomposição da tarefa \textsf{createLDScriptCLScenario!} (linhas 1-3) mediante a tarefa \textsf{createLDScript!} (linha 8), enquanto a integração é definida no método \textsf{fall-back} (linhas 11-13).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDScriptCLScenario! ?goals ?groups)
+      ()
+      ((createLDScriptCLScenario!! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (createLDScriptCLScenario!! ?goals ?groups)
+      ()
+      ((createLDScript! ?goals ?groups)))
+   
+   \textit{;; fall-back}
+   (:method (createLDScriptCLScenario! ?goals ?groups)
+      ()
+      ((createLDCLScenario! ?goals ?groups)))
+\end{jshopcode}
+\caption{Método de cominação associados à tarefa \textsf{createLDScriptCLScenario!}}
+\label{list:createLDScriptCLScenarioMandatory}
+\end{figure}
+
+A tarefa \textsf{createLDScript!} é associada a diferentes métodos hierárquicos que definem a seleção do macrorroteiro adequado a ser combinado. Os métodos associado a tarefa são representado mediante o esquema da Figura \ref{list:createLDScriptCLScenarioMandatory}, no que: 
+
+\begin{itemize}
+\item a condição lógica que evita que um padrão de roteiro seja combinado com ele mesmo (linhas 3-8) é definido como pré-condições lógicas; e
+\item as condições de complexidade (linhas 10-15), habilidades e atitudes (linhas 17-23) do roteiro são definidas como condições relativas (\textsf{:relative}).
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDScript! ?goals ?groups)
+      relative-\textit{name}-script
+      ((getElement ?e ((class CurrentLDElement)))
+       . . .
+       (getRelateds ?lds (?e) -1 isPartOf
+                    ((class Script)
+                     (class \textit{Name})))
+       (same ?lds ()))
+      \textit{;; complexity}
+      (:relative 3 ((assign ?learners (call ConcatList ?groups))
+                    (length ?nroLearners ?learners)
+                    (filterByQuery ?expLearners ?learners
+                                   ((property hasCLExperience (\textit{exp$_{1}$ ... \textit{exp$_{n}$}}))))
+                    (length ?nroExpLearners ?expLearners)
+                    (call > ?nroExpLearners (call / ?nroLearners 2))))
+      \textit{;; skills and attitudes}
+      . . .
+      (:relative 1 ((getRelateds ?variants (\textit{skill}/\textit{attitude}) -1 isVariantOf)
+                    (getElement ?e ((class CurrentLDElement)))
+                    (getPropertyValue ?u ?e hasCurrentUoL)
+                    (getPropertyValue ?\textit{skill}/\textit{attitude} ?u \textit{hasSkill}/\textit{hasAttitude})
+                    (or (same ?\textit{skill}/\textit{attitude} \textit{skill}/\textit{attitude})
+                        (exist ?\textit{skill}/\textit{attitude} ?variants))))
+      ((createLD\textit{Name}Script ?goals ?groups)))
+\end{jshopcode}
+\caption{Esquema dos métodos associados à tarefa \textsf{createLDScriptCLScenario!}}
+\label{list:createLDScriptCLScenarioMandatory}
+\end{figure}
+
+\newpage
+\section{Unidades de aprendizagem}
+\label{sec:modelagemuol}
+
+As estratégias de criação de unidades de aprendizagem são representadas usando o esquema de tarefas e métodos hierárquicos mostrado na Figura \ref{list:createLDUoLJShop2}. O esquema efetua a definição de elementos <learning-design> (linhas 11-17), no qual: cada competência \textsf{?c} definida nos objetivos \textsf{?goals} define um roteiro colaborativo mediante a tarefa \textsf{createLD\textit{Name}Script} (linha 32). No método de decomposição da tarefa \textsf{create\textit{Name}UoL} (linhas 19-22), o axioma \textsf{getCompsFromGoals} e \textsf{sortBy} obtém em forma ordenada as competências cognitivas. Os axiomas \textsf{filterGoalsByComp} e \textsf{filterGroupsByComp} (linhas 30-31) efetuam a filtragem dos objetivos educacionais.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLD\textit{Name}UoL ?goals ?skills ?attits ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (buildPropertyQuery ?sQuery hasSkill ?skills
+                           ((class UoL)
+                            (class \textit{Name})))
+       (buildPropertyQuery ?aQuery hasAttitude ?attits ?sQuery)
+       (buildPropertyQuery ?query hasParticipants ?learners ?aQuery)
+       (assign ?id (call BuildElement ?query (call GetUUID (call GetUUID ld))))
+       (getPropertyValue ?res ?id hasResource)
+       (getPropertyValue ?href ?res hasHref))
+      ((!startLDElement learning-design ((uri ?href) (level B) (identifier ?id))
+                        ((\textit{Name} UoL) ?id ?goals ?skills ?attits ?groups))
+       (createLDTitle (\textit{Name} UoL) ?goals)
+       (!startLDElement method)
+       (create\textit{Name}UoL ?goals ?groups)
+       (!endLDElement method)
+       (!endLDElement learning-design ?id)))
+   
+   (:method (create\textit{Name}UoL ?goals ?groups)
+      ((getCompsFromGoals ?unsortComps ?goals)
+       (sortBy ?comps ?unsortComps isRequiredBy))
+      ((distribute\textit{Name}ScriptByComps ?goals ?groups ?comps)))
+   
+   \textit{;;}
+   (:method (distribute\textit{Name}ScriptByComps ?goals ?groups ())
+      ()
+      ())
+   
+   (:method (distribute\textit{Name}ScriptByComps ?goals ?groups (?c . ?comps))
+      ((filterGoalsByComp ?fgoals ?goals ?c)
+       (filterGroupsByComp ?fgroups ?goals ?groups ?c))
+      ((createLD\textit{Name}Script ?fgoals ?fgroups)
+       (distribute\textit{Name}ScriptByComps ?goals ?groups ?comps)))
+\end{jshopcode}
+\caption{Esquema de representação da estratégia de criação de unidades de aprendizagem}
+\label{list:createLDUoLJShop2}
+\end{figure}
+
+Neste trabalho, a única estratégia modelada usando o esquema da Figura \ref{list:createLDUoLJShop2} é a criação da unidade de aprendizagem \textsf{Fundamental}, definida mediante a substituição do termo itálico \textsf{\textit{Name}}.

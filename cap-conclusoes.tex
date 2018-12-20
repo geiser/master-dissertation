@@ -1,0 +1,49 @@
+
+\chapter{Conclusões e trabalhos futuros}
+\label{cap:conclusoes}
+
+Esta dissertação apresentou a modelagem do planejamento instrucional em ACSC como um problema de planejamento hierárquico, uma abordagem que utiliza o processo de planejamento instrucional usando padrões de roteiros para representar estratégias de planejamento instrucional como tarefas e métodos hierárquicos. 
+A modelagem proposta foi implementada no gerador do curso colaborativos que utiliza o sistema de planejamento hierárquico denominado JSHOP2ip.% Uma versão modificada do sistema JSHOP2 que apresenta suporte às condições relativas.
+
+Os esquemas de representação de estratégias de planejamento instrucional apresentados no modelo pedagógico (Capítulo \ref{cap:modelagemEstrategias}) possibilitam a representação de novas estratégias. Utilizando esses esquemas foram modeladas para padrões de microrroteiros 12 estratégias de eventos IL, 16 estratégias de interações cíclicas e direcionadas,  6 estratégias de padrões de interação de microrroteiros, 6 estratégias de fases dos cenários colaborativos, 9 estratégias de definição de estratégias de aprendizagem, 10 estratégias de papéis colaborativos e 6 estratégias de cenários colaborativos.  Empregando os esquemas também foram modeladas para padrões de macrorroteiros  4 estratégias de sessões de aprendizagem, 8 estratégias de atividades de grupo, 10 estratégias de fases e 3 estratégias de macrorroteiros.
+
+O componente mediador no gerador de cursos possibilita efetuar consultas em repositórios externos mediante a tradução dos termos de chamada de consultas aos modelos de domínio a ser ensinado e de estudante em requisições de tipo GET e POST que devolvem o resultado no formato XML. O gerador pode abstrair detalhes das consultas e ser reutilizado em outro domínio empregando as mesmas estratégias de planejamento instrucional.
+
+A avaliação efetuada neste trabalho mostra que a modelagem proposta no gerador de cursos é viável computacionalmente, devido a que em média são gerados mais de 150 elementos de roteiros em menos de um segundo. A avaliação também é efetuada na modelagem de estratégias de planejamento instrucional usando como exemplo o padrão de microrroteiro \textit{peer tutoring} e o padrão de macrorroteiro \textit{jigsaw}. Finalmente, a avaliação da saída do planejador no modelo proposto demostra viabilidade em situações reais.
+
+% --------------------------------------------------------------------------- %
+\newpage
+\section{Trabalhos futuros}
+
+Nesta seção apresentamos os trabalhos que podem complementar o trabalho desenvolvido.
+
+\subsection*{- Generalização das estratégias de criação de fases nos macrorroteiro}
+
+As estratégias de criação de fases nos macrorroteiros colaborativos não apresentam um esquema de representação comum. No entanto, todas as estratégias têm como objetivo efetuar a formação de grupos, assim explorando mais estratégias de criação de fases deve ser possível estabelecer um esquema de representação. Além disso, todas as estratégias de criação de fases, com exceção da criação da fase individual,  empregam o termo de chamada \textsf{(call CLGrouping ...)}, o que reforça a existência de um esquema de representação.
+
+\subsection*{- Modelagem de estratégias de planejamento instrucional usando padrões do nível de recursos e do nível de papéis e mecanismos comuns}
+
+Os padrões de roteiros colaborativos são classificados em quatro tipos (nível do fluxo de aprendizagem colaborativa, nível de atividades, nível de recursos e nível de papéis e mecanismos comuns). Nesta dissertação efetuamos a modelagem de estratégias de planejamento instrucional que utilizam unicamente padrões do nível de fluxo de aprendizagem e do nível de atividade. Um estudo de padrões do nível de recursos e do nível de papéis e mecanismos comuns deve ser realizado para definir a modelagem de estratégias de planejamento instrucional empregando os princípios da modelagem apresentada no Capítulo \ref{cap:modelagem}.
+
+\subsection*{- Desenvolvimento de uma ferramenta de autoria de estratégias de planejamento instrucional}
+
+Os esquemas de representação de estratégias de planejamento instrucional obtidos nesta dissertação fazem do modelo pedagógico um candidato ao desenvolvimento de uma ferramenta de autoria. A ferramenta de autoria de planejamento instrucional a ser desenvolvida usando esses esquemas de representação deve apresentar uma interface de usuário na qual deve ser possível gerenciar (criar, editar e apagar) as estratégias de planejamento instrucional mediante uma interface gráfica de usuário. Além disso, outra característica da ferramenta de autoria deve ser a possibilidade de representar estratégias de planejamento instrucional mais específicas dependentes do domínio a ser ensinado.
+
+\subsection*{- Melhorias no componente mediador}
+
+O componente de mediador traduz as consultas efetuadas aos modelos de domínio a ser ensinado e de estudantes em métodos de requisição GET e POST que efetuam consultas em repositórios externos. No entanto, essas requisições não utilizam um padrão ou especificação de consultas. Uma proposta de trabalho futuro é efetuar melhorias no componente mediador a fim de dar suporte a consultas SQI \citep{simon2005simple} para recuperar as informações de diferentes repositórios nas especificações IMS-MD e IMS-LIP.
+
+Outra melhora poderia incluir a implementação de uma cache que deverá arquivar resultados de consultas prévias efetuadas aos repositórios externos. Isso deve minimizar a latência da rede e o tempo de reposta das consultas.
+
+\subsection*{- Integração com ambientes virtuais de aprendizagem}
+
+CopperCore não pode ser usado como um produto final para à execução de roteiros colaborativos porque ele não fornece interface de usuário, nem serviços de autorização e autenticação. Portanto, para a aplicação em casos reais de uso, um trabalho futuro é a integração do CopperCore em ambientes virtuais de aprendizagem como Moodle, Sakai etc.
+
+Outra alternativa para a integração do gerador de cursos com ambientes virtuais de aprendizagem é desenvolver novos algoritmos de conversão do plano solução em formatos específicos de curso. Isto é, desenvolver novos métodos de conversão na classe \textsf{LDELement} e novas classes que implementam a interface \textsf{IPublishHandler} (detalhados no Capítulo \ref{cap:implementacao}).
+
+No desenvolvimento de software educacional, a modelagem apresentada nesta dissertação pode ser utilizada para definir um componente que auxilie o projetista instrucional no desenvolvimento, adaptação e personalização de unidades de aprendizagem de maneira fácil, devido à independência do modelo pedagógico fornecida pelo componente Mediador nos axiomas de consultas aos modelos de estudante e de domínio a ser ensinado. Por exemplo, no desenvolvimento de ferramentas de autoria, os serviços Web que fornece o gerador de cursos podem ser usados para desenvolver um componente de apoio que forneça dicas de como definir os roteiros colaborativos.
+
+\section{Produções ao longo do mestrado}
+
+Ao longo do mestrado, produzimos o artigo intitulado ``Uso da técnica de planejamento hierárquico no sequenciamento automático de atividades colaborativas'' aceito no XXI Simpósio Brasileiro de Informática na Educação, em 2010.
+

@@ -1,0 +1,1261 @@
+
+\chapter{Referencial teórico}
+\label{cap:referencialTeorico}
+
+Este capítulo apresenta o referencial teórico relacionado ao planejamento instrucional em ACSC que situa o leitor no contexto desta dissertação. Na Seção \ref{sec:terminologia} apresentamos definições básicas dos termos utilizados neste trabalho. Na Seção \ref{sec:planejamentoInstrucional} apresentamos os conceitos da área de planejamento instrucional. Na Seção \ref{sec:sti} apresentamos conceitos dos STI usados como modelo de referência em nossa modelagem proposta. A Seção \ref{sec:planejamentoHierarquico} mostra os princípios básicos da técnica de planejamento hierárquico. Finalmente, a Seção \ref{sec:consideracoesFinais} apresenta as considerações finais.
+
+%O objetivo do capítulo é  e planejamento instrucional em ACSC. A Seção \ref{sec:terminologia} apresenta a  terminologia utilizada neste trabalho. Na Seção \ref{sec:sti}, são apresentados conceitos da área de sistemas tutores inteligentes que ao longo dos anos tem desenvolvido arquiteturas e aplicações que automatizam o processo de planejamento instrucional. A descrição e classificação de roteiros colaborativos são apresentadas na Seção \ref{sec:roteirosColaborativos}. Finalmente, na Seção \ref{sec:planejamentoInstrucionalACSC} apresentamos o processo de planejamento instrucional em ACSC usando padrões de roteiros.
+
+%% ------------------------------------------------------------------------- %%
+\section{Terminologia básica}
+\label{sec:terminologia}
+
+%Nesta seção são apresentadas as definições de alguns termos utilizados neste trabalho.
+
+\begin{description}
+\item[Objeto de aprendizagem:] \citet{wiley2002instructional} define um objeto de aprendizagem como ``qualquer elemento digital que pode ser reutilizado para dar apoio à aprendizagem''.
+
+\begin{itemize}
+\item \textit{Digital}: um objeto de aprendizagem tem que estar disponível em formato digital, ou seja, ele é armazenado em uma mídia digital (por exemplo uma página Web).
+
+\item \textit{Reutilização}: um objeto de aprendizagem pode ser usado em um contexto diferente para o qual foi originalmente projetado.
+
+\item \textit{Apoio à aprendizagem}: um objeto de aprendizagem é projetado para servir como apoio ao processo de ensino-aprendizagem.
+\end{itemize}
+
+\item[Recurso instrucional:] Um recurso instrucional é um objeto de aprendizagem identificável e acessível por meio de uma URL\footnote{URL - \textit{Uniform Resource Identifier}} (identificador uniforme de recurso).
+
+\item[Serviço de apoio à aprendizagem:] Um serviço de apoio à aprendizagem ou \emph{serviço} é uma ferramenta de software de apoio aos estudantes na comunicação, coordenação e cooperação que é utilizada durante o processo de ensino-aprendizagem.
+
+\item[Ambiente:] Um ambiente é uma coleção de objetos de aprendizagem, serviços e subambientes na qual as atividades são efetuadas pelos estudantes \citep{van2006testing}.
+
+%\item[Informação de planejamento instrucional:] A informação de planejamento instrucional ou \emph{learning design} consistente na representação do que deve ser ensinado e da forma em que os participantes (estudantes e docentes) devem interagir a fim de atingir determinados objetivos educacionais, da maneira mais efetiva \citep{koper2003representing}.
+
+%Assim, a informação de planejamento instrucional é representada mediante a descrição do processo de ensino-aprendizagem, especificando o sequenciamento das atividades e a estruturação dos recursos instrucionais integrados as atividades
+%, denominado \textit{learning design}, como o sequenciamento das atividades e a estruturação dos recursos instrucionais integrados as atividades.
+
+\newpage
+\item[Unidade de aprendizagem:] Uma unidade de aprendizagem é um termo abstrato utilizado para se referir a qualquer unidade concisa de estudo, como tópicos, módulos e lições, composta por recursos instrucionais e informação de planejamento instrucional.
+Na unidade de aprendizagem, a informação de planejamento instrucional ou \emph{learning design} consistente na representação do que deve ser ensinado e da forma em que os participantes (estudantes e docentes) devem interagir a fim de atingir determinados objetivos educacionais, da maneira mais efetiva \citep{koper2003representing}.
+\end{description}
+
+%Um termo abstrato utilizado para se referir a qualquer unidade concisa de estudo, como um curso, um módulo ou uma lição. Uma unidade de aprendizagem representa mais do que apenas uma coleção de recursos instrucionais estruturados para aprender que inclui uma variedade de atividades prescritas (por exemplo, atividades de resolução de problemas, atividades de pesquisa, atividades de discussão e atividades de avaliação), avaliações, serviços e ambientes de apoio a serem efetuadas pelos participantes (estudantes e docentes).
+
+%Uma unidade de aprendizagem é uma unidade concisa de estudo composta de recursos instrucionais e da informação de planejamento instrucional, que define o conteúdo instrucional mediante a representação do mecanismo de instrução como o que deve ser ensinado e da forma em que os participantes (estudantes e docentes) interagem uns com outros.
+%A informação de planejamento instrucional neste trabalho é representada mediante a linguagem de modelagem pedagógico \citet{IMS-LD}, no que o conteúdo instrucional é definido mediante o sequenciamento de atividades a serem efetuadas pelos participantes e a estruturação dos recursos instrucionais integrados as atividades.
+
+%\end{description}
+
+
+% --------------------------------------------------------------------------- %
+\section{Planejamento instrucional}
+\label{sec:planejamentoInstrucional}
+
+Planejamento instrucional é definido por \citet{wasson1996instructional} como o processo de geração de uma sequência de interações instrucionais que oferece consistência, coerência e continuidade no processo de ensino-aprendizagem. Interação instrucional pode ser definida como qualquer forma de interação entre o estudante e o conteúdo instrucional, ou a interação mediada pelo computador entre estudantes que colaboram entre si ou com o professor.
+
+No enfoque de aprendizagem colaborativa, \citet{dillenbourg2002over} argumenta que a prescrição da colaboração mediante planejamento instrucional diminui a flexibilidade do processo de aprendizagem. \citet{goodyear2004towards} argumenta que os planos obtidos em planejamento instrucional não consideram a complexidade da aprendizagem colaborativa devido à falta de dependência contextual e social. Consequentemente, a comunidade de ACSC tem adaptado as ideias de planejamento instrucional de modo que o objetivo principal é projetar roteiros colaborativos. Assim, a seguir apresentamos, a descrição e classificação de roteiros colaborativos, a representação computacional dos roteiros e o processo de planejamento instrucional usando padrões de roteiros.
+
+%A descrição e classificação de roteiros colaborativos são apresentadas na Seção \ref{sec:roteirosColaborativos}. Finalmente, na Seção \ref{sec:planejamentoInstrucionalACSC} apresentamos o processo de planejamento instrucional em ACSC usando padrões de roteiros.
+
+
+\subsection{Roteiros colaborativos}
+\label{subsec:roteirosColaborativos}
+
+O grupo de pesquisas europeu CoSSICLE\footnote{\emph{Computer-Supported Scripting of Interaction in Collaborative Learning Environments} - \newline \url{http://cossicle.noe-kaleidoscope.org/}} descreve os roteiros colaborativos como: ``\emph{roteiros de suporte computacional que facilitam processos sociais e cognitivos da aprendizagem colaborativa por meio da definição da forma como os estudantes interagem uns com outros.}'' \citep{weinberger2005epistemic}. Roteiros colaborativos são similares a roteiros de peça de teatro nas quais participantes atuam de acordo com as instruções prescritas neles \citep{kirschner2004designing}.
+
+De acordo com o arcabouço desenvolvido por \citet{kobbe2007specifying}, ilustrado na Figura \ref{fig:frameworkKobbe}, os componentes necessários para definir um roteiro colaborativo são:
+
+\begin{enumerate}[label=\textbf{(\arabic{*})}]
+  \item \textbf{Participantes} definidos como uma lista de estudantes e docentes.
+  \item \textbf{Atividades} a serem efetuadas pelos participantes para atingir os objetivos educacionais. %A lista pode ser definida na forma de uma estrutura hierárquica que representa a decomposição das atividades e das interações em unidades menores.
+  \item \textbf{Papéis} que podem ser assumidos pelos participantes durante as atividades. Os participantes podem assumir um ou mais papéis em um determinado momento.
+  \item \textbf{Recursos} que podem ser usados pelos participantes nas atividades. Neste trabalho, os recursos são restritos unicamente a recursos instrucionais.
+  \item \textbf{Grupos} de participantes que são definidos geralmente  na forma de estruturas hierárquicas que definem a formação de grupos grandes compostos de grupos menores.
+  %de acordo com as características dos participantes, atividades, restrições e disponibilidade de recursos. Os grupos são geralmente descritos na forma de estruturas hierárquicas que definem a formação de grupos grandes compostos de grupos menores.
+\end{enumerate}
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.85\textwidth]{figuras/frameworkKobbe}
+\caption{Ilustração gráfica do arcabouço desenvolvido por \citet{kobbe2007specifying}}
+\label{fig:frameworkKobbe}
+\end{figure}
+
+No arcabouço desenvolvido por \citet{kobbe2007specifying}, os mecanismos de colaboração utilizados para definir um roteiro são:
+
+\begin{enumerate}[label=\textbf{(\arabic{*})}]
+  \item \textbf{Distribuição de tarefas} - Consiste no mapeamento entre participantes e atividades, e no mapeamento entre recursos e participantes.
+  \item \textbf{Formação de grupos} - Consiste em especificar a forma de agrupamento dos participantes.
+  \item \textbf{Sequenciamento} - Consistente em definir a ordem de execução das atividades.
+\end{enumerate}
+
+A Tabela \ref{tab:sampleArgueGraphScript} apresenta como exemplo a representação do roteiro colaborativo \emph{ArgueGraph} para quatro estudantes com a definição dos componente e mecanismos em forma textual.
+
+De acordo com a granularidade das atividades, os roteiros colaborativos são classificados em macrorroteiros e microrroteiros. Enquanto, as atividades dos macrorroteiros descrevem o modelo pedagógico do processo de ensino-aprendizagem, as atividades dos microrroteiros descrevem o modelo dialógico.
+
+%Cada umas das atividades descritas por um microrroteiro podem durar um único diálogo ou conversação entre estudantes.
+%Cada uma das atividades descrita por um macrorroteiro podem durar vários dias ou semanas.
+%A macro-script é um método pedagógico  O termo macro-script é usado para diferenciar nossos scripts de micro-scripts (Dillenbourg and Jermann, para aparecer). Vamos ilustrar a diferença macro / micro com scripts que visam aumentar diálogos argumentativos. A macro-script estabelece as condições em que a argumentação deve ocorrer, como no ArgueGraph, por exemplo, colocando os alunos com opiniões opostas. Um script de micro-andaimes o processo de interação, por si só: quando um aluno traz um argumento, o script, por exemplo, solicitar o seu par de indicar um contra-argumento (Kollar et al, no prelo). Estes dois exemplos diferem pela sua granularidade: uma fase de uma macro-script é uma actividade que pode durar durante várias semanas, enquanto que em um micro-script, que pode ser uma única volta de conversação. Este grau de granularidade binário não é, portanto, a distinção micro / macro poderia ser considerado como um contínuo. No entanto, estes dois exemplos têm um estatuto muito diferente: a ArgueGraph é um método pedagógico que simplesmente precisa ser adotada pelos alunos, enquanto os scripts Kollar et al transmitir um modelo de diálogo que deve ser internalizada pelos alunos. Na verdade, um script, como RSC é "macro" em termos de granularidade, mas algumas de suas características são, todavia, deverá ser internalizados já que os estudantes são esperados para internalizar conceitos como? Plano? ou? tarefas? e / ou para construir uma organização explícita.
+
+\begin{table}[htbp]\footnotesize
+\begin{tabular}{|l|p{12cm}|}
+\hline
+\emph{Participantes}: & Quatro estudantes com identificadores l1, l2, l3 e l4.\\
+\hline
+\emph{Atividades}: &
+   1. Justificar opiniões e construir argumentos.\\
+ & 2. Comparar, avaliar e elaborar resultados.\\
+ & 3. Negociar e construir argumentos.\\
+ & 4. Explicar e justificar opiniões.\\
+ & 5. Resumir e construir conexões de argumentos.
+\\ \hline
+\emph{Papéis}: & Nenhum. \\
+\hline
+\emph{Recursos}: & Um questionário para cada participante e uma cópia adicional por grupo pequeno. Uma folha argumentativa por item de questionário. \\ \hline
+\emph{Grupos}: & Sala: (l1, l2, l3 e l4); e Pares: (l1 l2), (l1 l3), ... e (l3 l4). \\ \hline
+\emph{Distribuição de tarefas}: & Na fase de inspeção, todos os participantes da sala recebem uma cópia do questionário. Nas fases de discussão e elaboração, cada par recebe uma cópia do questionário. Na fase de reflexão, cada participante recebe uma folha de argumentação. \\ \hline
+\emph{Formação de grupos}: & Na fase de inspeção, todos os participantes formam parte do grupo sala. Na fase de discussão e elaboração, os participantes são agrupados em pares formados por estudantes que têm máxima divergência de opinião entre as respostas. \\ \hline
+\emph{Sequenciamento}: &
+\begin{itemize}
+\item Na fase de inspeção:
+	\begin{itemize}
+	\item Todos os participantes na aula, de forma individual, preenchem a primeira cópia do questionário.
+	\item O tutor apresenta os resultados obtidos do questionário para os participantes.
+	\item Os participantes na aula discutem conjuntamente os resultados do questionário.
+	\end{itemize}
+\item Na fase de discussão:
+	\begin{itemize}
+	\item Grupos de pares são formados de acordo as respostas do questionário.
+	\item Cada par preenche a segunda cópia do questionário, ou seja, negociam em uma escolha única o argumento comum.
+	\end{itemize}
+\item Fase de elaboração:
+	\begin{itemize}
+	\item O tutor coleta todos os questionários.
+	\item Para cada par, o tutor efetua pergunta aos participantes para comentar seus argumentos e apresenta um conselho de como seus argumentos são relacionados com teorias e conceitos.
+	\item Por cada item do questionário, o tutor recompila todas as escolhas e argumentos de cada par numa folha de argumentos.
+	\end{itemize}
+\item Na fase de reflexão:
+	\begin{itemize}
+	\item O tutor distribui uma folha de argumento para cada participante.
+	\item Cada participante escreve individualmente um resumo de todos os argumentos na folha de argumentação.
+	\end{itemize}
+\end{itemize}
+ \\ \hline
+\end{tabular}
+\caption{Exemplo de roteiro colaborativo \textit{ArgueGraph} \citep{kobbe2005framework}}
+\label{tab:sampleArgueGraphScript}
+\end{table}
+
+\newpage
+
+\subsubsection{Macrorroteiros colaborativos}
+
+Os macrorroteiros colaborativos estruturam a colaboração entre os participantes mediante a descrição do modelo pedagógico a ser utilizado durante o processo de ensino-aprendizagem \citep{dillenbourg2002over}. Assim, as atividades descrevem o modelo pedagógico como a estruturação do conteúdo instrucional a ser ensinado que visa produzir interações desejadas entre os participantes.
+
+\begin{definition}
+\label{def:sequenciamentoMacrorroteiro}
+O mecanismo de \emph{sequenciamento} é formalizado como uma estrutura linear de fases definida como a lista
+
+\begin{center}
+$S$ = [$F_{1}$, $F_{2}$, ..., $F_{n}$],
+\end{center}
+
+na qual cada fase $F_{i}$ especifica pontos de sincronização para o início das atividades a serem efetuadas pelos participantes. Cada uma das fases $F_{i}$ = \{$e_{1}$, $e_{2}$, ..., $e_{m}$ \} é representada formalmente como n-uplas $e_{i}=(T, g, m, time)$ denominadas \textit{atividades de grupo} que definem:
+
+\begin{itemize}%[leftmargin=0cm]%[font=\normalfont]
+\item uma \textit{lista de tarefas} $T$=[\textit{tarefa}$_{1}$,
+\textit{tarefa}$_{2}$, ..., \textit{tarefa}$_{k}$], em que cada tarefa
+\textit{tarefa}$_{i}$ denominada \textit{sessão de aprendizagem} é uma n-upla (\textit{Entrada}, \textit{atividade},
+\textit{Saída}) $\in T$, onde:
+
+\begin{itemize}%,label=\textrm{--}]
+\item \textit{Entrada} é um conjunto de recursos instrucionais a ser empregado pelos estudantes durante a execução da atividade;
+\item \textit{atividade} é um identificador da atividade; e
+\item \textit{Saída} é um conjunto de recursos instrucionais a serem criados pelos estudantes durante a execução da atividade.
+\end{itemize}
+
+\item um \emph{grupo} $g$ definido no componente grupos;
+
+\item um \emph{modo} opcional $m$ que define as características de: tipo de mídia (textual, gráfica, áudio ou vídeo); tipo de comunicação (síncrono ou assíncrono); e modelo de comunicação (um para um, um para muitos ou muitos para muitos); e
+
+\item um aspeto temporal opcional \textit{time} que define a duração ou
+  prazo de término de cada fase.
+\end{itemize}
+\end{definition}
+
+\begin{example}
+O mecanismo de sequenciamento do macrorroteiro \textit{Jigsaw} \citep{leo2004ims} da Figura \ref{fig:exemplo-JIGSAW} é formalizado como a lista $S$ = [$F_{1}$, $F_{2}$, $F_{3}$], na qual: $F_{1}$ é a \textit{fase individual}, $F_{2}$ é a \textit{fase de especialização} e $F_{3}$ é a \textit{fase jigsaw}. No exemplo, a fase $F_{2}$ é definida como:
+
+\begin{center}
+$F_{2}$=\{([\textit{tarefa}$_{a}$], $g_{e_{1}}$), ([\textit{tarefa}$_{b}$], $g_{e_{2}}$, $m$, $temp$)\}, tal que:
+\end{center}
+
+\newpage
+\begin{itemize}%[leftmargin=0,topsep=0,label=\textrm{--}]
+\item \textit{tarefa}$_{a}$=(\{$r_{i_{1}}$, $r_{i_{2}}$\}, $a_{1}$, \{$r_{e_{1}}$\}) representa uma sessão de aprendizagem denominada \textit{trabalho no tópico 1}, no qual:
+
+\begin{itemize}
+\item os recursos de entrada $r_{i_{1}}$ e $r_{i_{2}}$ são \textit{resumo elaborado pelo especialista 1 no tópico 1} e \textit{resumo elaborado pelo especialista 2 no tópico1};
+\item a atividade $a_{1}$ a ser efetuada é \textit{elaborar um resumo do tópico 1}; e
+\item o recurso de saída $r_{e_{1}}$ é \textit{resumo do tópico 1}.
+\end{itemize}
+
+\item \textit{tarefa}$_{b}$=(\{$r_{i_{3}}$, $r_{i_{4}}$\}, $a_{2}$, \{$r_{e_{2}}$\})  representa uma sessão de aprendizagem denominada \textit{trabalho no tópico 2}, na qual:
+\begin{itemize}
+\item os recursos de entrada $r_{i_{3}}$ e $r_{i_{4}}$ são  \textit{resumo elaborado pelo especialista 1 no tópico 2} e \textit{resumo elaborado pelo especialista 2 no tópico 2};
+\item a atividade $a_{2}$ a ser efetuada é  \textit{elaborar um resumo do tópico 2}; e
+\item o recurso $r_{e_{2}}$ de saída é \emph{resumo do tópico 2}.
+\end{itemize}
+
+\item $g_{e_{1}}$ representa o grupo de \emph{especialistas no tópico 1} e $g_{e_{2}}$ representa o grupo de \emph{especialistas no tópico 2}.
+
+\item $m$=\{\textit{textual}, \textit{assíncrono}\} representa a necessidade de ferramentas assíncronas de suporte a mídias textuais durante a execução da fase $F_{3}$.
+
+\item $temp$=\{``12/02/2011'' $\lor$ ``$r_{e_{2}}$''\} representa o prazo da fase $F_{3}$ na data ``\textit{12/02/2011}'' ou envio do recurso $r_{e_{2}}$.
+\end{itemize}
+\end{example}
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.80\textwidth]{figuras/macroJIGSAW}
+\caption{Exemplo de macrorroteiro \textit{Jigsaw}}
+\label{fig:exemplo-JIGSAW}
+\end{figure}
+
+\begin{definition}
+\label{def:distribuicaoTarefasMacrorroterio}
+A \emph{distribuição de tarefas} é representada por cada par $(T, g)$ definido no conjunto de n-uplas $e_{i}=(T,g,m,time)$ de cada fase $F_{j}$; na qual a lista de sessões $T$=[\textit{tarefa}$_{1}$, ..., \textit{tarefa}$_{k}$] é efetuada de forma linear pelo grupo de participantes $g$ durante a execução da fase $F_{j}$.
+\end{definition}
+
+\begin{example}
+No exemplo de macrorroteiro \textit{Jigsaw} mostrado na Figura \ref{fig:exemplo-JIGSAW}, a distribuição de tarefas na fase ``\emph{fase jigsaw}'' $F_{3}$ é definida pelas n-uplas $e_{1}=(T_{j_{1}}, g_{j_{1}})$ e $e_{2}=(T_{j_{2}}, g_{j_{2}})$, onde a n-upla $e_{1}=(T_{j_{1}}, g_{j_{1}})$ representa a distribuição da tarefa $T_{j_{1}}$ para o grupo $g_{j_{1}}$. A tarefa $T_{j_{1}}$ é definida como a lista de sessões:
+
+\begin{center}
+\begin{tabular}{r@{}l}
+$T_{j_{1}}$=&[(\{\}, \textit{discutir o tópico 1}, \{$r_{1}$\}),\\
+          &\ (\{\}, \textit{discutir o tópico 2}, \{$r_{2}$\}),\\
+          &\ (\{$r_{1}$, $r_{2}$\}, \textit{discussão final}, \{$r_{f}$\})]
+\end{tabular}
+\end{center}
+
+%Assim, o grupo ``\textit{jigsaw 1}'' deverá na fase $F_{3}$ devera efetuar a como uma sequência linear de atividades definidas pelas sessões  \textit{discutir o tópico 1}, \textit{discutir o tópico 2} e \textit{elaborar resumo}, nas quais são utilizados os recursos $r_{1}$, $r_{2}$ e $r_{f}$ que representam o \textit{resumo de discussão do tópico 1}, o \textit{resumo do tópico 2} e o \textit{resumo da discussão final}.
+\end{example}
+
+\subsubsection{Microrroteiros colaborativos}
+
+Os microrroteiros colaborativos estruturam a colaboração entre os participantes mediante a descrição do modelo dialógico a ser utilizado  durante o processo de ensino-aprendizagem \citep{dillenbourg2007designing}. Assim, as atividades descrevem o modelo dialógico como interações que definem a transmissão e recepção de mensagens utilizados pelos participantes.
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.75\textwidth]{figuras/peerTutoringInteractionFlow}
+\caption{Exemplo de fluxo de interação Peer-Tutoring \citep{isotani2009ontological}}
+\label{fig:peerTutoringInteractionFlow}
+\end{figure}
+
+O \textit{mecanismo de sequenciamento} de um microrroteiro é representado como um fluxo de interações necessárias e complementares. Na Figura \ref{fig:peerTutoringInteractionFlow} apresentamos a representação do mecanismo de sequenciamento do roteiro \textit{peer-tutoring}, no qual as interações necessárias são ilustradas com linhas sólidas, enquanto interações complementares são ilustradas com linhas tracejadas.
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.70\textwidth]{figuras/utteranceTypeLabel}
+\caption{Exemplo de relação entre diálogo-rótulo e diálogo-tipo \citep{inaba2003models}}
+\label{fig:utteranceTypeLabel}
+\end{figure}
+
+As interações são formalizadas mediante um vocabulário de diálogos-tipo que representa o agrupamento de diálogos específicos denominados diálogos-rótulo \citep{inaba2003models}. Um exemplo do agrupamento dos diálogos-rótulo em diálogos-tipo é apresentado na Figura \ref{fig:utteranceTypeLabel}, na qual são definidas os diálogos-tipo ``transmissão de conhecimento'' (\textit{knowledge transmission}), ``mostrar uma solução'' (\textit{showing a solution}) e ``ensinar como resolver um problema'' (\textit{teaching the way to solve a problem}). Assim, usando a relação de reciprocidade dos diálogo-rótulo identificada por \citet{hayashi2006ontological}, pela qual cada diálogo-tipo apresenta dois diálogos-rótulo recíprocos, uma interação é representada como um \emph{evento IL}. %por exemplo no diálogo-tipo ``transmissão de conhecimento'' existem os diálogos-rótulo recíprocos ``apresentar conhecimento'' e ``receber explicação''
+
+Um \emph{evento IL} mostrado na Figura \ref{fig:illustrationEventoIL} é definida como a composição de um evento de aprendizagem e um evento instrucional, nos quais são definidas ações como diálogos-rótulo a serem efetuados pelo participante para atingir objetivos educacionais desempenhando um papel de instrutor ou aprendiz \citep{isotani2010foundations}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.45\textwidth]{figuras/illustrationEventoIL}
+  \caption{Elementos de um \emph{evento IL} \citep{isotani2007planejamento}}
+  \label{fig:illustrationEventoIL}
+\end{figure}
+
+A Figura \ref{fig:peerTutoringInteractionFlow2} apresenta a representação do microrroteiro \textit{peer-tutoring} como eventos IL, no qual o evento IL ``notificar andamento do estudante'' (\textit{notifying how the learner is}) é representado como um evento instrucional com o diálogo-rótulo ``dar-infomação'' (\textit{giving information}) e um evento de aprendizagem com o diálogo-rótulo ``receber informação'' (\textit{receiving information}). % O \emph{evento IL} define uma ação de ``aconselhar'' (\emph{advising}) a ser efetuada pelos participantes com papel de ``tutor'' (\emph{tutor}) e um objeto de  aprendizagem ``problemas dos estudantes'' (\emph{learner's problem}) a ser entregue aos participantes com papel de ``aprendiz'' (\emph{tutee}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.45\textwidth]{figuras/peerTutoringInteractionFlow2}
+  \caption{Representação do microrroteiro \emph{peer-tutoring} como \emph{eventos IL} \citep{isotani2009ontological}}
+  \label{fig:peerTutoringInteractionFlow2}
+\end{figure}
+
+\newpage
+\subsection{Representação computacional de roteiros colaborativos}
+
+Com o propósito de possibilitar o reúso e interoperabilidade de roteiros colaborativos durante o processo de planejamento instrucional, a linguagem de modelagem pedagógica IMS-LD (detalhada no Apêndice \ref{ape:imsld}) é empregada para efetuar a representação computacional de roteiros. A linguagem IMS-LD descreve a informação de planejamento instrucional mediante o sequenciamento das atividades (como resolução de problemas, pesquisa, discussão e avaliação) a serem efetuadas pelos participantes e a estruturação dos recursos instrucionais integrados as atividades.
+
+De acordo com  \citet{leo2004ims} e \citet{hernandez2005computacional} a representação computacional de roteiros consiste na representação dos mecanismos de colaboração do roteiro como elementos da especificação IMS-LD detalhados a seguir.
+
+\subsubsection{Mecanismo de formação de grupos}
+
+A formação de grupos e subgrupos é definida como elementos <learner>. A Figura \ref{list:formacaoGrupos}, mostra a representação de dois grupos temáticos de discussão  de câncer (\textsf{g-thematic-cancer}, linhas 2-13) e AIDS (\textsf{g-thematic-aids}, linhas 14-16). O grupo de discussão de câncer é dividido em dois subgrupos, um referido ao câncer de mama (\textsf{g-breast-cancer}, linhas 4-6) e outro referido ao câncer de pulmão (\textsf{g-lung-cancer}, linhas 7-12).
+
+\begin{figure}[htbp]
+\centering
+\begin{xmlcode}
+<roles>
+  <learner identifier="g-thematic-cancer" min-persons="6">
+    <title>Thematic cancer group</title>
+    <learner identifier="g-breast-cancer" min-persons="4">
+      <title>Breast cancer group</title>
+    </learner>
+    <learner identifier="g-lung-cancer" min-persons="2">
+      <title>Lung cancer group</title>
+      <information>
+        <item identifier="i-lung-cancer-list" identifier-ref="res-2ed49d-234fa" />
+      </information>
+    </learner>
+  </learner>
+  <learner identifier="g-thematic-aids" min-persons="4">
+    <title>Thematic aids group</title>
+  </learner>
+</roles>
+\end{xmlcode}
+%  \fbox{\includegraphics[width=0.85\textwidth]{listagem/formacaoGrupos01}}
+\caption{Exemplo da representação de formação de grupos e subgrupos}
+\label{list:formacaoGrupos}
+\end{figure}
+
+Para representar a formação de grupos, a especificação IMS-LD apresenta limitações devido à falta de elementos que possibilitem definir características e condições necessárias dos participantes. No entanto, as limitações são mitigadas: (1) mediante a inclusão de atributos \textit{min-persons} e \textit{max-persons} que definem o número mínimo e máximo de participantes que podem ser associados ao papel; e (2) mediante a inclusão de recurso instrucional que efetua a descrição dos participantes que serão atribuídos a cada grupo. Na Figura \ref{list:formacaoGrupos}, o subgrupo de discussão de câncer de pulmão apresenta um número mínimo de dois participantes e utiliza o recurso instrucional \textsf{res-2ed49d-234fa} para apresentar a lista de participantes associada ao grupo (linha10).
+
+\subsubsection{Mecanismo de distribuição de tarefas}
+
+O mecanismo de distribuição de tarefas é representado mediante elementos <role-part>, no qual o grupo de estudantes é representado mediante o elemento <role-ref> e a lista de tarefas é representada mediante elementos <learning-activity-structure> e <activity-structure-ref>.
+
+A Figura \ref{list:mecanismoDistribuicao1} mostra a representação da distribuição de tarefas definidas no ato de discussão (linhas 13-26), na qual: o grupo de discussão de câncer é associado à atividade de aprendizagem discussão livre de câncer (\textsf{la-free-discussion-cancer}, linhas 16-17); e o grupo de discussão de AIDS é associado às tarefas discussão livre de AIDS (\textsf{as-free-discussion-aids}, linhas 20-21). 
+
+\begin{figure}[htbp]
+\centering
+\begin{xmlcode}
+<environment identifier="e-free-discussion">
+  <service identifier="s-free-discussion">
+    <conference conference-type="synchronous">
+      <participant role-ref="r-learner"/>
+    </conference>
+  </service>
+</environment>
+. . .
+<learning-activity identifier="la-free-discussion-cancer">
+  <environment-ref ref="e-free-discussion"/>
+</learning-activity>
+. . .
+<act>
+  <title>Discussion</title>
+  <role-part>
+    <role-ref ref="g-thematic-cancer"/>
+    <learning-activity-ref ref="la-free-discussion-cancer"/>
+  </role-part>
+  <role-part>
+    <role-ref ref="g-thematic-aids"/>
+    <activity-structure-ref ref="as-free-discussion-aids"/>
+  </role-part>
+  <complete-act>
+    <when-role-part-completed ref="g-thematic-aids"/>
+  </complete-act>
+</act>
+\end{xmlcode}
+%  \fbox{\includegraphics[width=0.50\textwidth]{listagem/mecanismoDistribuicao01}}
+\caption{Exemplo de representação do mecanismo de distribuição de tarefas}
+\label{list:mecanismoDistribuicao1}
+\end{figure}
+
+Os atributos \textit{conference-type} (tipo de conferência) e \textit{type} (tipo de mídia) nos elementos <conference> e <learning-object> são utilizados para representar o tipo de comunicação e tipo de mídia da distribuição de tarefas nos macrorroteiros. Na Figura \ref{list:mecanismoDistribuicao1}, o tipo de comunicação da distribuição de tarefas para o grupo de discussão de câncer é síncrona (linha 3).
+
+O aspeto temporal na distribuição de tarefas é definido no elemento <complete-act> para definir a finalização das atividades. Na Figura \ref{list:mecanismoDistribuicao1}, o aspeto temporal da distribuição de tarefas é a finalização das atividades do grupo de discussão AIDS (linhas 23-25). 
+
+\newpage
+\subsubsection{Mecanismo de sequenciamento}
+
+O mecanismo de sequenciamento é representado no elemento <play> como elementos <act> e elementos <activity-structure> definidos no elemento <activity-structure>. Os elementos <act> definem o mecanismo de sequenciamento como atividades ou estruturas de atividades a serem efetuadas pelos participantes em forma sequencial. Nas estruturas de atividades <activity-structure> o mecanismo de sequenciamento é definido como uma estrutura de tipo sequencial ou de tipo seleção, o tipo de estrutura é definido no atributo \textit{activity-structure} mediante valores \textit{sequence} (sequencial) e \textit{selection} (seleção).
+
+\begin{figure}[htbp]
+\centering
+\begin{xmlcode}
+<activities>
+  <activity-structure identifier="as-high-level-questionnaire"
+                      structure-type="selection">
+    <learning-activity-ref="la-question01-discussion" />
+    <learning-activity-ref="la-question02-discussion" />
+    . . .
+  </activity-structure>
+  . . .
+  <activity-structure identifier="as-questionnaire-discussion"
+                      structure-type="sequence">
+    <activity-structure-ref ref="as-low-level-questionnaire" />
+    <activity-structure-ref ref="as-high-level-questionnaire" />
+  </activity-structure>
+</activities>
+. . .
+<play>
+  <act identifier="a-individual-phase">
+    <role-part identifier="rp-individual-student">
+      <role-ref ref="r-student"/>
+      <learning-activity-ref ref="la-individual-study"/>
+    </role-part>
+  </act>
+  <act identifier="a-conflict-phase">
+    <role-part identifier="rp-conflict-student">
+      <role-ref ref="r-student"/>
+      <activity-structure-ref ref="as-questionnaire-discussion"/>
+    </role-part>
+  </act>
+</play>
+\end{xmlcode}
+%  \fbox{\includegraphics[width=0.50\textwidth]{listagem/sequenciaFases01}}
+\caption{Exemplo da representação de um mecanismo de sequenciamento}
+\label{list:sequenciaFases1}
+\end{figure}
+
+A Figura \ref{list:sequenciaFases1} mostra um exemplo de representação do mecanismo de sequenciamento de um roteiro, no que o grupo de estudantes \textsf{r-student} (linha 16-29) efetuam as atividades estudo individual \textsf{la-individual-study} (linha 20) e a estrutura de atividades discussão de questionários \textsf{as-questionnaire-discussion} (linha 26). A estrutura de atividades discussão de questionários (linhas 9-13) é definida como uma sequência linear de uma estrutura de atividades discussão de questionários de baixo nível \textsf{as-low-level-questionnaire} (linha 11), e uma estrutura de atividades discussão de questionários de alto nível \textsf{as-high-level-questionnaire} (linha 12)
+
+% --------------------------------------------------------------------------- %
+
+\subsection{Planejamento instrucional usando padrões de roteiros}
+\label{subsec:planejamentoInstrucionalACSC}
+
+``\emph{Um padrão descreve a solução de um problema recorrente, de forma que possa ser reutilizado e adaptado muitas vezes em diferentes situações ...}'' \citep{alexander1977pattern}. Padrões de roteiros colaborativos são utilizados  para descrever roteiros colaborativos que fornecem solução às diferentes situações recorrentes de aprendizagem colaborativa.
+
+\subsubsection{Padrões de roteiros colaborativos}
+\label{subsubsec:padroesRoteiros}
+
+\citet{hernandez2008generating} classifica os padrões de roteiros colaborativos mediante a estrutura mostrada na Figura \ref{fig:patternRelation}, na qual são definidos três níveis de agregação e um nível de papéis e mecanismos comuns. Os três níveis de agregação representados por planos horizontais são: um \emph{nível de fluxo de aprendizagem colaborativa} que agrupa padrões de macrorroteiros; um \emph{nível de atividade} que agrupa padrões de microrroteiros; e \emph{um nível de recursos} que agrupa padrões de sequenciamento de recursos. O \emph{nível de papéis e mecanismos comuns} representado por um plano perpendicular agrupa padrões de formação de grupos, padrões de atribuição de papéis e padrões de suporte à execução de roteiros.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figuras/hierarchicalPatternRelation}
+  \caption{Relações entre padrões de roteiros colaborativos \citep{leo2007pattern}}
+  \label{fig:patternRelation}
+\end{figure}
+
+De acordo com \citet{leo2007pattern}, os padrões de roteiros apresentam as relações de:
+
+\begin{description}
+  \item[Aperfeiçoar.] Representam relações de associação que definem: (1) o detalhamento das atividades de um padrão do nível de fluxo de aprendizagem colaborativa usando padrões do nível de atividade; (2) o detalhamento dos diálogos de um padrão do nível de atividade usando padrões do nível de recursos; (3) o detalhamento das fases de um padrão do nível de fluxo de aprendizagem colaborativa usando outro padrão do nível de fluxo de aprendizagem colaborativa;
+  \newpage
+  (4a) o detalhamento das atividades de um padrão do nível de fluxo de aprendizagem colaborativa usando padrões do nível de papéis e mecanismos comuns; (4b) o detalhamento dos diálogos de um padrão do nível de atividades usando padrões do nível de papéis e mecanismos comuns; e (4c) o detalhamento das sequências de recursos instrucionais usando padrões do nível de papéis e mecanismos comuns de aprendizagem.
+  \item[Complementar.] Representam relações de associação que definem adições de atividades, diálogos ou sequências de recursos no mecanismo de colaboração dos padrões.
+  \item[Alternativa.] Representam relações de associação que definem soluções alternativas para atingir o mesmo conjunto de objetivos educacionais.
+  \item[Especialização.] Representam relações de associação entre padrões do mesmo nível mediante a qual se definem variações específicas, isto é definir padrões mais dependentes do domínio a ser ensinado.
+\end{description}
+
+Exemplos de padrões de roteiros colaborativos no nível de fluxo de aprendizagem são ``\textit{jigsaw}'' e ``\textit{pyramid}''; no nível de atividades são ``\textit{discussion group}'' e ``\textit{peer tutoring}''; no nível de recursos são ``\textit{guiding questions}'' e ``\textit{structure space for group task}''; e no nível de papéis e mecanismos comuns são ``\textit{free group formation}'' e ``\textit{controlled group formation}''.
+
+\subsubsection{Etapas do processo de planejamento instrucional usando padrões}
+\label{subsubsec:planejamentoroteiroscolaborativos}
+
+\citet{dillenbourg2007designing, hernandez2009generating} e \citet{villasclaras2009looking} definem o processo de planejamento instrucional usando padrões de roteiros colaborativos como uma abordagem intermediária entre desenvolvimento \emph{top-down} e \emph{botton-up}. O processo de desenvolvimento \emph{top-down} efetua a seleção e adaptação dos componentes e mecanismos de colaboração de um padrão de roteiros até que todos os elementos sejam compostos de recursos instrucionais. O processo de desenvolvimento \emph{botton-up} efetuada adaptações dos roteiros colaborativos em função de necessidades que surgem durante sua execução.
+
+\begin{figure}[htbp]
+  \centering 
+  \includegraphics[width=0.85\textwidth]{figuras/adaptiveScriptPhase}
+  \caption{Exemplo das etapas de planejamento instrucional usando o padrão \emph{ArgueScript}}
+  \label{fig:fasesRoteiroArgueGraph}
+\end{figure}
+
+As quatro etapas do processo de planejamento instrucional exemplificado na Figura \ref{fig:fasesRoteiroArgueGraph} mediante o uso do padrão \textit{ArgueScript} são:
+
+\begin{enumerate}[label=\textbf{(\alph{*})}]
+  \item \textbf{Edição dos roteiros}. Consiste na seleção e adaptação de padrões de roteiros. A adaptação de padrões é feita mediante definições dos mecanismos de colaboração. Finalizada a etapa, os roteiros obtidos são nomeados classes de roteiros (\textit{script classe}), um tipo de roteiro que apresenta solução a um conjunto de objetivos educacionais independente do domínio a ser ensinado.
+  
+  \item \textbf{Instanciação dos roteiros}. Consiste na seleção e sequenciamento dos recursos instrucionais a serem utilizados no roteiro. A organização dos recursos é efetuada mediante a avaliação dos mecanismos de colaboração da classe de roteiro, objetivos educacionais e características individuais dos participantes. Os roteiros obtidos na etapa são nomeados instâncias de roteiros (\textit{script instance}).
+ \end{enumerate}
+
+As instâncias de roteiros são empacotadas para sua execução em uma unidade de aprendizagem, na qual são incluídos os recursos necessários para sua execução em um AVA.
+
+\begin{enumerate}[label=\textbf{(\alph{*})}, resume]
+  \item \textbf{Configuração da unidade de aprendizagem}. Consiste na definição da estrutura social e temporal das instâncias de roteiros efetuada no ambiente virtual de aprendizagem empregado. A estrutura social é definida mediante a atribuição de papéis e grupos aos participantes, enquanto a estrutura temporal é definida mediante a especificação do aspeto temporal nas fases dos roteiros. 
+
+  \item \textbf{Execução do roteiro}. Consiste na execução sequencial das atividades e interações definidas no roteiro em um ambiente virtual de aprendizagem. Nesta etapa podem ser efetuadas adaptações em tempo de execução (\emph{run-time}) para definir mudanças nas atividades, no conteúdo e na estrutura social e temporal dos roteiros.
+\end{enumerate}
+
+
+% --------------------------------------------------------------------------- %
+\section{Sistemas tutores inteligentes}
+\label{sec:sti}
+
+Sistemas Tutores Inteligentes (STI) são programas de software que dão suporte às atividades de aprendizagem usando técnicas de inteligência artificial \citep{gamboa2001designing, wenger1987artificial}. Esses sistemas ao longo dos anos tem desenvolvido arquiteturas e aplicações que automatizam o processo de planejamento instrucional mediante a manipulação automática das interações instrucionais que especificam o que deve ser feito para ensinar.
+
+A seguir são apresentados o modelo de sistemas tutores inteligentes; a representação das tarefas e métodos instrucionais; e os tipos de métodos instrucionais.
+
+\newpage
+\subsection{Modelo clássico dos sistemas tutores inteligentes}
+
+Nos sistemas de tutores inteligentes, usando as técnicas de planejamento em IA, se obtêm um plano de ações que definem o sequenciamento de recursos adaptado aos estudantes. Para realizar a tarefa, os STIs devem possuir conhecimento de vários aspetos do processo de ensino-aprendizagem como conhecimentos do domínio a ser ensinado, da informação do estudante, da pedagogia e da comunicação \citep{woolf2008building}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.65\textwidth]{figuras/modeloReferencia}
+  \caption{Modelo clássico de sistemas tutores inteligentes}
+  \label{fig:referenceModel}
+\end{figure}
+
+
+O modelo clássico dos STIs \citep{kaplan1995new} mostrado na Figura \ref{fig:referenceModel} é composto de um modelo de domínio a ser ensinado, um modelo de estudante, um modelo pedagógico e uma interface.
+
+\begin{description}
+\item[Modelo de domínio a ser ensinado.] Contém a representação do conteúdo instrucional usando recursos instrucionais (atividades, exercícios, exemplos etc.) a serem utilizados durante o processo de ensino-aprendizagem.
+\item[Modelo de estudante.] Contém a representação de características dos estudantes, abrangendo informação do conhecimento do estudante sobre o domínio a ser ensinado, histórico e preferências.
+\item[Modelo pedagógico.] Contém a representação das estratégias pedagógicas a serem empregadas no processo de ensino-aprendizagem.
+\item[Interface.] Contém a representação das interações instrucionais que definem a comunicação dos STIs com o estudante. Em planejamento instrucional, o modelo de interface consiste em um conjunto de funções fornecido pelo mecanismo de execução ou mecanismo de adaptação do AVA em que é executado o plano de interação \citep{brusilovsky2003course}.
+\end{description}
+
+\subsection{Tarefas e métodos instrucionais}
+
+Segundo \citet{van1998gte} e \citet{vassileva1998dcg}, as estratégias pedagógicas são representadas no modelo pedagógico como um conjunto de tarefas e métodos instrucionais.
+As \emph{tarefas instrucionais} são atividades de diferentes níveis de granularidade a serem efetuadas por um instrutor durante o processo de ensino-aprendizagem, enquanto os \emph{métodos instrucionais} definem as várias maneiras como a tarefa deve ser efetuada. Consequentemente, a tarefa descreve um objetivo pedagógico e o método descreve como atingir esse objetivo.
+
+\newpage
+Os métodos e tarefas instrucionais podem ser empregados em diferentes contextos com diferentes elementos de domínio a ser ensinado e diferentes estudantes. No entanto, nem sempre as circunstancias do contexto são as apropriadas para aplicar um método, assim os métodos são associados a diferentes condições que definem a aplicabilidade de cada método. Dessa maneira, uma tarefa é associada a diferentes métodos, representando a característica de um projetista humano com diferentes alternativas para resolver a mesma tarefa.
+
+A Figura \ref{fig:exampleInstructionalMethod} mostra a representação gráfica da tarefa instrucional ``remediar-exercício'' e dos métodos instrucionais associados à tarefa. A tarefa apresenta três métodos associados que decompõe a tarefa em: (1) ``explicar'' e ``dar-solução''; (2) ``explicar'', ``dar-subexercícios'' e ``repetir''; e (3) ``dar-dica'', ``repetir'' e \textit{verificar}.
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tikzpicture}[scale=1]
+\draw (0,-0.6) -- (-3.2,-1.5);
+\draw (0,0) -- (0,-1.5);
+\draw (0,-0.6) -- (3.5,-1.5);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (0, -1.5) -- (-4,-3.8);
+\draw[arrows={-triangle 45}] (0, -1.5) -- (0,-3.8);
+\draw[arrows={-triangle 45}] (0, -1.5) -- (3.5,-3.8);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (-3.2, -1.5) -- (-4,-3.8);
+\draw[arrows={-triangle 45}] (-3.2, -1.5) -- (-2.5,-3.8);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (3.5, -1.5) -- (2,-3.8);
+\draw[arrows={-triangle 45}] (3.5, -1.5) -- (3.5,-3.8);
+\draw[arrows={-triangle 45}] (3.5, -1.5) -- (5,-3.8);
+% draw tasks 
+\filldraw[fill=black] (-0.2,-0.2) rectangle (0.2,0.2);
+\draw (0,-0.4) node [text badly centered, font=\footnotesize] {remediar-exercício};
+\filldraw[fill=white] ( 0,-1.5) circle (0.2);
+\filldraw[fill=white] (-3.2,-1.5) circle (0.2);
+\filldraw[fill=white] ( 3.5,-1.5) circle (0.2);
+\draw (4,-0.8) node [text badly centered, font=\footnotesize] {existe sugestão?};
+\draw (5,-1.1) node [text badly centered, font=\footnotesize] {pouco motivado? (+ aplicab.)};
+\draw (3.5,-1.9) node [text badly centered, font=\footnotesize] {dar-dica-repetir-verificar};
+% draw task explicar e dar-solução
+\filldraw[fill=black!20] (-4.2,-4.2) rectangle (-3.8,-3.8);
+\draw (-4,-4.4) node [text badly centered, font=\footnotesize] {explicar};
+\filldraw[fill=black!20] (-2.7,-4.2) rectangle (-2.3,-3.8);
+\draw (-2.5,-4.4) node [text badly centered, font=\footnotesize] {dar-solução};
+% draw task explicar, dar-subexercícios  e repetir
+\filldraw[fill=black!20] (-0.2,-4.2) rectangle (0.2,-3.8);
+\draw (0,-4.4) node [text badly centered, font=\footnotesize] {dar-subexercícios};
+% draw task dar-dica, repetir e verificar
+\filldraw[fill=black!20] (1.8,-4.2) rectangle (2.2,-3.8);
+\draw (2,-4.4) node [text badly centered, font=\footnotesize] {dar-dica};
+\filldraw[fill=black!20] (3.3,-4.2) rectangle (3.7,-3.8);
+\draw (3.5,-4.4) node [text badly centered, font=\footnotesize] {repetir};
+\filldraw[fill=black!20] (4.8,-4.2) rectangle (5.2,-3.8);
+\draw (5,-4.4) node [text badly centered, font=\footnotesize] {verificar};
+%draw legends
+\filldraw[fill=black] (-7.2,-0.6) rectangle (-6.8,-0.2); \draw (-6,-0.4) node [text badly centered, font=\footnotesize] {Tarefas};
+\filldraw[fill=white] (-7,-1) circle (0.2); \draw (-6,-1) node [text badly centered, font=\footnotesize] {Métodos};
+\filldraw[fill=black!20] (-7.2,-1.8) rectangle (-6.8, -1.4); \draw (-6,-1.6) node [text badly centered, font=\footnotesize] {Ações};
+\end{tikzpicture}
+%\includegraphics[width=0.75\textwidth]{figuras/instructionalMethoda}
+\end{center} 
+\caption{Tarefa instrucional remediar-exercício e métodos instrucionais associados}
+\label{fig:exampleInstructionalMethod}
+\end{figure}
+
+\citet{van1998gte} identifica três tipos de condições: absolutas, relativas e de preferência. As condições absolutas devem necessariamente ser satisfeitas para que o método possa ser aplicado. Por exemplo, o método ``dar-dica-repetir-verificar'' associado à tarefa remediar (Figura \ref{fig:exampleInstructionalMethod}) apresenta como condição absoluta a existência de uma sugestão para o exercício. As condições relativas e de preferência são condições não necessárias que aumentam ou diminuem a aplicabilidade de um método quando são satisfeitas. Por exemplo, o método apresentado anteriormente tem uma condição relativa que incrementa a aplicabilidade, se o estudante está pouco motivado.
+
+\subsection{Tipos de métodos instrucionais}
+
+De acordo com \citet{van1998gte}, os métodos de planejamento instrucional podem ser de quatro tipos: métodos de decomposição, métodos de decomposição repetitiva, métodos de decomposição distributiva e métodos de execução.
+
+Os \emph{métodos de decomposição} e \emph{métodos de decomposição repetitiva} decompõem uma tarefa instrucional em um conjunto de subtarefas, o primeiro método efetua a decomposição da tarefa apenas uma vez, enquanto o segundo método efetua a decomposição da tarefa várias vezes. Como exemplo,  o método de decomposição ``esclarecer por analogia'' decompõe a tarefa ``esclarecer conceito'' em duas subtarefas ``apresentar analogia'' e ``demostrar analogia'' (Figura \ref{fig:exemploMetodoDecomposicao}). Enquanto, o método de decomposição repetitiva ``método completo'' decompõe a tarefa ``demonstrar analogia'' nas tarefas ``demonstrar relações'' e ``demonstrar analogia'' (Figura \ref{fig:exemploMetodoDecomposicaoRepetitiva})
+
+%\pgfsetlayers{main,nodelayer,edgelayer}
+\begin{figure}[htbp]
+\begin{center}
+\subfloat[método de decomposição]{\label{fig:exemploMetodoDecomposicao}
+\begin{tikzpicture}[scale=1.5]
+\tikzstyle{task}=[rectangle,fill=Black,draw=Black]
+\tikzstyle{method}=[circle,fill=White,draw=Black,minimum size=2mm,inner sep=0pt]
+\tikzstyle{action}=[rectangle,fill=hexcolor0xd6d6d6,draw=Black]
+\tikzstyle{more}=[rectangle,fill=White,draw=White]
+\tikzstyle{zeta}=[fill=Black,->]
+\tikzstyle{texto}=[text badly centered, font=\tiny]
+%\begin{pgfonlayer}{nodelayer}
+	\node [style=task] (t1) at (1, 1.75) {};
+	\draw (1, 1.5) node [style=texto] {esclarecer conceito};
+	\node [style=method] (m1) at (1, 1) {};
+	\draw (2, 1) node [style=texto] {esclarecer por analogia};
+	\node [style=action] (a1) at (0, 0) {};
+	\draw (0, -0.25) node [style=texto] {apresentar analogia};
+	\node [style=task] (st1) at (2, 0) {};
+	\draw (2, -0.25) node [style=texto] {demonstrar analogia};
+%\end{pgfonlayer}
+%\begin{pgfonlayer}{edgelayer}
+	\draw [style=zeta] (t1) to (m1);
+	\draw [style=zeta] (m1) to (a1);
+	\draw [style=zeta] (m1) to (st1);
+%\end{pgfonlayer}
+\end{tikzpicture}}
+\subfloat[método de decomposição repetitiva]{\label{fig:exemploMetodoDecomposicaoRepetitiva}
+\begin{tikzpicture}[scale=1.5]
+\tikzstyle{task}=[rectangle,fill=Black,draw=Black]
+\tikzstyle{method}=[circle,fill=White,draw=Black,minimum size=2mm,inner sep=0pt]
+\tikzstyle{action}=[rectangle,fill=hexcolor0xd6d6d6,draw=Black]
+\tikzstyle{more}=[rectangle,fill=White,draw=White]
+\tikzstyle{zeta}=[fill=Black,->]
+\tikzstyle{texto}=[text badly centered, font=\tiny]
+%\begin{pgfonlayer}{nodelayer}
+	\node [style=task] (t1) at (1.5, 1.75) {};
+	\draw (1.5, 1.5) node [style=texto] {demonstrar analogia};
+	\node [style=method] (m1) at (0, 1) {};
+	\draw (1, 1) node [style=texto] {método básica};
+	\node [style=method] (m2) at (3, 1) {};
+	\draw (4, 1) node [style=texto] {método completo};
+	\node [style=action] (a1) at (0, 0) {};
+	\draw (0, -0.25) node [style=texto] {descrever analogia};
+	\node [style=task] (st1) at (2, 0) {};
+	\draw (2, -0.25) node [style=texto] {demonstrar relações};
+	\node [style=task] (st2) at (4, 0) {};
+	\draw (4, -0.25) node [style=texto] {demonstrar analogia};
+%\end{pgfonlayer}
+%\begin{pgfonlayer}{edgelayer}
+	\draw [style=zeta] (t1) to (m1);
+	\draw [style=zeta] (t1) to (m2);
+	\draw [style=zeta] (m1) to (a1);
+	\draw [style=zeta] (m2) to (st1);
+	\draw [style=zeta] (m2) to (st2);
+%\end{pgfonlayer}
+\end{tikzpicture}}
+\caption{Exemplos do métodos decomposição e decomposição repetitiva}
+\end{center}
+\end{figure}
+%\pgfsetlayers{main}
+
+Os \emph{métodos de decomposição distributiva} de tarefas decompõe a tarefa instrucional em um número idêntico de subtarefas, na que cada uma opera sob um elemento de uma sequência. Por exemplo, o método ``dar exercício para cada subproblema'' mostrado na Figura \ref{fig:exemploMetodoDecomposicaoDistributiva} decompõe a tarefa ``apresentar exercício'' nas subtarefas ``apresentar exercício'' para cada subproblema $p_{i}$.
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tikzpicture}[scale=1.5]
+\tikzstyle{task}=[rectangle,fill=Black,draw=Black]
+\tikzstyle{method}=[circle,fill=White,draw=Black,minimum size=2mm,inner sep=0pt]
+\tikzstyle{action}=[rectangle,fill=hexcolor0xd6d6d6,draw=Black]
+\tikzstyle{more}=[rectangle,fill=White,draw=White]
+\tikzstyle{zeta}=[fill=Black,->]
+\tikzstyle{texto}=[text badly centered, font=\tiny]
+%\begin{pgfonlayer}{nodelayer}
+	\node [style=task] (t1) at (3, 1.75) {};
+	\draw (3, 1.5) node [style=texto] {apresentar exercício};
+	\node [style=method] (m1) at (3, 1) {};
+	\draw (4.5, 1) node [style=texto] {dar exercício para cada subproblema};
+	\node [style=task] (st1) at (0, 0) {};
+	\draw (0, -0.25) node [style=texto] {apresentar exercício $p_{1}$};
+	\node [style=task] (st2) at (2, 0) {};
+	\draw (2, -0.25) node [style=texto] {apresentar exercício $p_{2}$};
+	\node [style=more] (mo1) at (4,0) {...};
+	\node [style=task] (st3) at (6, 0) {};
+	\draw (6, -0.25) node [style=texto] {apresentar exercício $p_{n}$};
+%\end{pgfonlayer}
+%\begin{pgfonlayer}{edgelayer}
+	\draw [style=zeta] (t1) to (m1);
+	\draw [style=zeta] (m1) to (st1);
+	\draw [style=zeta] (m1) to (st2);
+	\draw [style=zeta] (m1) to (mo1);
+	\draw [style=zeta] (m1) to (st3);
+%\end{pgfonlayer}
+\end{tikzpicture}
+\caption{Exemplo do método de decomposição distributiva}
+\label{fig:exemploMetodoDecomposicaoDistributiva}
+\end{center}
+\end{figure}
+
+Os métodos de execução são métodos que efetuam a decomposição de uma tarefa instrucional em ações instrucionais que não podem ser decompostas. A Figura \ref{fig:exemploMetodoExecucao} mostra o método de execução ``dar-dica-repetir-verificar'' que decompõe a tarefa ``remediar-exercicio'' nas ações ``dar-dica'', ``repetir'' e ``verificar''.
+
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tikzpicture}[scale=1.5]
+\tikzstyle{task}=[rectangle,fill=Black,draw=Black]
+\tikzstyle{method}=[circle,fill=White,draw=Black,minimum size=2mm,inner sep=0pt]
+\tikzstyle{action}=[rectangle,fill=hexcolor0xd6d6d6,draw=Black]
+\tikzstyle{more}=[rectangle,fill=White,draw=White]
+\tikzstyle{zeta}=[fill=Black,->]
+\tikzstyle{texto}=[text badly centered, font=\tiny]
+%\begin{pgfonlayer}{nodelayer}
+	\node [style=task] (t1) at (2, 1.75) {};
+	\draw (2, 1.5) node [style=texto] {remediar-exercício};
+	\node [style=method] (m1) at (2, 1) {};
+	\draw (3.5, 1) node [style=texto] {dar-dica-repetir-verificar};
+	\node [style=action] (a1) at (0, 0) {};
+	\draw (0, -0.25) node [style=texto] {dar-dica};
+	\node [style=action] (a2) at (2, 0) {};
+	\draw (2, -0.25) node [style=texto] {repetir};
+	\node [style=action] (a3) at (4, 0) {};
+	\draw (4, -0.25) node [style=texto] {verificar};
+%\end{pgfonlayer}
+%\begin{pgfonlayer}{edgelayer}
+	\draw [style=zeta] (t1) to (m1);
+	\draw [style=zeta] (m1) to (a1);
+	\draw [style=zeta] (m1) to (a2);
+	\draw [style=zeta] (m1) to (a3);
+%\end{pgfonlayer}
+\end{tikzpicture}
+\caption{Exemplo do método de execução}
+\label{fig:exemploMetodoExecucao}
+\end{center}
+\end{figure}
+
+\newpage
+% --------------------------------------------------------------------------- %
+\section{Planejamento hierárquico}
+\label{sec:planejamentoHierarquico}
+
+Nesta seção, descrevemos o sistema de planejamento hierárquico JSHOP2ip utilizado na modelagem de planejamento instrucional em ACSC. Iniciamos com uma visão geral de planejamento em IA apresentando os conceitos básicos na Subseção \ref{subsec:introducaoPlanejamentoIA}. A Subseção \ref{subsec:planejamentoHierarquico} apresenta os conceitos do processo de planejamento hierárquico. Finalmente, na Subseção \ref{subsec:JSHOP2ip} apresentamos detalhes do sistema de planejamento hierárquico JSHOP2ip.
+
+%Este capítulo apresenta o modelo conceitual de planejamento em IA na Seção \ref{sec:modeloConceitualPlanejamento}. As técnicas de planejamento clássico e planejamento hierárquico são apresentadas nas Seções \ref{sec:planejamentoClassico} e \ref{sec:planejamentoHierarquico}. Na seção \ref{sec:JSHOP2}, apresentamos detalhes do sistema de planejamento hierárquico JSHOP2ip, sistema utilizado para representar a modelagem proposta.
+
+\subsection{Introdução ao planejamento em Inteligência Artificial}
+\label{subsec:introducaoPlanejamentoIA}
+
+Planejamento em IA consiste na geração automática de uma sequência de ações, chamada de plano, que ao ser executado por um agente a partir de um estado inicial alcança um estado meta no que os objetivos do agente são atingidos \citep{ghallab2004automated}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.53\textwidth]{figuras/planningConceitualModel}
+\caption{Modelo conceitual do problema de planejamento em IA}
+\label{fig:planningConceitualModel}
+\end{figure}
+
+De forma geral, o modelo conceitual do problema de planejamento em IA, mostrado na Figura \ref{fig:planningConceitualModel}, consiste de:
+
+\begin{itemize}
+\item Um \emph{sistema de transição de estados} $\Sigma$ que muda de acordo com sua função de transição de estados $\gamma$, reagindo aos \emph{eventos} e \emph{ações} que acontecem no sistema;
+\item Um algoritmo de planejamento, chamado de \emph{planejador}, cujas entradas são a descrição do sistema $\Sigma$ denominada \emph{domínio de planejamento}, a situação inicial chamada de \emph{estado inicial} $s_{0}$ e um conjunto de \emph{objetivos} $G$ que se deseja atingir; e
+\item Um \emph{controlador} que executa as \emph{ações} definidas em algum \emph{plano} fornecido pelo \emph{planejador}. O controlador recebe como entrada, o estado da execução de ações, denominado estado corrente $s$, obtido por meio de \emph{observações}.
+\end{itemize}
+
+Se durante o processo de execução de algum \emph{plano}, utiliza a informação fornecida pelo controlador acerca do estado da execução das \emph{ações}, denominada monitoramento, o processo é chamado de \emph{planejamento online}, caso contrário, é conhecido como \emph{planejamento offline}.
+
+\subsubsection{Planejador dependente e independente de domínio}
+
+Uma abordagem para resolver problemas de planejamento em IA é o desenvolvimento de \emph{planejadores dependentes de domínio}, no que são desenvolvidas técnicas específicas para cada problema. O desenvolvimento desses planejadores oferece oportunidades para adequar o mecanismo de planejamento a cada domínio específico obtendo uma eficiência maior na resolução de problemas. Por exemplo, um sistema de planejamento para o jogo de xadrez, pode conter sequências prescritas de movimentos definidas por estratégias táticas, possibilitando obter planos para o jogo em segundos.
+
+Os \emph{planejadores independentes de domínio} separam o mecanismo de planejamento da descrição do sistema $\Sigma$. Para resolver um problema específico, a descrição do sistema $\Sigma$ é definida por meio de uma representação declarativa. Assim, um planejador independente de domínio utiliza como entrada as especificações do problema e do domínio de planejamento. Para melhorar o desempenho de um planejador independente de domínio, os sistemas de planejamento empregam em geral um compilador para obter planejadores dependentes de domínio, usando como entrada a descrição do domínio de planejamento.
+
+\subsubsection{Linguagem de planejamento}
+
+Em um sistema de planejamento independente de domínio, a linguagem de planejamento $L$ é usada para descrever o problema e domínio de planejamento. A linguagem $L$ define os tipos de problemas que podem ser resolvidos pelo planejador, assim, a linguagem deve ser suficientemente expressiva para representar uma variedade ampla de problemas, e ao mesmo tempo deve ser suficientemente restritiva para obter planejadores dependentes do domínio eficientes.
+
+Nesta dissertação, a modelagem de planejamento instrucional em ACSC utiliza a representação clássica detalhada no Apêndice \ref{ape:planejamentoClassico}, na qual é usada uma notação proveniente da linguagem de primeira ordem com símbolos de variáveis, predicados e constantes. Assim, um estado corrente $s$ é representado usando átomos lógicos, enquanto, as ações são representadas como operadores.
+
+\subsubsection{Átomos lógicos e operadores de planejamento}
+
+Um \emph{átomo lógico} é uma fórmula que não pode ser dividida em subfórmulas, ou seja, uma fórmula sem conectivos que representa uma proposição. Em linguagem natural, um exemplo de átomo lógico é ``Jaqueline é inteligente''. A estrutura utilizada para representar um átomo lógico depende da linguagem $L$. No presente trabalho, um átomo lógico tem a forma: \textsf{(p t$_{1}$ t$_{2}$ ... t$_{n}$)}, onde \textsf{p} é um símbolo predicado e \textsf{t$_{i}$} são termos. 
+
+Os \emph{operadores de planejamento} são generalizações das ações executadas pelo controlador. Um operador consiste de um conjunto de pré-condições e efeitos. As pré-condições são representadas por expressões lógicas que definem a aplicabilidade das ações no estado corrente $s$. Enquanto, os efeitos, representados mediante literais, definem o conjunto de átomos lógicos a serem adicionados e removidos do estado corrente $s$.
+
+\newpage
+\subsection{Processo de planejamento hierárquico}
+\label{subsec:planejamentoHierarquico}
+
+Planejamento hierárquico, ou planejamento em rede hierárquica de tarefas (\emph{Hierarchical Task Network Planning}, HTN), é uma técnica de planejamento em IA na qual o problema de planejamento é resolvido por meio da decomposição sucessiva de tarefas em subtarefas até atingir um nível de tarefas primitivas, chamado de plano, \citep{ghallab2004automated}.
+
+Um exemplo de decomposição utilizando métodos hierárquicos é mostrado na Figura \ref{fig:sampleHTN02}, na qual a tarefa ``transportar dois pacotes $p_{1}$ e $p_{2}$'' é decomposta nas subtarefas ``transportar pacote $p_{1}$'' e ``transportar pacote $p_{2}$'' que não apresentam relações de ordem parcial entre elas.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{figuras/sampleHTN02}
+  \caption{Exemplo de decomposição da tarefa transportar dois pacotes $p_{1}$ e $p_{2}$}
+  \label{fig:sampleHTN02}
+\end{figure}
+
+As definições de planejamento hierárquico apresentadas a seguir correspondem ao caso restrito de planejamento com redes simples de tarefas (\textit{Simple Task Network Planning}, STN). As redes simples de tarefas representam restrições na ordem de execução das tarefas, podendo ser tanto de ordem parcial quanto total, assemelhando-se a um plano parcialmente ordenado.
+
+\begin{definition}
+O problema de planejamento hierárquico é formalizado como a tripla \newline
+$P$ = $\langle s_{0}, w_{0}, D \rangle$, em que:
+\begin{itemize}
+\item $s_{0}$ é o estado inicial que utiliza átomos lógicos;
+\item $w_{0}$ é a rede de tarefas inicial; e
+\item $D$ é o domínio de planejamento.
+\end{itemize}
+\end{definition}
+
+\begin{definition}
+Uma rede simples de tarefas $w$ é formalizada como um dígrafo acíclico $w = (U,E)$, no qual: $U$ é um conjunto de nós tarefas nas quais cada nó $u \in U$ contém uma tarefa $t_{u}$; e $E$ é um conjunto de arestas que representam as restrições de ordem. Uma rede é totalmente instanciada se todas as tarefas \{$t_{u} | u \in U$\} são instanciadas; caso contrário, a rede é parcialmente instanciada. Uma rede de tarefas é primitiva se todas as tarefas \{$t_{u} | u \in U$\} são primitivas.
+\end{definition}
+
+\begin{example}
+A rede de tarefas inicial $w_{0}=(U,E)$ da Figura \ref{fig:sampleHTN02} é definida por $U=\{u_{1}\}$ e $E=\{\}$, onde: $u_{1}=\{t_{1}\}$ é um n\'{o} tarefa que contém a tarefa $t_{1}$ ``transportar dois pacotes $p_{1}$ e $p_{2}$ às localizações $l_{3}$ e $l_{4}$''.
+\end{example}
+
+\begin{definition}
+\label{def:tarefaHTN}
+Uma tarefa hierárquica é uma expressão da forma ($t$ $r_{1}$ ... $r_{k}$), na qual: $t$ é um símbolo único de tarefa, e  $r_{1}, ..., r_{k}$ são termos. Dessa maneira, distinguimos dois tipos de tarefas:
+
+\begin{itemize}
+\item uma \emph{tarefa primitiva} na qual $t$ é um símbolo de operador; e
+\item uma \emph{tarefa composta} na qual $t$ não é um símbolo de operador.
+\end{itemize}
+\end{definition}
+
+O domínio­ de planejamento $D=(O,M)$ consiste em um conjunto de operadores $O$ e métodos hierárquicos $M$ que representam explicitamente receitas de solução às tarefas aproveitando a natureza hierárquica inerente a muitos problemas.
+
+\begin{definition}
+\label{def:metodoHTN}
+Um método hierárquico é a n-upla: $m=\langle$\emph{nome}($m$), \emph{tarefa}($m$), \emph{precond}($m$), \emph{rede}($m$)$\rangle$, na qual:
+
+\begin{itemize}
+\item $nome(m)$ é o nome do método;
+\item $tarefa(m)$ é uma tarefa não primitiva;
+\item $precond(m)$ é um conjunto de literais que especificam as pré-condições do método; e
+\item $rede(m)$ é uma rede de tarefas contendo as subtarefas na qual a tarefa é decomposta.
+\end{itemize}
+\end{definition}
+
+Na definição do método, $nome(m)$ é um nome único, $tarefa(m)$ é a tarefa na qual o método $m$ pode ser aplicado, $precond(m)$ especifica as condições que o estado corrente deve satisfazer para que o método $m$ seja aplicável e $rede(m)$ especifica a rede de subtarefas a serem realizadas para efetuar a tarefa $tarefa(m)$.
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.70\textwidth]{figuras/exemploPlanejamentoClassico}
+\caption{Problema de planejamento logístico de entrega de dois pacotes}
+\label{fig:exemploProcessoPlanejamento}
+\end{figure}
+
+\begin{example}
+\label{exa:metodoHTN}
+No domínio de planejamento logístico de entrega de pacotes da Figura \ref{fig:exemploProcessoPlanejamento}, identificamos os seguintes métodos hierárquicos:
+\\ \\
+\begin{tabular}{p{6cm}p{1cm}l}
+\multicolumn{3}{l}{\ \textrm{(a)} \textit{despachar o transporte $t$ à localização $l$}}\\
+\begin{tabular}{ll}
+  nome:     & \textsf{despachar-no-lugar}\\
+  tarefa:   & \textsf{(despachar $t$ $l$)}\\
+  precond:  & \textsf{(em $t$ $l$)}\\
+  rede:     & $u_{1}$=\textsf{(reservar $t$)}\\
+            & $E$=\{ \}\\
+            & \\
+\end{tabular}
+ & &
+\begin{tabular}{ll}
+  nome:     & \textsf{despachar-em-outro-lugar}\\
+  tarefa:   & \textsf{(despachar $t$ $l$)}\\
+  precond:  & \textsf{(em $t$ $x$), $x \not= l$}\\
+  rede:     & $u_{1}$=\textsf{(reservar $t$)}\\
+            & $u_{2}$=\textsf{(mover $t$ $x$ $l$)}\\
+            & $E$=\{($u_{1} \prec u_{2}$)\}\\
+\end{tabular} \\
+\end{tabular}
+\\ \\
+\begin{tabular}{p{6cm}p{1cm}l}
+\multicolumn{3}{l}{\ \textrm{(b)} \textit{retornar o transporte $t$ à localização $l$}}\\
+\begin{tabular}{ll}
+  nome:     & \textsf{retornar-no-lugar}\\
+  tarefa:   & \textsf{(retornar $t$ $l$)}\\
+  precond:  & \textsf{(em $t$ $l$)}\\
+  rede:     & $u_{1}$=\textsf{(disponibilizar $t$)}\\
+            & $E$=\{ \}\\
+            & \\
+\end{tabular}
+ & & 
+\begin{tabular}{ll}
+  nome:     & \textsf{retornar-em-outro-lugar}\\
+  tarefa:   & \textsf{(retornar $t$ $l$)}\\
+  precond:  & \textsf{(em $t$ $x$), $x \not= l$}\\
+  rede:     & $u_{1}$=\textsf{(mover $t$ $x$ $l$)}\\
+            & $u_{2}$=\textsf{(disponibilizar $t$)}\\
+            & $E$=\{($u_{1} \prec u_{2}$)\}\\
+\end{tabular} \\
+\end{tabular}
+\\ \\ \\
+\begin{tabular}{lp{1cm}l}
+\multicolumn{3}{l}{\ \textrm{(c)} \textit{transportar o pacote $p$ com $t$ da localização $l_{1}$ à localização $l_{2}$}}\\
+\begin{tabular}{ll}
+  nome:     & \textsf{transportar-pacote}\\
+  tarefa:   & \textsf{(transportar $p$ $t$ $l_{1}$ $l_{2}$)}\\
+  precond:  & \textsf{(em $p$ $l_{1}$), (em $t$ $l$)}\\
+  rede:     & $u_{1}$=\textsf{(despachar $t$ $l_{1}$)}\\
+            & $u_{2}$=\textsf{(carregar $t$ $p$)}\\
+            & $u_{3}$=\textsf{(mover $t$ $l_{1}$ $l_{2}$)}\\
+            & $u_{4}$=\textsf{(descarregar $t$ $p$)}\\
+            & $u_{5}$=\textsf{(retornar $t$ $l$)}\\
+            & $E$=\{($u_{1} \prec u_{2}$), ($u_{2} \prec u_{3}$),
+	    ($u_{3} \prec u_{4}$), ($u_{4} \prec u_{5}$)\}\\
+\end{tabular}                                               &   & \\
+\end{tabular}
+\\ \\ \\
+\begin{tabular}{lp{1cm}l}
+\multicolumn{3}{l}{\ \textrm{(d)} \textit{efetuar o transporte de dois pacotes $p_{1}$ e $p_{2}$ das localizações $l_{1}$ e $l_{2}$ às localizações $l_{3}$ e $l_{4}$}}\\
+\begin{tabular}{ll}
+  nome:     & \textsf{transportar-duplo}\\
+  tarefa:   & \textsf{(transportar-duplo $p_{1}$ $p_{2}$ $l_{1}$ $l_{2}$ $l_{3}$ $l_{4}$)}\\
+  precond:  & \textsf{(disponível $t_{1}$), (disponível $t_{2}$), $t_{1} \not= t_{2}$}\\
+  rede:     & $u_{1}$=\textsf{(transportar $p_{1}$ $t_{1}$ $l_{1}$ $l_{2}$)}\\
+            & $u_{2}$=\textsf{(transportar $p_{2}$ $t_{2}$ $l_{3}$ $l_{4}$)}\\
+            & $E$=\{ \}\\
+\end{tabular}                                               &   & \\
+\end{tabular}
+\end{example}
+
+No planejamento com redes simples de tarefas, as restrições associadas às tarefas são restrições de ordem e pré-condição, de maneira que o único tipo de procedimento de planejamento viável é a decomposição progressiva \citep{ghallab2004automated}. Quando um método $m$ é utilizado para decompor uma tarefa $t$, tal que $t$ é parte de um nó $u$ de uma rede de tarefas $w$, obtemos a nova rede de tarefas por meio da decomposição $\delta(w,u,m,\sigma)$. Na decomposição, um nó $u$ é removido da rede de tarefas $w$, uma cópia da rede de tarefas $w_{u}$ do método $m$ é inserida na rede $w$ no lugar de $u$ e as restrição de ordem $\prec$ que aplicava a $u$ passa a valer para todo $w_{u}$.
+
+\begin{definition}
+Seja $w=(U, E)$ uma rede simples de tarefas, na qual $u \in U$ é um nó sem predecessores e $m$ é um método relevante para a tarefa $t_{u}$ contida no n\'{o} $u$ em alguma substituição $\sigma$; seja \emph{succ}($u$)=$\{ u' \in U | (u,u') \in E\}$ o conjunto de todos os sucessores imediatos de $u$; seja \emph{succ$_{1}$}($u$) o conjunto de sucessores imediatos para os quais $u$ é o único predecessor; seja $(U',E')$ o resultado da remoção de $u$ e todas as arestas que contenham $u$; e seja ($U_{m}$,$E_{m}$) uma cópia da rede de tarefas \emph{rede}($m$) contendo as subtarefas na qual a tarefa do método $m$ é decomposta.
+
+Se $(U_{m},E_{m})$ não é vazio, então a função de decomposição $\delta$ de $u$ em $w$ sob a substituição $\sigma$ é o conjunto de redes de tarefas:
+\begin{center}
+$\delta$($w$,$u$,$m$,$\sigma$)=\{($\sigma(U' \cup U_{m})$, $\sigma(E_{v})$) $|$ $v$  $\in$ \emph{subtarefas}($m$)\},
+\end{center}
+onde:
+\begin{center}
+$E_{v} = E_{m} \cup (U_{m}$ x \emph{succ}$(u)) \cup \{(v,u') | u' \in$ \emph{succ}$_{1}(u)\}$
+\end{center}
+
+Caso contrário, $\delta(w,u,m,\sigma) = \{(\sigma(U'), \sigma(E'))\}$.
+\end{definition}
+
+\begin{example}
+Na Figura \ref{fig:exemploDecomposicaoHTN} é mostrado o processo de decomposição de tarefas hierárquicas para o problema de planejamento logístico de transporte de pacotes da Figura \ref{fig:exemploProcessoPlanejamento} utilizando os métodos hierárquicos definidos no Exemplo \ref{exa:metodoHTN}.
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tikzpicture}[scale=0.85]
+\draw (-0.5,0) -- (-0.5,-2);
+\draw (-5,-4) -- (-5,-6);
+\draw (4,-4) -- (4,-6);
+\draw (-9,-8) -- (-9,-10);
+\draw (-1,-8) -- (-1,-10);
+\draw (0,-8) -- (0,-11);
+\draw (8,-8) -- (8,-10);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (-0.5, -2) -- (-5,-4);
+\draw[arrows={-triangle 45}] (-0.5, -2) -- (4,-4);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (-5, -6) -- (-9,-8);
+\draw[arrows={-triangle 45}] (-5, -6) -- (-7,-8);
+\draw[arrows={-triangle 45}] (-5, -6) -- (-5,-8);
+\draw[arrows={-triangle 45}] (-5, -6) -- (-3,-8);
+\draw[arrows={-triangle 45}] (-5, -6) -- (-1,-8);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (4, -6) -- (0,-8);
+\draw[arrows={-triangle 45}] (4, -6) -- (2,-8);
+\draw[arrows={-triangle 45}] (4, -6) -- (4,-8);
+\draw[arrows={-triangle 45}] (4, -6) -- (6,-8);
+\draw[arrows={-triangle 45}] (4, -6) -- (8,-8);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (-9, -10) -- (-10,-12);
+\draw[arrows={-triangle 45}] (-9, -10) -- (-8,-12);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (-1, -10) -- (-2,-12);
+\draw[arrows={-triangle 45}] (-1, -10) -- (0,-12);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (0, -11) -- (-1,-13);
+\draw[arrows={-triangle 45}] (0, -11) -- (1,-13);
+% draw arrows for method
+\draw[arrows={-triangle 45}] (8, -10) -- (8,-12);
+% draw arrow for order
+\draw[arrows={-angle 60}] (-7, -6.5) -- (-3,-6.5);
+\draw[arrows={-angle 60}] (2, -6.5) -- (6,-6.5);
+\draw[arrows={-angle 60}] (-9.5, -10.5) -- (-8.5,-10.5);
+\draw[arrows={-angle 60}] (-1.5, -10.5) -- (-0.5,-10.5);
+\draw[arrows={-angle 60}] (-0.5, -11.5) -- (0.5,-11.5);
+% draw task transportar-duplo
+\filldraw[fill=black] (-0.7,0) rectangle (-0.3,0.4);
+\draw (-0.5,-0.5) node [text badly centered, font=\footnotesize] {(transportar-duplo p1 p2 loc1 loc2 loc3 loc4)};
+\filldraw[fill=white] (-0.5,-2) circle (0.2);
+% draw task transportar-t1 and transporter-t2
+\filldraw[fill=black] (-5.2,-4) rectangle (-4.8,-4.4);
+\draw (-5,-5) node [text badly centered, font=\footnotesize] {(transportar p2 t1 loc2 loc4)};
+\filldraw[fill=black] (3.8,-4) rectangle (4.2,-4.4);
+\draw (4,-5) node [text badly centered, font=\footnotesize] {(transportar p1 t2 loc1 loc3)};
+\filldraw[fill=white] (-5,-6) circle (0.2);
+\filldraw[fill=white] (4,-6) circle (0.2);
+% draw task despachar, carregar, mover, descarregar e retornar
+\filldraw[fill=black] (-9.2,-8) rectangle (-8.8,-8.4); \draw (-9,-8.7) node [text badly centered, font=\footnotesize]{despachar};
+\filldraw[fill=black!20] (-7.2,-8) rectangle (-6.8,-8.4); \draw (-7,-8.7) node [text badly centered, font=\footnotesize]{carregar};
+\filldraw[fill=black!20] (-5.2,-8) rectangle (-4.8,-8.4); \draw (-5,-8.7) node [text badly centered, font=\footnotesize]{mover};
+\filldraw[fill=black!20] (-3.2,-8) rectangle (-2.8,-8.4); \draw (-3,-8.7) node [text badly centered, font=\footnotesize]{descarregar};
+\filldraw[fill=black] (-1.2,-8) rectangle (-0.8,-8.4); \draw (-1,-8.7) node [text badly centered, font=\footnotesize]{returner};
+\filldraw[fill=white] (-9,-10) circle (0.2);
+\filldraw[fill=white] (-1,-10) circle (0.2);
+% draw task despachar, carregar, mover, descarregar e retornar      
+\filldraw[fill=black] (-0.2,-8) rectangle (0.2,-8.4);
+\filldraw[fill=black!20] (1.8,-8) rectangle (2.2,-8.4);
+\filldraw[fill=black!20] (3.8,-8) rectangle (4.2,-8.4);
+\filldraw[fill=black!20] (5.8,-8) rectangle (6.2,-8.4);
+\filldraw[fill=black] (7.8,-8) rectangle (8.2,-8.4);
+\filldraw[fill=white] (0,-11) circle (0.2);
+\filldraw[fill=white] (8,-10) circle (0.2);
+% draw task reserver e mover
+\filldraw[fill=black!20] (-10.2,-12) rectangle (-9.8,-12.4);
+\draw (-10,-12.7) node [text badly centered, font=\footnotesize]{reservar};
+\filldraw[fill=black!20] (-8.2,-12) rectangle (-7.8,-12.4);
+\draw (-8,-12.7) node [text badly centered, font=\footnotesize]{mover};
+% draw task mover e disponibilizar
+\filldraw[fill=black!20] (-2.2,-12) rectangle (-1.8,-12.4);
+\draw (-2,-12.7) node [text badly centered, font=\footnotesize]{mover};
+\filldraw[fill=black!20] (-0.2,-12) rectangle (0.2,-12.4);
+\draw (0,-12.7) node [text badly centered, font=\footnotesize]{disponibilizar};
+% draw task reservar e mover
+\filldraw[fill=black!20] (-1.2,-13) rectangle (-0.8,-13.4);
+\draw (-1,-13.7) node [text badly centered, font=\footnotesize]{reservar};
+\filldraw[fill=black!20] (0.8,-13) rectangle (1.2,-13.4);
+\draw (1,-13.7) node [text badly centered, font=\footnotesize]{mover};
+% draw task disponibilizar
+\filldraw[fill=black!20] (7.8,-12) rectangle (8.2,-12.4);
+\draw (8,-12.7) node [text badly centered, font=\footnotesize]{disponibilizar};
+%draw legends
+\filldraw[fill=black] (-9.2,-0.6) rectangle (-8.8,-0.2); \draw (-8,-0.4) node [text badly centered, font=\footnotesize] {Tarefas};
+\filldraw[fill=white] (-9,-1) circle (0.2); \draw (-8,-1) node [text badly centered, font=\footnotesize] {Métodos};
+\filldraw[fill=black!20] (-9.2,-1.8) rectangle (-8.8, -1.4); \draw (-8,-1.6) node [text badly centered, font=\footnotesize] {Ações};
+\end{tikzpicture}
+\end{center} %\centering 
+%\includegraphics[width=0.95\textwidth]{figuras/exemploDecomposicaoHTN} 
+\caption{Exemplo de decomposição de tarefas hierárquicas}
+\label{fig:exemploDecomposicaoHTN}
+\end{figure}
+\end{example}
+
+\newpage
+
+\subsection{Sistema de planejamento hierárquico JSHOP2ip}
+\label{subsec:JSHOP2ip}
+
+\textit{Java Simple Hierarquical Ordered Planner 2 for Instructional Planning} (JSHOP2ip) é uma versão modificada do sistema de planejamento JSHOP2  que possibilita representar condições relativas nos métodos hierárquicos.
+As condições relativas são condições que não precisam ser satisfeitas para efetuar a decomposição de uma tarefa, mas aumentam ou diminuem a aplicabilidade de um método hierárquico quando existe mais de um método que possa ser aplicado.
+
+A seguir apresentamos as características compartilhadas dos sistemas JSHOP2 e JSHOP2ip, a extensão efetuada na linguagem JSHOP2 para representar condições relativas, e finalmente apresentamos o algoritmo de planejamento JSHOP2ip.
+
+\subsubsection{Características dos sistemas JSHOP2 e JSHOP2ip}
+
+JSHOP2 é um sistema de planejamento hierárquico independente de domínio, desenvolvido pelo grupo de Planejamento Automatizado da Universidade de Maryland, que utiliza o caso restrito de planejamento com redes simples de tarefas \citep{ilghami2006documentation}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figuras/JSHOP2CompileProcess} 
+  \caption{Processo de planejamento no sistema de planejamento JSHOP2ip}
+  \label{fig:JSHOP2CompileProcess}
+\end{figure}
+
+O sistema JSHOP2ip também apresenta o processo de planejamento mostrado na Figura \ref{fig:JSHOP2CompileProcess} que utiliza um arquivo com a descrição do \emph{domínio de planejamento} para efetuar a compilação de operadores e métodos em um planejador dependente de domínio­ de código JAVA. Então, o plano de solução a um problema planejamento é obtido pelo planejador usando um arquivo com a descrição do \emph{problema de planejamento}. A compilação em código JAVA torna mais eficiente o processo de planejamento hierárquico ao serem empregadas estruturas de dados fixas para representar operadores e métodos \citep{nau2003shop2}.
+
+O termo de chamada \textsf{(call $f$ p$_{1}$ ... p$_{n}$)} nos sistemas de planejamento efetuam chamadas de funções externas, na qual $f$ é o nome da função externa e \textsf{p$_{1}$} ... \textsf{p$_{n}$} é a lista de parâmetros da função. O termo de chamada é empregado para realizar cálculos complexos ou efetuar consultas à informação localizada externamente durante o processo de planejamento.
+
+Para efetuar a representação do domínio e problema de planejamento, o sistema JSHOP2ip apresenta uma linguagem similar à linguagem LISP, que é detalhado no Apêndice \ref{ape:formalismoJSHOP2ip}.
+
+\newpage
+
+Usando a linguagem JSHOP2ip, o problema de planejamento logístico de entrega de dois pacotes apresentado na Figura \ref{fig:exemploProcessoPlanejamento} é representado pela estrutura mostrada na Figura \ref{list:problemaPlanejamento}.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+(defproblem logistic-problem logistics-domain
+  ((em p1 loc1) (em p2 loc2)  \textit{;; estado inicial}
+   (em t1 loc5) (em t2 loc3)
+   (disponivel t1) (disponivel t2))
+  ((transportar-pacotes p1 p2 loc1 loc3 loc2 loc4)))   \textit{;; rede de tarefa inicial}
+\end{jshopcode}
+\caption{Representação do problema de logística de entrega de pacotes em JSHOP2ip}
+\label{list:problemaPlanejamento}
+\end{figure}
+
+O domínio de planejamento para o planejamento logístico de entrega de dois pacotes é mostrado na Figura \ref{list:dominioPlanejamento}, no qual é mostrado parte da representação apresentado: os métodos de decomposição das tarefas \textsf{transportar-pacotes} e \textsf{transportar}; e os operadores \textsf{!mover} e \textsf{!carregar}.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+(defdomain logistics-domain(
+
+   (:method (transportar-pacotes ?p1 ?p2 ?l1 ?l2 ?l3 ?l4)
+     ((disponivel ?t1)    \textit{;; precodições}
+      (disponivel ?t2))
+     (:unordered (transportar ?p1 ?t1 ?l1 ?l2)
+                  (transportar ?p2 ?t2 ?l3 ?l4)))
+   
+   (:method (transportar ?p ?t ?l1 ?l2)
+     ((em ?p ?l1)
+      (em ?t ?l))
+     ((despachar ?t ?l1)
+      (!carregar ?t ?p)
+      (!mover ?t ?l ?l1)
+      (!descarregar ?t ?p)
+      (retornar ?t ?l)))
+    \textit{...}
+    (:operator (!mover ?t ?x ?y)
+      ((em ?t ?x))         \textit{;; precondições}
+      ((em ?t ?x))         \textit{;; efeitos negativos}
+      ((em ?t ?y)))        \textit{;; efeitos positivos}
+    
+    (:operator (!carregar ?t ?p)
+      ((em ?p ?x)
+       (em ?t ?x))
+      ((em ?p ?x))
+      ((em ?p ?t)))
+    \textit{...}
+))
+\end{jshopcode}
+\caption{Representação do domínio de logística de entrega de pacotes em JSHOP2ip}
+\label{list:dominioPlanejamento}
+\end{figure}
+
+\newpage
+\subsubsection{Extensão da linguagem JSHOP2 para JSHOP2ip}
+
+A extensão da linguagem JSHOP2 ao sistema de planejamento JSHOP2ip é efetuada na representação dos métodos hierárquicos mediante a estrutura:
+
+\begin{alltt}\sffamily
+              (:method h [name\(\sb{1}\)] L\(\sb{1}\) [R\(\sb{1\sb{1}}\) R\(\sb{1\sb{2}}\) ... R\(\sb{1\sb{m\sb{1}}}\)] T\(\sb{1}\)
+                             [name\(\sb{2}\)] L\(\sb{2}\) [R\(\sb{2\sb{1}}\) R\(\sb{2\sb{2}}\) ... R\(\sb{2\sb{m\sb{2}}}\)] T\(\sb{1}\)
+                             ...
+                             [name\(\sb{n}\)] L\(\sb{n}\) [R\(\sb{n\sb{1}}\) R\(\sb{n\sb{2}}\) ... R\(\sb{n\sb{m\sb{n}}}\)] T\(\sb{n}\))
+\end{alltt}
+
+onde:
+
+\begin{itemize}
+\item \textsf{h} é o \emph{átomo de tarefa} composta;
+\item cada \textsf{name$_{i}$} é um nome opcional de cada estrutura \textsf{(L$_{i}$ [R$_{i_{1}}$ R$_{i_{2}}$ ... R$_{i_{m_{i}}}$] T$_{i}$)};
+\item cada \textsf{L$_{i}$} (pré-condição do método) é uma pré-condição lógica;
+\item cada \textsf{[R$_{i_{1}}$ R$_{i_{2}}$ ... R$_{i_{m_{i}}}$]} é uma lista de condições relativas; e
+\item cada \textsf{T$_{i}$} é uma lista de tarefas na qual o método decomposição da tarefa \textsf{h}.
+\end{itemize}
+
+As condições relativas são representadas mediante a estrutura:
+
+\begin{center}
+\textsf{(:relative a L)}
+\end{center}
+
+onde:
+
+ \begin{itemize}
+  \item \textsf{a} é um valor numérico que representa a aplicabilidade ao ser satisfeita a condição \textsf{L}; e
+  \item \textsf{L} é uma expressão lógica.
+ \end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (transportar ?p ?t ?l1 ?l2)
+     ((em ?p ?l1)
+      (em ?t ?l))
+     (:relative 2 ((tipo-motor ?t diesel)))
+     ((despachar ?t ?l1)
+      (!carregar ?t ?p)
+      (!mover ?t ?l ?l1)
+      (!descarregar ?t ?p)
+      (retornar ?t ?l)))
+      
+   (:method (transportar ?p ?t ?l1 ?l2)
+     ((em ?p ?l1)
+      (em ?t ?l))
+     (:relative -1 ((tipo-motor ?t gas)))
+     ((!carregar-gas ?t)
+      (despachar ?t ?l1)
+      (!carregar ?t ?p)
+      (!mover ?t ?l ?l1)
+      (!descarregar ?t ?p)
+      (retornar ?t ?l)))
+\end{jshopcode}
+\caption{Exemplo de representação de condições relativas}
+\label{list:relativeConditionJSHOP2}
+\end{figure}
+
+A Figura \ref{list:relativeConditionJSHOP2} mostra um exemplo de representação das condições relativas associadas  aos métodos de transportar um pacote \textsf{?p} com o transporte \textsf{?t} da localização \textsf{?l1} à localização \textsf{?l2}. Nos métodos, as condições relativas são associadas ao tipo de motor do transporte \textsf{?t} (linhas 4,14); se durante o planejamento o motor do transporte \textsf{?t} é Diesel, o valor da aplicabilidade do primeiro método é incrementado em 2; no caso em que o tipo de motor do transporte \textsf{?t} seja gás, a aplicabilidade do segundo método é diminuída em 1.
+
+\newpage
+\subsubsection{Algoritmo de planejamento JSHOP2ip}
+\label{subsubsec:JSHOP2ipPlanner}
+
+\begin{algorithm}
+\Entrada{$P=\langle s, w, D \rangle$ é o problema de planejamento, $w = (U, C)$ é a rede de tarefas inicial e $D=\langle M, O\rangle$ é o domínio de planejamento}
+\Saida{$Plan = \{ a_{1}, a_{2}, ... \}$ é uma lista de ações}
+$Plan \leftarrow \emptyset$\;
+\Enqto{$w \neq \emptyset$}{
+	$t$ é uma tarefa sem predecessores e $t$ é parte de um nó $u \in U$\;
+	\eSe{$t$ é uma tarefa primitiva}{
+		$A \leftarrow $ \{ $(a,\sigma)$: $a$ é uma instancia de um operador $o \in O$ e $\sigma$ é uma substituição que unifica $\{nome(a), t\}$ e $s$ satisfaz as precondições de $a$, $precond(a)$ \}\;
+		\lSe{$A=\emptyset$}{\Retorna{falha}\;}
+		escolha não determinística do par $(a,\sigma) \in A$\;
+		$s \leftarrow \gamma(s, a)$ \tcp*[r]{transição de estado}
+		adicionar $a$ na lista $Plan$\;
+		modificar $w$ apagando $u$ e aplicando $\sigma$\;
+	}{
+		$M_{0} \leftarrow $ \{ $(m,\sigma)$: $m$ é uma instancia de um método $m \in M$ e $\sigma$ é uma substituição $\{head(m),t\}$ e $s$ satisfaz as precondições de $m$, $precond(m)$ \}\;
+		\lSe{$M_{0}=\emptyset$}{ \Retorna{falha}\; }
+		escolha do par $(m,\sigma) \in M_{0}$ com maior valor nas condições relativas\;
+		$w \leftarrow \delta(w,u,m,\sigma)$ \tcp*[r]{decomposição da tarefa $t$ no nó $u$}	
+	}
+}
+\Retorna{$Plan$}\;
+\caption{Versão simplificada do algoritmo JSHOP2ip}
+\label{list:algorithmJSHOP2ip}
+\end{algorithm}
+
+O algoritmo de planejamento JSHOP2ip mostrado na Figura \ref{list:algorithmJSHOP2ip} é uma versão modificada do algoritmo de planejamento JSHOP2 \citep{nau2003shop2}. No algoritmo, a lista de métodos $M_{0}$ é implementada como uma fila de prioridade para simplificar a escolha do método $m$ e a substituição $\sigma$ a ser aplicados à tarefa $t$ (linha 12-14). A ordem na fila de prioridade é determinada efetuando a avaliação das condições relativas que são satisfeitas no estado corrente. Se uma condição relativa \textsf{(:relative \textit{value} \textit{condition})} é satisfeita, o valor de aplicabilidade $a_{m}$ de um método $m$ é atualizado, isto é %$a_{m}$ = $a_{m}$ + \textsf{\textit{value}}.
+
+\begin{center}
+$a_{m}$ = $a_{m}$ + \textsf{\textit{value}}.
+\end{center}
+
+\newpage
+% --------------------------------------------------------------------------- %
+\section{Considerações finais}
+\label{sec:consideracoesFinais}
+
+Neste trabalho, o processo de planejamento instrucional usando padrões de roteiros  é simplificado a uma abordagem \emph{top-down} usando unicamente padrões de roteiros colaborativos do nível de fluxo de aprendizagem colaborativa (macrorroteiros) e padrões do nível de atividade (microrroteiros). Se efetuarmos a modelagem das estratégias de planejamento instrucional mediante a representação da criação de elementos de roteiros como tarefas e métodos hierárquicos, o processo de planejamento mantém uma forte semelhança com planejamento hierárquico.
+
+A Figura \ref{fig:propostaPlanejamentoACSC} mostra o processo de planejamento instrucional usando estratégias de criação de elementos de roteiros extraídas do planejamento instrucional usando padrões de roteiro.
+
+\begin{figure}[htbp]
+  \centering 
+  \includegraphics[width=0.80\textwidth]{figuras/propostaPlanejamentoACSC}
+  \caption{Estratégias de criação de elementos de roteiros}
+  \label{fig:propostaPlanejamentoACSC}
+\end{figure}
+
+O objetivo de projetar roteiros colaborativos é possibilitar aos estudantes alcançar objetivos educacionais definidos pelos projetistas instrucionais. Assim, na modelagem de planejamento instrucional como problema de planejamento hierárquico, os operadores de planejamento utilizado na fase de edição efetuaram mudanças dos níveis de competência dos estudantes. Para isso, os operadores deveram conter informações dos objetivos educacionais a serem alcançados pelos estudantes ao término das atividades e interações. A Figura \ref{fig:propostaPlanejamentoACSC} mostra como as informação dos objetivos são incluídas nos roteiros colaborativos $r_{1}$ e $r_{2}$.
+
+\newpage
+Diferente do processo de planejamento instrucional original, a fase de configuração é efetuada antes da execução do roteiro em um AVA para definir a seleção e sequenciamento dos recursos instrucionais de acordo com as características individuais dos participantes. Os registros do modelo de estudante relativos à estrutura social são atualizados para definir a formação de grupos e atribuição de papéis.
+Na Figura \ref{fig:propostaPlanejamentoACSC}, a configuração da estrutura social é efetuada mediante a definição do grupo $gr_{1}$ no qual os estudantes $l_{1}$ e $l_{3}$ são selecionados durante o planejamento do roteiro $r_{1}$, logo no planejamento do roteiro $r_{3}$ a estrutura social dos estudantes $l_{1}$ e $l_{3}$ é modificada mediante a atribuição dos papéis \textit{tutor} e \textit{tutee} respetivamente.
+
+Na fase de instanciação de roteiros, as informações do modelo de estudante relativas ao histórico são atualizadas ao ser definidos recursos instrucionais associados às atividades e interações. A Figura \ref{fig:propostaPlanejamentoACSC} mostra como os estudantes $l_{3}$ e $l_{1}$ mudam seus registro históricos ao serem definidos os recursos $e_{1}$ e $e_{2}$ durante a interação $i_{1}$.
+
+No capítulo seguinte mostraremos como é efetuada a modelagem de planejamento instrucional em ACSC como um problema de planejamento hierárquico, a modelagem utiliza o processo de planejamento usando padrões apresentado nesta seção.
+
+
+
+%\newpage
+
+%\tikzstyle{decision} = [diamond, draw, fill=blue!20,font=\scriptsize, text width=1.8cm, text badly centered, node distance=2.5cm, inner sep=0pt]
+%\tikzstyle{block} = [rectangle, draw, fill=blue!20, font=\scriptsize, text width=6cm, text centered, rounded corners, minimum height=1cm]
+%\tikzstyle{line} = [draw, -latex']
+%\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=5cm, minimum height=2em]
+    
+%\begin{tikzpicture}[node distance = 1.5cm, auto]
+% Place nodes
+    %\node [block] (level1) {Nível 1: Sequenciamento de objetivos};
+    %\node [block, below of=level1] (level2) {Nível 2: Seleção do cenário pedagógico\\ Nível 3: Definição das seções};
+    %\node [block, below of=level2] (level4) {Nível 4: Formação de grupos\\ Nível 5: Definição das atividades de grupo};
+    %\node [block, below of=level4] (level6) {Nível 6: Seleção da estratégia\\ Nível 7: Definição das sessões};
+    %\node [decision, below of=level6] (decsubsecoes) {Pode ser dividido em subseções?};
+    %\node [block, right of=level6, node distance=7cm] (level8) {Nível 8: Seleção de roteiro\\ Nível 9: Definição das fases};
+    %\node [block, below of=decsubsecoes] (level10) {Nível 10: Seleção do macrorroteiro\\ Nível 11: Definição das fases};
+    %\node [block, below of=level10] (level12) {Nível 12: Formação de grupos\\ Nível 13: Definição das atividades de grupo};
+    %\node [block, below of=level12] (level14) {Nível 14: Seleção da estratégia\\ Nível 15: Definição das sessões};
+%    \node [block, below of=decide, node distance=3cm] (stop) {stop};
+    % Draw edges
+%    \path [line] (init) -- (identify);
+%    \path [line] (identify) -- (evaluate);
+%    \path [line] (evaluate) -- (decide);
+%    \path [line] (decide) -| node [near start] {yes} (update);
+%    \path [line] (update) |- (identify);
+%    \path [line] (decide) -- node {no}(stop);
+%    \path [line,dashed] (expert) -- (init);
+%    \path [line,dashed] (system) -- (init);
+%    \path [line,dashed] (system) |- (evaluate);
+%\end{tikzpicture}
+

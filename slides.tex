@@ -1,0 +1,1096 @@
+\documentclass[10pt]{beamer}
+\usepackage[brazil]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{tikz-uml}
+\usepackage{pgfkeys,pgffor,pgfcalendar,pgfpages}
+\usepackage{fancyvrb}
+\usepackage{verbatim}
+\usepackage{alltt}
+\usepackage{media9}
+\usepackage{hyperref}
+\usepackage{amsthm}
+%\usepackage{enumitem}
+\usepackage[round]{natbib}
+\usepackage{color}
+%\usepackage[dvipsnames]{xcolor}
+%\newcommand{\newblock}{}
+%\useoutertheme{infolines}
+
+\usetikzlibrary{positioning,shadows,arrows}
+
+\usetheme[pageofpages=de,% String used between the current page and the  total page count.
+          alternativetitlepage=true,% Use the fancy title page.
+          titlepagelogo=figuras/ime-logo,% Logo for the first page.
+          ]{Torino}
+\usecolortheme{freewilly}
+
+\newenvironment<>{varblock}[2][.95\textwidth]{%
+  \setlength{\textwidth}{#1}
+  \begin{actionenv}#3%
+    \def\insertblocktitle{#2}%
+    \par%
+    \usebeamertemplate{block begin}}
+  {\par%
+    \usebeamertemplate{block end}%
+  \end{actionenv}}
+  
+  \AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Agenda}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\DefineVerbatimEnvironment{jshopcode}{Verbatim}
+{fontsize=\footnotesize, commandchars=\\\{\}, numbers=none, frame=none, fontfamily=cmtt, codes={\catcode`$=3\catcode`^=7\catcode`_=8}}
+\DefineVerbatimEnvironment{jshopcode2}{Verbatim}
+{fontsize=\tiny, commandchars=\\\{\}, numbers=none, frame=none, fontfamily=cmtt, codes={\catcode`$=3\catcode`^=7\catcode`_=8}}
+
+
+\DefineVerbatimEnvironment{xmlcode}{Verbatim}
+{fontsize=\footnotesize, commandchars=\\\{\}, numbers=none, frame=none, fontfamily=cmtt}
+\DefineVerbatimEnvironment{xmlcode2}{Verbatim}
+{fontsize=\tiny, commandchars=\\\{\}, numbers=none, frame=none, fontfamily=cmtt}
+
+\resetcounteronoverlays{saveenumi}
+
+\def\date#1{\gdef\@date{#1}}
+
+\author{Geiser Chalco Challco}
+\title{Planejamento instrucional automatizado em aprendizagem colaborativa com suporte computacional utilizando planejamento hierárquico}
+\institute{Instituto de Matemática e Estatística da Universidade de São Paulo}
+\date{\@date}
+
+% The log drawn in the upper right corner.
+\logo{\includegraphics[height=0.125\paperheight]{figuras/ime-logo}}
+
+\begin{document}
+\include{content}
+
+%-- title
+\begin{frame}[t,plain]
+\titlepage
+\end{frame}
+
+%-- Agenda
+\begin{frame}
+\frametitle{Agenda}
+\setcounter{tocdepth}{1}
+\tableofcontents
+\end{frame}
+
+%-- Introdução
+\section{Introdução}
+\begin{frame}
+\frametitle{Introdução}
+
+ACSC\footnote[1]{\scriptsize{Aprendizagem Colaborativa com Suporte Computacional}} tem por objetivo fornecer suporte computacional ao trabalho em grupo para que estudantes elaborem seu próprio conhecimento negociando e compartilhando informação \citep{stahl2006computer}\footnote[2]{\scriptsize{G.~Stahl, e T.~Koschmann. Computer-Supported Collaborative Learning, 2006.}}.
+
+\begin{columns}
+\column{.35\textwidth}
+Ferramentas de autoria de unidades de aprendizagem:
+\begin{itemize}
+\item COOL-MODES, COLLAGE e CHOCOLATO.
+\end{itemize}
+\column{.6\textwidth}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{figuras/coolmodes}
+  \caption{Interface gráfica COOL-MODES}
+  \label{fig:referenceModel}
+\end{figure}
+\end{columns}
+\end{frame}
+
+%--
+\begin{frame}
+\frametitle{Introdução}
+
+A área de planejamento instrucional estuda métodos e técnicas que possibilitam o desenvolvimento de unidades de aprendizagem mediante a organização coerente do conteúdo definida de acordo com objetivos educacionais e características individuais dos estudantes \citep{wasson1996instructional}\footnote[1]{\scriptsize{B.~Wasson. Instructional planning and contemporary theories of learning: Is this a self-contradiction? Em \emph{Proceedings of the European Conference on AIED}, p\'{a}ginas 23--30. Colobri.}}.
+
+\begin{columns}
+\column{.32\textwidth}
+Sistemas Tutores Inteligentes que utilizam planejamento em IA:
+\begin{itemize}
+\item GTE, DCG, PAIGOS, PASER e ADAPTAPLAN.
+\end{itemize}
+\column{.63\textwidth}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figuras/leactivemath}
+\caption{Interface de LeActiveMath (PAIGOS)}
+\end{center}
+\end{figure}
+\end{columns}
+\end{frame}
+
+%--
+\begin{frame}
+\frametitle{Introdução - planejamento hierárquico}
+
+
+%\begin{columns}
+%\column{.45\textwidth}
+\begin{itemize}
+\item \textcolor{blue}{Plano} é obtido  por meio de \textcolor{yellow}{métodos} que efetuam a decomposição sucessiva de tarefas em \textcolor{violet}{subtarefas} até um nível de \textcolor{green}{tarefas primitivas}.
+\item Objetivo é a rede de \textcolor{red}{tarefa inicial}.
+\end{itemize}
+
+%\column{.5\textwidth}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figuras/htn-sample}
+\end{center}
+%\end{columns}
+
+
+%\begin{columns}
+%\column{.43\textwidth}
+%Planejamento hierárquico:
+%\begin{itemize}
+%\item Sequência de ações (plano).
+%\item Tarefas e métodos hierárquicos.
+%\end{itemize}
+%\column{.55\textwidth}
+%Planejamento instrucional:
+%\end{columns}
+
+%\begin{center}
+%\begin{varblock}[11cm]{Planejamento hierárquico e planejamento instrucional}
+%\begin{itemize}
+%\item Sequência de ações - interações instrucionais .
+%\item Tarefas e métodos hierárquicos - Estratégias de planejamento instrucional.
+%\end{itemize}
+%\end{varblock}
+%\end{center}
+
+\end{frame}
+
+%--
+\begin{frame}[fragile]
+\frametitle{Objetivos e contribuições}
+\begin{center}
+\includegraphics[width=1\textwidth]{figuras/objetivos}
+\end{center}
+\end{frame}
+
+
+%-- Planejamento instrucional
+\section{Planejamento instrucional}
+
+\begin{frame}
+\frametitle{Roteiros colaborativos}
+
+``\emph{Roteiros de suporte computacional que facilitam processos sociais e cognitivos da aprendizagem colaborativa por meio da definição da forma como os estudantes interagem}'' \citep{weinberger2005epistemic}\footnote[1]{\scriptsize{A.~Weinberger, B.~Ertl, F.~Fischer, e H.~Mandl. Epistemic and social scripts in Computer-Supported Collaborative Learning. \emph{Instructional Science}, 33\penalty0 (1):\penalty0 1--30.}}.
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.70\textwidth]{figuras/frameworkKobbe}
+\caption{Ilustração gráfica dos componentes e mecanismos dos roteiros}
+\label{fig:frameworkKobbe}
+\end{figure}
+\end{frame}
+
+%--
+\begin{frame}
+\frametitle{Macrorroteiros colaborativos}
+
+Estruturam a colaboração por meio do sequenciamento de sessões a serem efetuadas durante a execução da unidade de aprendizagem.
+
+\begin{columns}
+\column{.5\textwidth}
+
+\begin{itemize}
+\item Sequenciamento: S=[$F_{1}$, ..., $F_{n}$]
+\begin{itemize}
+\item Fase: $F_{i}$ = \{$e_{1}$, ..., $e_{m}$\}
+\begin{itemize}
+\item Atividade de grupo: \footnotesize{e=($T$,$g$,$m$,$t$)}\\ 
+- $T$ são sessões.\\
+- $g$ é um \emph{grupo}.
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+\begin{itemize}
+\item Sessões: $T$=[\textit{tarefa}$_{1}$, ..., \textit{tarefa}$_{k}$]
+\begin{itemize}
+\item Sessão de aprendizagem:\\
+\footnotesize{\textit{tarefa}$_{i}$=(\textit{Entrada}, \textit{atividade}, \textit{Saída})}
+\end{itemize}
+\end{itemize}
+
+\column{.5\textwidth}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{figuras/macroJIGSAW}
+\caption{Macrorroteiro Jigsaw}
+\label{fig:macroJIGSAW}
+\end{center}
+\end{figure}
+\end{columns}
+
+\end{frame}
+
+%--
+\begin{frame}
+\frametitle{Microrroteiros colaborativos}
+
+\begin{columns}
+\column{.5\textwidth}
+
+Estruturam a colaboração por meio do sequenciamento de interações que definem a transmissão e recepção de mensagens.
+
+\begin{itemize}
+\item Sequenciamento: Cenário colaborativo
+\begin{itemize}
+\item Estratégia de aprendizagem:
+\begin{itemize}
+\item Papel (Instrutor - aprendiz).
+\end{itemize}
+\item Padrão de interação:
+\begin{itemize}
+\item Interações cíclicas e direcionadas.
+\item Evento IL.
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+%\begin{itemize}
+%\item Interação cíclica e direcionada:
+\begin{itemize}
+\item Evento IL:
+\begin{itemize}
+\item Ações instrucional e de aprendizagem.
+\item Objetos de aprendizagem.
+\end{itemize}
+\end{itemize}
+%\end{itemize}
+
+\column{.45\textwidth}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.95\textwidth]{figuras/peerTutoringInteractionFlow2}
+\caption{Microrroteiro Peer-tutoring}
+\end{center}
+\end{figure}
+\end{columns}
+\end{frame}
+
+%-- 
+\begin{frame}
+\frametitle{Representação computacional de roteiros}
+
+A especificação IMS-LD descreve o conteúdo instrucional como uma sequência de atividades a serem efetuadas pelos estudantes e docentes.
+
+\begin{columns}
+\column{.70\textwidth}
+%\begin{itemize}\footnotesize
+%\item Metáfora de roteiro de teatro:
+\begin{itemize}
+\item Peça de teatro $<$play$>$: Ato 1 -$>$ Ato 2.% (Sincronização).
+\begin{itemize}\footnotesize
+\item<2-> Sequenciamento de fases.
+\item<3-> Cenário colaborativo.
+\end{itemize}
+\item Atos $<$act$>$: Papel-parte 1 $||$ Papel-parte 2.% (Simultâneo).
+\begin{itemize}\footnotesize
+\item<2-> Fase.
+\item<3-> Estratégia de aprendizagem.
+\end{itemize}
+\item Papel-parte $<$role-part$>$: Papel x atividade.
+\begin{itemize}\footnotesize
+\item<2-> Atividade de grupo: Grupo x sessões.
+\item<3-> Papél x padrão interação.
+\end{itemize}
+\item Estrutura de atividades $<$activity-structure$>$.
+\begin{itemize}\footnotesize
+\item<2-> Sessões.
+\item<3-> Interação cíclica e direcionada.
+\end{itemize}
+\item Atividade $<$learning-activity$>$.
+\begin{itemize}\footnotesize
+\item<2-> Sessão de aprendizagem.
+\item<3-> Evento IL.
+\end{itemize}
+\end{itemize}
+%\end{itemize}
+\column{.3\textwidth}
+\begin{center}
+\includegraphics[width=0.95\textwidth]{figuras/teatro}
+\end{center}
+\end{columns}
+\end{frame}
+
+%-- Planejamento hierárquico
+\section{Planejamento hierárquico}
+
+%\begin{frame}
+%\frametitle{Planejamento hierárquico}
+%\begin{itemize}
+%\item Representação do estado como um conjunto de átomos lógicos.
+%\item Ações representado como operadores o=$\langle$\emph{nome}, \emph{precond}, \emph{efeitos}$\rangle$.
+%\end{itemize}
+%\begin{columns}
+%\column{.45\textwidth}
+%\begin{itemize}
+%\item Meta é a rede de \textcolor{red}{tarefa inicial}.
+%\item \textcolor{blue}{Plano} é obtido  por meio de \textcolor{yellow}{métodos} que efetuam a decomposição sucessiva de tarefas em \textcolor{violet}{subtarefas} até um nível de \textcolor{green}{tarefas primitivas}.
+%\end{itemize}
+%\column{.5\textwidth}
+%\begin{center}
+%\includegraphics[width=1\textwidth]{figuras/htn-sample}
+%\end{center}
+%\end{columns}
+%\end{frame}
+
+%-- 
+\begin{frame}[fragile]
+\frametitle{Sistema de planejamento JSHOP2ip}
+
+Versão modificada de JSHOP2\footnote[1]{\footnotesize{Java Simple hierarchical Ordered Planner - University of Maryland}} que representa condições relativas.
+
+\begin{center}
+\begin{jshopcode}
+         (:method (tarefa ?p1 ... ?pn)
+              (pré-condição)
+              (:relative \textit{aplicabilidade} condição)     \textcolor{blue}{\textit{;; condições relativas}}
+              (subtarefas))
+\end{jshopcode}
+\end{center}
+
+\begin{columns}
+\column{.45\textwidth}
+\begin{itemize}
+\item Domínio de planejamento:
+\begin{itemize}
+\item Axiomas. % --infere condições não definidas no estado corrente.
+\item Operadores.
+\item Métodos.
+\end{itemize}
+\item Problema de planejamento:
+\begin{itemize}
+\item Estado inicial (átomos). 
+\item Rede de tarefa inicial.
+\end{itemize}
+ \end{itemize}
+\column{.45\textwidth}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{figuras/JSHOP2CompileProcess}
+\caption{Processo de planejamento}
+\label{fig:JSHOP2CompileProcess}
+\end{center}
+\end{figure}
+\end{columns}
+
+\end{frame}
+
+%-- Modelo de planejamento instrucional em ACSC
+\section{Modelo de planejamento instrucional em ACSC como problema de planejamento hierárquico}
+
+\begin{frame}[fragile]
+\frametitle{Modelo de planejamento instrucional em ACSC}
+\begin{center}
+\includegraphics[width=0.9\textwidth]{figuras/coursewareHTN01}
+\end{center}
+\end{frame}
+
+%--
+\begin{frame}[fragile]
+\frametitle{Entrada: problema de planejamento instrucional}
+
+\begin{center}
+\begin{varblock}[11cm]{Estado inicial $s_{0}$: Modelos de domínio a ser ensinado e de estudante}
+\begin{jshopcode}
+         (class \textit{type} \textit{id})
+         (property \textit{id} \textit{prop} \textit{value})
+         (relation \textit{id} \textit{rel} \textit{dest})
+\end{jshopcode}
+\end{varblock}
+\end{center}
+
+\begin{itemize}
+\item Estrutura de elementos de competência (habilidades, atitudes e competências cognitivas).
+\item Níveis de competência (\textit{Learner's Growth Model}) - s$x$k$y$:
+\begin{itemize}\footnotesize
+\item $x$=\{0: sem habilidade, 1: inicial, 2: explicativo, 3: associativo, 4: autônomo\}
+\item $y$=\{0: sem conhecimento, 1: crescimento, 2: aperfeiçoamento, 3: restruturação\}
+\end{itemize}
+\item Modelo de domínio a ser ensinado:
+\begin{itemize}
+\item Estrutura de elementos de conhecimento (fundamental e auxiliar).
+\item Pré-requisitos e objetivos de aprendizagem.
+\end{itemize}
+\item Modelo de estudante:
+\begin{itemize}
+\item Registros de competências.
+\item Registros históricos.
+\item Registros de preferências.
+\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+
+
+%--
+\begin{frame}[fragile]
+\frametitle{Entrada: problema de planejamento instrucional}
+
+\begin{columns}
+\column{.4\textwidth}
+\begin{itemize}
+\item Estado inicial: Modelos de domínio a ser ensinado e de estudante.
+\item Rede de tarefa inicial: Tarefa de planejamento instrucional pública.
+\begin{itemize}
+\item Identificador de tarefa de planejamento.
+\item \textcolor{magenta}{Objetivos educacionais}.
+\item \textcolor{cyan}{Grupos de estudantes}.
+\end{itemize}
+\end{itemize}
+
+\column{.6\textwidth}
+\begin{varblock}[7cm]{Problema $P=\langle s_{0}, w_{0}, D \rangle$}
+\begin{jshopcode}
+(defproblem problem domain
+  \textcolor{blue}{\textit{;; Estado inicial} ($s_{0}$)}
+  ((class Competency c1)
+   (property c1 hasKnowledge f9w)
+   (property c1 hasSkill s3m)
+   (property c1 'Solve problem derivate')
+   ...
+   (class Learner l1)
+   (property l1 hasCLExperience high)
+   (property l1 hasCompLevel (c1 s3k3))
+   (property l1 hasMotivation (c1 low)))
+  \textcolor{blue}{\textit{;; Rede de tarefa inicial} ($w_{0}$)}
+  ((createLDFundUoL \textcolor{magenta}{((c1 s4k3) (c1 s4k2))}
+                     \textcolor{cyan}{((l1 l2)   (l3 l4))})))
+\end{jshopcode}
+\end{varblock}
+\end{columns}
+\end{frame}
+
+%--
+\begin{frame}[fragile]
+\frametitle{Modelo de planejamento instrucional em ACSC}
+\begin{center}
+\includegraphics[width=0.9\textwidth]{figuras/coursewareHTN02}
+\end{center}
+\end{frame}
+
+%--
+\begin{frame}[fragile]
+\frametitle{Saída: interações instrucionais}
+
+\begin{varblock}[11cm]{Resultado do planejamento $P$}
+\begin{columns}
+\column{.45\textwidth}
+\begin{jshopcode}
+(!startLDElement learning-design
+              ((identifier ld-8a1)))
+(!startLDElement prerequisites)
+(!startLDElement item
+             ((identifier item-44a3)
+              (identifierref res-a4a7)))
+(!startLDElement title)
+(!text (Resource) ('Solução') ())
+(!endLDElement title)
+(!endLDElement item)
+(!endLDElement prerequisites)
+...
+(!endLDElement learning-design)
+\end{jshopcode}
+
+\column{.45\textwidth}
+\pause
+\begin{xmlcode}
+<imsld:learning-design
+         identifier="ld-8a1">\pause
+  <imsld:prerequisites>
+    <imsld:item
+         identifier="item-44a3"
+         identifierref="res-a4a7">\pause
+      <imsld:title>
+        Solução
+      </imsld:title>
+    </imsld:item>
+  </imsld:prerequisites>
+  ...
+</imsld:learning-design>
+\end{xmlcode}
+\end{columns}
+\end{varblock}
+\end{frame}
+
+
+%--
+\begin{frame}[fragile]
+\frametitle{Saída: interações instrucionais}
+\begin{center}
+\includegraphics[width=1\textwidth]{figuras/coppercore01}
+\end{center}
+\end{frame}
+
+
+%--
+\begin{frame}[fragile]
+\frametitle{Modelo de planejamento instrucional em ACSC}
+\begin{center}
+\includegraphics[width=0.9\textwidth]{figuras/coursewareHTN03}
+\end{center}
+\end{frame}
+
+%--
+\begin{frame}[fragile]
+\frametitle{Domínio de planejamento: modelo pedagógico}
+
+\begin{columns}
+\column{.4\textwidth}
+
+\begin{itemize}
+\item Axiomas de:
+\begin{itemize}
+\item propósito geral;
+\item consulta aos modelos de domínio a ser ensinado e de estudante; e
+\item planejamento instrucional.
+\end{itemize}
+\item Operadores de:
+\begin{itemize}
+\item propósito geral; e 
+\item interações instrucionais.
+\end{itemize}
+\item Métodos: estratégias de planejamento instrucional.
+\end{itemize}
+
+\column{.6\textwidth}
+
+\begin{varblock}[7cm]{Domínio de planejamento $D=\langle A, O, M \rangle$}
+\begin{jshopcode}
+(defdomain domain(
+   \textcolor{blue}{\textit{;; Axiomas e operadores de propósito geral}}
+   (:- (same ?x ?x) ())
+   ...
+   \textcolor{blue}{\textit{;; Axiomas de consulta aos modelos de domínio}}
+   \textcolor{blue}{\textit{;; e de estudante e de domínio}}
+   (:- (getType ?t ?e)
+       (:first (class ?t ?e))
+       ((assignIterator ?t (call GetType ?e))))
+   ...
+   \textcolor{blue}{\textit{;; Axiomas de planejamento instrucional}}
+   ...
+   \textcolor{blue}{\textit{;; Interações instrucionais}}
+   (:operator (!startLDElement ?tag) () () ())
+   ...
+   \textcolor{blue}{\textit{;; Estratégias de planejamento instrucional}}
+   ...
+))
+\end{jshopcode}
+\end{varblock}
+\end{columns}
+\end{frame}
+
+%--
+\begin{frame}[fragile]
+\frametitle{Interações instrucionais (etapa edição)}
+
+\begin{itemize}[]\footnotesize
+\item[]<1->
+\begin{jshopcode}
+(!startLDElement learning-activity ((identifier la-4)) ((Exercise Session)
+                 la-4 ((c1 s4k3) (c1 s4k2)) ((l1 l2) (l3 l4))))
+\end{jshopcode}
+\item[]<2->
+\begin{jshopcode}
+(!!changeIndGoals ((l1 (c1 s3k3s4k3)) (l2 (c1 s3k3s4k3))
+                   (l3 (c1 s3k2s4k2)) (l4 (c1 s3k2s4k2))))
+\end{jshopcode}
+\item[]<3->...
+\begin{jshopcode}
+(!endLDElement la-4)
+\end{jshopcode}
+\end{itemize}
+
+\begin{varblock}[11.5cm]{\textsf{S$_{3}$=$\gamma$(...($\gamma$($\gamma$(S, $T[1]$), $T[2]$), ...), $T[n]$)}}
+\begin{columns}
+\column{.4\textwidth}
+\begin{jshopcode}
+
+(class Session la-4)
+(class Exercise la-4)
+(property la-4 hasGoal (c1 s4k3))
+(property la-4 hasGoal (c1 s4k2))
+(property la-4 hasParticipant l1)
+(property la-4 hasParticipant l2)
+(property la-4 hasParticipant l3)
+(property la-4 hasParticipant l4)
+\pause
+\end{jshopcode}
+\column{.55\textwidth}
+\begin{jshopcode}
+(property la-4 hasIndGoal (l1 (c1 s4k3)))
+(property la-4 hasIndGoal (l2 (c1 s4k3)))
+(property la-4 hasIndGoal (l3 (c1 s4k2)))
+(property la-4 hasIndGoal (l4 (c1 s4k2)))
+\pause
+(property l1 hasCompLevel (c1 s4k3))
+(property l2 hasCompLevel (c1 s4k3))
+(property l3 hasCompLevel (c1 s4k2))
+(property l4 hasCompLevel (c1 s4k2))
+\end{jshopcode}
+\end{columns}
+\end{varblock}
+\end{frame}
+
+%--
+\begin{frame}[fragile]
+\frametitle{Interações instrucionais}
+
+\begin{center}\footnotesize
+\begin{tabular}{|p{4cm}|p{6cm}|}
+\hline
+\multicolumn{2}{|l|}{\textbf{(a) Etapa: \textit{Edição}}} \\ \hline
+\textsf{startLDElement!}             & $<$imsld:tag$>$ (subtarefa \textsf{!!changeIndGoals}). \\ \hline
+\textsf{!!changeCurrentLDElement}     & Alterar elemento IMS-LD corrente. \\ \hline
+\textsf{!!changeLearningResourceType}     & Alterar valor do tipo de recurso instrucional. \\ \hline
+\textsf{!!changeFundCompetency}     & Alterar valor da competência fundamental. \\ \hline
+\textsf{!!changeCLGrouping}     & Alterar informação do agrupamento. \\ \hline
+\multicolumn{2}{|l|}{\textbf{(b) Etapa: \textit{Configuração}}} \\ \hline
+\textsf{!addUsersToRole}                & Atribuição do papel. \\ \hline
+\textsf{!removeUserFromRole}       & Remoção do papel. \\ \hline
+\textsf{!addUserToGroup}                & Adição ao grupo. \\ \hline
+\textsf{!removeUserFromGroup}     & Remoção do grupo. \\ \hline
+\multicolumn{2}{|l|}{\textbf{(c) Etapa: \textit{Instanciação}}} \\ \hline
+\textsf{!text}	        & Inserir um texto. \\ \hline
+\textsf{createLDTitle}	        & Elemento $<$imsld:title$>$. \\ \hline
+\textsf{!insertElement}	        & Inserir um elemento (registro histórico). \\ \hline
+\textsf{!insertResource}	        & Inserir um recurso $<$resource$>$. \\ \hline
+\textsf{!!addAsAlreadySeen}	        & Alterar registro histórico. \\ \hline
+\textsf{createLDItem}	        & $<$imsld:item$>$. \\ \hline
+\textsf{createLDInstructItem}	        & $<$imsld:item$>$ no evento instrucional. \\ \hline
+\textsf{createLDLearningItem}	        & $<$imsld:item$>$ no evento de aprendizagem. \\ \hline
+\end{tabular}
+\end{center}
+\end{frame}
+
+%--
+\begin{frame}
+\frametitle{Modelo pedagógico}
+
+(1) Mapeamento das tarefas de planejamento instrucional
+\begin{itemize}\footnotesize
+  \item \textsf{$f_{1}$:$S$ $\rightarrow$ T'} associa cada nome de tarefa $s \in S$ com um símbolo de tarefa \textsf{t $\in$ T'};
+  \item \textsf{$f_{2}$:$G$ $\rightarrow$ M' x M'} associa cada objetivo com símbolos de nome \textsf{(m$_{i}$ m$_{j}$) $\in$ M' x M'}; e
+  \item \textsf{$f_{3}$:$L$ $\rightarrow$ M'} associa cada estudante $l \in L$ com um símbolo de nome \textsf{m $\in$ M'}.
+\end{itemize}
+
+\begin{varblock}[11cm]{Macrorroteiro}
+Sequenciamento:
+\textcolor{red}{\textsf{(createLD\textit{Name}Script ?goals ?groups)}}
+\begin{itemize}
+\item Fase:
+\textcolor{blue}{\textsf{(createLD\textit{Name}Phase ?goals ?groups)}}
+\begin{itemize}
+\item Atividade de grupo:
+\textcolor{green}{\textsf{(createLD\textit{Name}GroupActivity ?goals ?groups)}}
+\begin{itemize}
+\item Sessões:
+\textcolor{cyan}{\textsf{(createLD\textit{Name}Sessions ?goals ?groups)}}
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figuras/macrorroteiro-tarefa}
+\end{center}
+\end{varblock}
+
+\end{frame}
+
+%--
+\begin{frame}
+\frametitle{Modelo pedagógico}
+
+(1) Mapeamento das tarefas de planejamento instrucional
+\begin{varblock}[11cm]{Microrroteiro}
+CL Scenario:
+\textcolor{red}{\textsf{(createLD\textit{Name}CLScenario ?goals ?groups)}}
+\begin{itemize}
+\item Fase:
+\textcolor{blue}{\textsf{(createLD\textit{Name}Phase ?goals ?groups)}}
+\begin{itemize}
+\item Estratégia de aprendizagem:
+\textcolor{green}{\textsf{(createLD\textit{Name}Strategy ?goals ?groups)}}
+\item Padrão de interação:
+\textcolor{green}{\textsf{(createLD\textit{Name}Interactions ?goals ?groups)}}
+\begin{itemize}
+\item Interações cíclicas e direcionadas:\\
+\textcolor{cyan}{\textsf{(createLD\textit{Name}Interactions ?goals ?groups)}}
+\item EventoIL:
+\textcolor{cyan}{\textsf{(createLD\textit{Name}ILEvent ?goals ?groups)}}
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{figuras/microrroteiro-tarefa}
+\end{center}
+\end{varblock}
+\end{frame}
+
+
+%-- 
+\begin{frame}[fragile]
+\frametitle{Modelo pedagógico: exemplo sessão discussão}
+\begin{center}
+\begin{jshopcode}
+   (:method (createLDDiscussionSession ?goals ?groups)
+            ()
+            ())
+\end{jshopcode}
+\end{center}
+\end{frame}
+
+
+%--
+\begin{frame}[fragile]
+\frametitle{Modelo pedagógico}
+\begin{center}
+\begin{varblock}[11cm]{(2) Definição de interações instrucionais.}
+\begin{jshopcode}
+      (:method (createLD\textit{InstructionalTask} ?goals ?groups)
+               ()
+               (\textcolor{magenta}{\textit{InstructionalInteraction$_{1}$}}
+                \textit{...}
+                (create\textit{InstructionalTask} ?goals ?groups)
+                \textit{...}
+                \textcolor{magenta}{\textit{InstructionalInteraction$_{m}$}}))
+\end{jshopcode}
+\end{varblock}
+\end{center}
+\end{frame}
+
+%-- 
+\begin{frame}[fragile]
+\frametitle{Modelo pedagógico: exemplo sessão discussão}
+\begin{center}
+\begin{jshopcode}
+   (:method (createLDDiscussionSession ?goals ?groups)
+            ((assign ?id (call GetUUID la)))
+            (\textcolor{magenta}{(!startLDElement learning-activity-ref ((ref ?id)))}
+             \textcolor{magenta}{(startLDElement! learning-activity ((identifier ?id))}
+                              \textcolor{magenta}{((Discussion Session) ?id ?goals ?groups))}
+             (createDiscussionSession ?goals ?groups)
+             \textcolor{magenta}{(!endLDElement learning-activity ?id)}
+             \textcolor{magenta}{(!endLDElement learning-activity-ref)}))
+\end{jshopcode}
+\end{center}
+\end{frame}
+
+%--
+\begin{frame}[fragile]
+\frametitle{Modelo pedagógico}
+
+\begin{varblock}[11cm]{(3) Definição de tarefas opcionais e críticas}
+\begin{jshopcode}
+   \textcolor{blue}{\textit{;; optional}}
+   (:method (create\textit{Task} ?goals ?groups)
+            ()
+            ((create\textit{Task}! ?goals ?groups)))
+   
+   \textcolor{blue}{\textit{;; fall-back}}
+   (:method (create\textit{Task} ?goals ?groups)            
+            ()
+            ())
+
+   \textcolor{blue}{\textit{;; mandatory}}
+   ...
+   
+\end{jshopcode}
+\end{varblock}
+\end{frame}
+
+%-- 
+\begin{frame}[fragile]
+\frametitle{Modelo pedagógico: exemplo sessão discussão}
+\begin{center}
+\begin{jshopcode}
+   (:method (createLDDiscussionSession ?goals ?groups)
+            ((assign ?id (call GetUUID la)))
+            ((!startLDElement learning-activity-ref ((ref ?id)))
+             (startLDElement! learning-activity ((identifier ?id))
+                              ((Discussion Session) ?id ?goals ?groups))
+             (createDiscussionSession ?goals ?groups)
+             (!endLDElement learning-activity ?id)
+             (!endLDElement learning-activity-ref)))
+
+   \textcolor{blue}{\textit{;; optional}}
+   (:method (createDiscussionSession ?goals ?groups)
+            ()
+            ((createDiscussionSession! ?goals ?groups)))
+   
+   \textcolor{blue}{\textit{;; fall-back}}
+   (:method (createDiscussionSession ?goals ?groups)            
+            ()
+            ((createDiscussionActivity ?goals ?groups)))
+
+   \textcolor{blue}{\textit{;; mandatory}}
+   ...
+\end{jshopcode}
+\end{center}
+\end{frame}
+
+%--
+\begin{frame}[fragile]
+\frametitle{Modelo pedagógico}
+
+\begin{varblock}[11cm]{(4) Representação das regras de planejamento instrucional como:}
+\begin{itemize}
+\item axiomas de propósito geral;
+\item axiomas de consulta aos modelos de estudante e de domínio a ser ensinado; e
+\item axiomas de planejamento instrucional.
+\end{itemize}
+\end{varblock}
+\end{frame}
+
+%-- 
+\begin{frame}[fragile]
+\frametitle{Modelo pedagógico: exemplo sessão discussão}
+\begin{center}
+\begin{jshopcode}
+   \textcolor{blue}{\textit{;; mandatory}}
+   (:method (createDiscussionSession! ?goals ?groups)
+      ((getElement ?e ((class CurrentLDElement)))
+       (assign ?learners (call ConcatList ?groups))
+       (getRelateds ?cphases (?e) 3 isPartOf ((class Phase)
+                                              (class Jigsaw)))
+       (different ?cphases ())
+       \textcolor{blue}{\textit{;; get resumes}}
+       (getRelateds ?resumes ?cphases 4 inverseIsPartOf
+                    ((class Output)
+                     (class ResumeDiscussion)
+                     (property hasParticipant ?learners))))
+      ((createLDResumeDiscussionOutput ?goals ?groups)
+       (createLDInputs ?resumes ?learners)
+       (createDiscussionActivity ?goals ?groups)))
+\end{jshopcode}
+\end{center}
+\end{frame}
+
+%--
+\begin{frame}[fragile]
+\frametitle{Modelo pedagógico}
+
+\begin{varblock}[11cm]{(5) Definição de métodos de decomposição distributiva.}
+O método de distribuição de tarefas decompõe a tarefa instrucional em um número idêntico de subtarefas na que cada uma opera sob um elemento de uma sequência dada.
+\end{varblock}
+
+\begin{itemize}
+\item Exemplo: método de distribuição da sessão discussão
+\begin{jshopcode}
+   (:method (distributeDiscussionSession () ?learners)
+      ()
+      ())
+   
+   (:method (distributeDiscussionSession (?goal . ?goals) ?learners)
+      ()
+      ((createLDDiscussionSession (?goal) (?learners))
+       (distributeDiscussionSession ?goals ?learners)))
+\end{jshopcode}
+\end{itemize}
+\end{frame}
+
+%--
+\begin{frame}
+\frametitle{Modelo pedagógico}
+Estratégias ($\approx$ 8000 linhas) para la criação de:
+\begin{itemize}
+\item elementos básicos de roteiros colaborativos: serviço de conferência, objeto de aprendizagem, ambiente de apoio à aprendizagem e grupo de estudantes;
+\item elementos de microrroteiros: 12 eventos IL, 16 fluxo de interações cíclicas e direcionadas, 06 padrões de interação, 10 papéis dos estudantes, 09 estratégias de aprendizagem, 06 fases nos cenários colaborativos e 06 cenários colaborativos; e
+\item elementos de macrorroteiros: 08 sessões de aprendizagem, 08 atividades de grupos, 09 fases e 04 macrorroteiros.
+\end{itemize}
+\end{frame}
+
+%--
+\begin{frame}[fragile]
+\frametitle{Modelo pedagógico - integração dos roteiros}
+Sessão de aprendizagem (\textit{Entrada}, \textit{atividade}, \textit{Saída})
+
+\begin{jshopcode}
+         (:method (create\textit{Name}Activity! ?goals ?groups)
+                  ()
+                  (\textcolor{blue}{(createLDCLScenario! ?goals ?groups)}))
+\end{jshopcode}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.45\textwidth]{figuras/integracaoMacroMicro} 
+\caption{Proposta de integração \citep{villasclaras2009looking}\footnote[1]{\scriptsize{Villasclaras-Fern{\'a}ndez, S.~Isotani, Y.~Hayashi, e R.~Mizoguchi. Looking into collaborative learning: Design from macro-and micro-script perspectives. \emph{Frontiers in Artificial Intelligence and Applications}}}}
+\label{fig:integracaoMacroMicro}
+\end{center}
+\end{figure}
+\end{frame}
+
+%--
+\begin{frame}[fragile]
+\frametitle{Modelo pedagógico - combinação dos macrorroteiros}
+Sessão de aprendizagem (\textit{Entrada}, \textit{atividade}, \textit{Saída})
+
+\begin{jshopcode}
+         (:method (create\textit{Name}Activity! ?goals ?groups)
+                  ()
+                  (\textcolor{blue}{(createLDScript! ?goals ?groups)}))
+\end{jshopcode}
+
+\begin{figure}[htbp]
+\begin{center} 
+\includegraphics[width=0.65\textwidth]{figuras/combinacaoCLFP} 
+\caption{Combinação dos macrorroteiro Jigsaw e Pyramid}
+\label{fig:combinacaoCLFP}
+\end{center}
+\end{figure}
+\end{frame}
+
+
+%--
+\begin{frame}[fragile]
+\frametitle{Modelo pedagógico - integração e combinação}
+
+\begin{jshopcode}
+         (:method (create\textit{Name}Activity! ?goals ?groups)
+                  ()
+                  ((createLDScriptCLScenario! ?goals ?groups)))
+         
+         \textcolor{blue}{\textit{;; optional}}
+         (:method (createLDScriptCLScenario! ?goals ?groups)
+                  ()
+                  ((createLDScriptCLScenario!! ?goals ?groups)))
+         
+         \textcolor{blue}{\textit{;; fallback - integração}}
+         (:method (createLDScriptCLScenario! ?goals ?groups)
+                  ()
+                  ((createLDCLScenario!! ?goals ?groups)))
+         
+         \textcolor{blue}{\textit{;; mandatory - combinação}}
+         (:method (createLDScriptCLScenario!! ?goals ?groups)
+                  ()
+                  ((createLDScript! ?goals ?groups)))
+\end{jshopcode}
+\end{frame}
+
+
+%-- Gerador de cursos colaborativos
+\section{Gerador de cursos colaborativos}
+\begin{frame}
+\frametitle{\href{http://screencast.com/t/PgdaTtYrlZC}{Gerador de curso}\footnote[1]{\footnotesize{Screencast - \url{http://screencast.com/t/PgdaTtYrlZC}}}}
+
+\begin{figure}[htbp]
+\begin{center}
+\tikzumlset{font=\tiny}
+\begin{tikzpicture}[scale=0.65]
+\begin{umlseqdiag}
+\umlactor[class=Projetista,x=0]{a}
+\umlobject[class=CourseGenerator,x=5]{c}
+\umlobject[class=Solver,x=9.5]{s}
+%\umlobject[class=LDElement,stereo=entity,x=11.2]{e}
+\umlobject[class=IPublishHandler,x=13.5]{p}
+\begin{umlcall}[op={getTaskDefinitions()}, return=tasks:List]{a}{c} 
+\end{umlcall}
+\begin{umlcall}[op={generate(initTask, initState)}, return=course:Metadata]{a}{c}
+\begin{umlcall}[op={solve(initTask, initState)}, return=e:LDElement]{c}{s}
+\umlcreatecall[class=LDElement,stereo=entity,x=12]{s}{e}
+\end{umlcall}
+\begin{umlcall}[op={toUoL()}, return=files:List$<$File$>$]{c}{e}
+\end{umlcall}
+\begin{umlcall}[op={publishUoL(file)}]{c}{p}
+\end{umlcall}
+\begin{umlcall}[op={createRunForUol(uolId, title)}]{c}{p}
+\end{umlcall}
+\end{umlcall}
+\end{umlseqdiag}
+\end{tikzpicture}
+\caption{Diagrama de sequência que ilustra a geração do curso}
+\label{list:seqdiagcoursegenerate}
+\end{center}
+\end{figure}
+\end{frame}
+
+%--
+\begin{frame}
+\frametitle{\href{http://screencast.com/t/PgdaTtYrlZC}{Gerador de curso}\footnote[1]{\footnotesize{Screencast - \url{http://screencast.com/t/PgdaTtYrlZC}}}}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{figuras/table01} 
+\caption{Exemplo empregado no gerador de cursos colaborativos}
+\end{center}
+\end{figure}
+\end{frame}
+
+%--
+\begin{frame}
+\frametitle{\href{http://screencast.com/t/PgdaTtYrlZC}{Gerador de curso}\footnote[1]{\footnotesize{Screencast - \url{http://screencast.com/t/PgdaTtYrlZC}}}}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{figuras/table02} 
+\caption{Exemplo empregado no gerador de cursos colaborativos}
+\end{center}
+\end{figure}
+\end{frame}
+
+%--
+\begin{frame}
+\frametitle{\href{http://screencast.com/t/PgdaTtYrlZC}{Gerador de curso}\footnote[1]{\footnotesize{Screencast - \url{http://screencast.com/t/PgdaTtYrlZC}}}}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=1\textwidth]{figuras/table03} 
+\caption{Exemplo empregado no gerador de cursos colaborativos}
+\end{center}
+\end{figure}
+\end{frame}
+
+%-- 
+\section{Conclusões}
+\begin{frame}
+\frametitle{Conclusões e trabalhos futuros}
+\begin{itemize}
+\item Eficiência: 32 estudantes e 2 objetivos $\approx$ 12 segundos, 3528 ações, 650 recursos instrucionais e 11 horas de instrução.
+\item Padrões de roteiros colaborativos podem ser usados para representar estratégias como tarefas e métodos hierárquicos .
+%\item  A modelagem de planejamento instrucional em ACSC como problema de planejamento hierárquico é viável.
+\item Trabalhos futuros:
+\begin{itemize}
+\item Generalização das estratégias de criação de fases nos macrorroteiro.
+\item Modelagem de estratégias de planejamento instrucional usando padrões do nível de recursos e do nível de papéis e mecanismos comuns.
+\item Desenvolvimento de uma ferramenta de autoria de estratégias de planejamento instrucional.
+\item Melhorias no componente mediador.
+\item Integração com ambientes virtuais de aprendizagem.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+%--
+\begin{frame}
+\frametitle{Fim!}
+\begin{center}\huge
+Perguntas?
+\end{center}
+\end{frame}
+
+\begin{frame}
+%\singlespacing
+\bibliographystyle{plainnat-ime} 
+\bibliography{bibliografia} 
+\end{frame}
+
+%--
+\begin{frame}[fragile]
+\frametitle{Modelo pedagógico - relações entre padrões}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.82\textwidth]{figuras/hierarchicalPatternRelation}
+  \caption{Relações entre padrões de roteiros colaborativos \citep{leo2007pattern}\footnote[1]{\scriptsize{D.H. Leo, J.I.A. P{\'e}rez, e I.D. Damoulis. \emph{A pattern-based design process for the creation of CSCL macro-scripts computationally represented with IMS LD}. Tese de Doutorado, Universidad de Valladolid.}}}
+\end{figure}
+\end{frame}
+
+
+%-------
+\end{document}
+

@@ -1,0 +1,397 @@
+
+\chapter{Implementação}
+\label{cap:implementacao}
+
+Neste capítulo descrevemos os aspetos técnicos e as características principais do gerador de cursos colaborativos e da ferramenta de autoria das unidades de aprendizagem desenvolvidas na forma de protótipos para avaliar a modelagem proposta.
+A Seção \ref{sec:implementacaoGerador} descreve as caraterísticas da implementação do gerador de cursos colaborativos. A Seção \ref{sec:ferramentaUnidades} descreve as caraterísticas da ferramenta ADL de autoria das unidades de aprendizagem.
+
+\section{Implementação do gerador de cursos colaborativos}
+\label{sec:implementacaoGerador}
+
+O gerador de cursos colaborativos é um software educativo que efetua a geração de unidades de aprendizagem adaptadas às características individuais dos estudantes. A geração acontece a solicitude de um projetista instrucional quem define os objetivos educacionais e participantes da unidade. Neste trabalho, a unidade de aprendizagem obtida consiste em um pacote ZIP que contém: um conjunto de roteiros colaborativos, definidos na especificação IMS-LD; e todos os recursos instrucionais necessários.
+
+
+Uma vez obtido o planejador dependente de domínio, usando o processo de compilação apresentado na Subseção \ref{subsec:JSHOP2ip} e a modelagem do domínio de planejamento apresentada nos Capítulos \ref{cap:modelagem} e \ref{cap:modelagemEstrategias}, o gerador de cursos consiste apenas de um pequeno número de classes principais apresentadas no diagrama UML da Figura \ref{fig:classesJava}.
+
+A classe \textsf{LDElement} representa a unidade de aprendizagem obtida pelo sistema de planejamento como um elemento de roteiro colaborativo que apresenta: 
+
+\begin{itemize}
+\item um atributo \emph{type} que define se o elemento de roteiro é uma etiqueta de abertura ou fechamento, atribuição ou remoção de um papel, adição ou remoção de um grupo, inserção de texto ou recurso;
+\item um atributo \emph{tag} que define o nome da etiqueta;
+\item um atributo \emph{parameters} que define a lista de atributos no marcador XML;
+\item um atributo \emph{children} que define a lista de elementos que são parte do elemento; e
+\item um atributo \emph{metadata} que define informações de classificação, objetivos educacionais e participantes conforme foi descrito na Subseção 4.3.4. Além disso, o atributo \emph{metadada} contém outras informações a serem definidas pelo gerador de curso como tarefas públicas, termos de busca, etc.
+\end{itemize} 
+
+\begin{landscape}
+\tikzumlset{font=\scriptsize}
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+
+\begin{umlpackage}[x=0,y=0]{coursegenerator} 
+\umlclass[x=9,y=8]{CourseGenerator}{}{
+generate(initTask, initState):Metadata \\
+%generate(initTask, initState, id):Metadata \\
+%getTaskDefinitions(id) : List<PublicTask> \\
+getTaskDefinitions() : List<PublicTask> }
+\umlclass[x=9,y=4]{LDElement}{type : String \\ tag : String \\ parameters : List<LDParamer> \\ children : List<LDElements> \\ metadata : Metadata}{
+toUoL():List<File>}
+\umlclass[x=0,y=8,type=interface]{Solver}{}{solve(initTask,initState):LDElement}
+\umlclass[x=0,y=0]{JShop2ipSolver}{domain: Domain\\planner : JShop2ipPlanner}{}
+\umlclass[x=3,y=4]{PublicTask}{identifier : String \\ goals : List<Goal> \\ skillIds : List<String> \\ attitudeIds : List<String>\\ learnerIds : List<Group>}{}
+\umlimpl{JShop2ipSolver}{Solver}
+\umluniassoc[stereo=invoke]{CourseGenerator}{Solver}
+\umluniassoc[stereo=manage]{CourseGenerator}{LDElement}
+\umluniassoc[stereo=manage]{CourseGenerator}{PublicTask}
+\umluniaggreg{LDElement}{LDElement}
+\end{umlpackage}
+
+\umlemptyclass[x=7,y=-2.5,width=15ex,type=interface]{BuildElement}
+\umlemptyclass[x=11,y=-2.5,width=15ex,type=interface]{GetElements}
+%\umlemptyclass[x=11,y=-2.5,width=15ex]{FilterByQuery}
+\umlemptyclass[x=15,y=-2.5,width=15ex,type=interface]{GetType}
+\umlemptyclass[x=15,y=0,width=15ex,type=interface]{GetPropertyValue}
+\umlemptyclass[x=15,y=2,width=15ex,type=interface]{GetRelated}
+
+\begin{umlpackage}[x=17,y=5]{ldpublisher}
+\umlclass[x=0,y=3,type=interface]{IPublishHandler}{}{
+publishUol(file, monitor)\\
+createRunForUol(uolId, title)\\
+createUser(userId)\\
+addUserToRole(user, roleId)\\
+addUserToRun(user, runId)\\
+%findRunFromTitle(int, String)\\
+%findUolInCC(String)\\
+%getActivityTree(String, int)\\
+%getAllCCRoleIdsForUser(Element, ArrayList<Integer>)\\
+%getContent(String, int, String, String)\\
+%getEnvironmentTree(String, int, String[])\\
+%getJDomRootFromXMLString(String)\\
+%getLastPublicationMessage()\\
+%getRoles(int)\\
+%getRolesTree(int)\\
+%getRunsForUol(int)\\
+%getUnitsOfLearning()\\
+%getUser(String)\\
+%getUserRoles(String, int)\\
+%getUsersFromRole(int, IRole)\\
+removeRun(runId)\\
+%removeUnitOfLearning(IUnitOfLearning)\\
+. . .
+%removeUserFromRole(user, roleId)\\
+%removeUserFromRun(user, runId)\\
+%setActiveRole(String, int, int)\\
+%setContentFolderOffset(String)
+}
+\umlemptyclass[x=0,y=0]{CCPublishHandler}{}{}
+\umlimpl{CCPublishHandler}{IPublishHandler}
+\end{umlpackage}
+%\umlimpl{PublishHandler}{IPublishHandler}
+\umluniassoc[stereo=invoke]{CourseGenerator}{IPublishHandler}
+\umlassoc{JShop2ipSolver}{BuildElement}
+\umlassoc{JShop2ipSolver}{GetElements}
+%\umlassoc{JShop2ipSolver}{FilterByQuery}
+\umlassoc{JShop2ipSolver}{GetType}
+\umlassoc{JShop2ipSolver}{GetPropertyValue}
+\umlassoc{JShop2ipSolver}{GetRelated}
+\end{tikzpicture}
+\caption{Visão geral das classes relevantes no gerador de cursos colaborativos}
+\label{fig:classesJava}
+\end{figure}
+\end{landscape}
+
+As classes encarregadas de efetuar o processo de planejamento instrucional são abstraias na interface \textsf{Solver}, interface que apresenta o método \textit{solve} para dar solução ao problema de planejamento instrucional (definido na Seção \ref{sec:problemaPlanejamento}). Assim, em nosso gerador de cursos a classe \textsf{JShop2ipSolver} encapsula o algoritmo de planejamento JSHOP2ip (detalhado na Subseção \ref{subsec:JSHOP2ip}) no atributo \textit{planner} e o domínio de planejamento (definido na Seção \ref{sec:dominioPlanejamento}) no atributo \textit{domain}.
+
+A interface \textsf{IPublishHandler} apresentam métodos que possibilitam publicar as unidades de aprendizagem obtidas em um AVA. Assim, como métodos que manipulam a atribuição e remoção de usuários nos papéis e grupos. A classe \textsf{CCPublishHandler} implementa a interface para definir a integração do gerador de cursos com o software CopperCore \citep{vogten2004coppercore}. 
+
+Finalmente, os métodos da classe \textsf{CourseGenerator} são empregados pelos projetista instrucional e outras ferramentas de autoria para efetuar a geração do curso mediante requisições de tipo GET e POST que empregam os métodos \textit{getTaskDefinitions} e \textit{generate}.
+
+\subsection{Processo de geração de cursos}
+\label{subsec:procesoGeracaoCursos}
+
+O processo de geração de cursos mostrado no diagrama de sequência da Figura \ref{list:seqdiagcoursegenerate}.
+
+\begin{figure}[htbp]
+\centering
+\tikzumlset{font=\footnotesize}
+\begin{tikzpicture} 
+\begin{umlseqdiag}
+\umlactor[class=Projetista,x=0]{a}
+\umlobject[class=CourseGenerator,x=5]{c}
+\umlobject[class=Solver,x=9.5]{s}
+%\umlobject[class=LDElement,stereo=entity,x=11.2]{e}
+\umlobject[class=IPublishHandler,x=13.5]{p}
+\begin{umlcall}[op={getTaskDefinitions()}, return=tasks:List]{a}{c} 
+\end{umlcall}
+\begin{umlcall}[op={generate(initTask, initState)}, return=course:Metadata]{a}{c}
+\begin{umlcall}[op={solve(initTask, initState)}, return=e:LDElement]{c}{s}
+\umlcreatecall[class=LDElement,stereo=entity,x=12]{s}{e}
+\end{umlcall}
+\begin{umlcall}[op={toUoL()}, return=files:List<File>]{c}{e}
+\end{umlcall}
+\begin{umlcall}[op={publishUoL(file)}]{c}{p}
+\end{umlcall}
+\begin{umlcall}[op={createRunForUol(uolId, title)}]{c}{p}
+\end{umlcall}
+\end{umlcall}
+\end{umlseqdiag}
+\end{tikzpicture}
+\caption{Diagrama de sequência que ilustra a geração do curso}
+\label{list:seqdiagcoursegenerate}
+\end{figure}
+
+O processo consiste primeiro  na obtenção de um lista de tarefas públicas mediante o método \textit{getTaskDefinitions}. A Figura \ref{list:descricaoTarefasProjetoInstrucional} contém um exemplo da lista de tarefas públicas que são devolvidas pelo método. A informação é apresentada como uma lista de elementos <task> que apresentam: um identificador de tarefa <identifier>, um conjunto de objetivos <goals>, uma lista de habilidades independentes <skills>, uma lista de atitudes <attitudes> e um conjunto de estudantes <learners>. Os atributos \textit{compId} e \textit{level} em cada objetivo <goal> são um identificador de competência e um nível de competência.
+
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+<tasks>
+  <task>
+    <identifier>createLDFundamentalUoL</identifier>
+    <goals>
+      <goal compId="comp127" level="s1k1">
+        <competency>
+          <id>comp127</id>
+          <title>Understand derivate</title>
+        </competency>
+        <level>s1k1</level>
+      <goal>
+      . . .
+    </goals>
+    <skills>
+      <skill>
+        <id>skill135</id>
+        <title>discussion</title>
+      </skill>
+      . . .
+    </skills>
+    <attitudes>
+      <attitude>
+        <id>attitutde234</id>
+        <title>positive-interdependence</title>
+      </attitude>
+      . . .
+    </attitudes>
+    <learners>
+      <learner>
+        <id>learner01</id>
+        <name>Jorge Guevara</name>
+      </learner>
+      . . .
+    </learners>
+  </task>
+</tasks>
+\end{jshopcode}
+%\fbox{\includegraphics[width=0.65\textwidth]{listagem/descricaoTarefasProjetoInstrucional}}
+\caption{Exemplo de descri\c{c}\~{a}o do conjunto de tarefas públicas}
+\label{list:descricaoTarefasProjetoInstrucional}
+\end{figure}
+\newpage
+
+A lista de tarefas públicas <tasks> é utilizada pelo projetista instrucional ou outra ferramenta para definir o estado inicial \textit{initState} e a tarefa pública inicial \textit{initTask} como a requisição:
+\begin{alltt}
+[courseGeneratorBaseURL]/generate?_format=xml
+   &initState=\textit{initState}
+   &initTask.identifier=\textit{identifier}
+   &initTask.goals[0].comp.id=\textit{compId\(\sb{0}\)}&initTask.goals[0].level=\textit{level\(\sb{0}\)}
+   ...
+   &initTask.goals[\(n\sb{1}\)].comp.id=\textit{compId\(\sb{n\sb{1}}\)}&initTask.goals[0].level=\textit{level\(\sb{n\sb{1}}\)}
+   &initTask.skills[0].id=\textit{skillId\(\sb{0}\)}
+   ...
+   &initTask.skills[\(n\sb{2}\)].id=\textit{skillId\(\sb{n\sb{2}}\)}
+   &initTask.attitudes[0].id=\textit{attitudeId\(\sb{0}\)}
+   ...
+   &initTask.attitudes[\(n\sb{3}\)].id=\textit{attitudeId\(\sb{n\sb{3}}\)}
+   &initTask.groups[0].learners[0].id=\textit{learnerId\(\sb{0}\)}
+   ...
+   &initTask.groups[0].learners[\(m\sb{0}\)].id=\textit{learnerId\(\sb{m\sb{0}}\)}
+   ...
+   &initTask.groups[\(n\sb{1}\)].learners[0].id=\textit{learnerId\(\sb{m}\)}
+   ...
+   &initTask.groups[\(n\sb{1}\)].learners[\(m\sb{n\sb{1}}\)].id=\textit{learnerId\(\sb{m\sb{n\sb{1}}}\)}
+\end{alltt}
+Onde: 
+\begin{itemize}
+\item \textit{identifier} é um identificador de tarefa de planejamento instrucional pública (detalhados na Subseção \ref{subsec:redeTarefaInicial});
+\item \textit{compId$_{0}$} ... \textit{compId$n_{1}$} são identificadores de competência cognitiva e \textit{level$_{n_{1}}$} ... \textit{level$_{n_{1}}$} são níveis de competência que definem objetivos educacionais \textit{goal$_{0}$} ... \textit{goal$_{n_{1}}$} (detalhados na Subseção \ref{subsec:objetivosEducacionais}); 
+\item \textit{skillId$_{0}$} ... \textit{skillId$_{n_{2}}$} são identificadores de habilidades independentes;
+\item \textit{attitudeId$_{0}$} ... \textit{attitudeId$_{n_{3}}$} são identificadores de atitudes; e
+\item \textit{learnerId$_{0}$} ... \textit{learnerId$_{m_{0}}$}, ..., \textit{learnerId$_{m}$} ... \textit{learnerId$_{m_{n_{1}}}$} são identificadores de estudantes que definem os grupos de participantes que irão atingir os objetivos \textit{goal$_{0}$} ... \textit{goal$_{n_{1}}$}.
+\end{itemize}
+
+Então, o processo de geração continua efetuando o método \textit{generate} da classe \textsf{CourseGenerator} que efetua a criação da unidade de aprendizagem \textsf{e} (da classe \textsf{LDElement}) mediante o método \textit{solve}. Logo, o método \textit{toUoL} no objeto \textsf{e} da classe \textsf{LDElement} é empregado para obter uma lista de arquivos \textit{files} das unidades da aprendizagem descritas na especificação IMS-LD usando o algoritmo de geração de roteiros colaborativos detalhado na Seção \ref{sec:componenteConversao}.
+
+Os métodos \textit{publishUoL} e \textit{createRunForUoL} são utilizados durante o processo de geração para publicar e criar ambientes de execução das unidades de aprendizagem usando a lista de arquivos \textit{files}. Assim, o metadado \textit{course} devolvido ao final do processo contém informações das URIs das unidades de aprendizagem e suas instancias de execução. A Figura \ref{list:courseMetadata} apresenta um exemplo do metadado \textit{course} obtido usando o gerador de cursos colaborativos.
+
+\begin{figure}[htbp]
+\centering
+\begin{xmlcode}
+<metadata>
+  <identifier>ld-23fdf-23df-ea23f12-3f20be<identifier>
+  <property name="type">UoL</property>
+  <property name="hasTitle">Course of absolute value</property>
+  <property name="hasFile">/file/uol23445.zip</property>
+  <property name="hasCopperCoreURL">http://example/cc</property>
+  <property name="hasRun">345</property>
+  <property name="hasCopperCoreUserId">(learner01 3)</property>
+  <property name="hasCopperCoreUserId">(learner02 4)</property>
+</metadata>
+\end{xmlcode}
+\caption{Exemplo do metadado de um curso}
+\label{list:courseMetadata}
+\end{figure}
+
+
+\subsection{Mediador de consultas}
+\label{subsec:mediador}
+
+O componente mediador mostrado na Figura \ref{fig:mediatorcomponent} é utilizadas pelo domínio de planejamento no atributo \textit{domain} da classe \textsf{JShop2ipSolver} para dar solução aos termos de chamada que efetuam consultas nos modelos de domínio a ser ensinado e de estudantes. Assim, o mediador implementa as interfaces \textsf{BuildElements}, \textsf{GetElements}, \textsf{GetType}, \textsf{GetPropertyValue} e \textsf{GetRelated}.
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.75\textwidth]{figuras/mediatorcomponent}
+\caption{Visão geral do mediador dos modelos de domínio a ser ensinado e de estudante}
+\label{fig:mediatorcomponent}
+\end{figure}
+
+As interfaces \textsf{QueryRepository} e \textsf{Register} no mediador são Serviços Web baseados em RESTful \citep{fielding2000representational} que efetuam consultas nos repositórios externos. Os repositórios são registrados mediante a interface \textsf{Register}, na qual são registrados o nome e a localização URL base do repositório. A interface \textsf{QueryRepository} possibilita ao mediador efetuar consultas nos repositórios mediante requisições de tipo GET ou POST na URL base do repositório definido como
+\begin{alltt}
+[repositoryBaseURL]/search?function=\textit{function}
+   &\textit{key\(\sb{1}\)}=\textit{value\(\sb{1}\)}
+   ...
+   &\textit{key\(\sb{n}\)}=\textit{value\(\sb{n}\)}.
+\end{alltt}
+
+Se o termo da chamada é \textsf{(call BuildElement ?query [?id [?n]])} ou \textsf{(call GetElement ?query)} então o valor de \textit{function} é BuildElement ou GetElement; e os valores \textit{key$_{i}$}=\textit{value$_{i}$} são:
+
+\begin{itemize}
+\item types[i]=\textit{t} para cada termo \textsf{(class \textit{t})} da lista \textsf{?query};
+\item properties[i].name=\textit{n} e properties[i].value=\textit{v} para cada termo \textsf{(property \textit{n} \textit{v})} da lista \textsf{?query};
+\item relations[i].name=\textit{n} e relations[i].value=\textit{v} para cada termo \textsf{(relation \textit{n} \textit{v})} da lista \textsf{?query};
+\item id=\textit{id} para o termo constante \textsf{?id}; e
+\item nro=\textit{n} para o termo constante \textsf{?n}.
+\end{itemize}
+
+\begin{example}
+O termo de chamada
+\begin{alltt}\sffamily
+     (assign ?result (call GetElements ((class Auxiliary)
+                                                (property hasLearningResourceType (exercise diagram))
+                                                (property hasLearningObjective (c1 s1k2))))
+\end{alltt} 
+é representado no repositório com URL base \textsf{http://repository.com}  mediante a requisição:
+\begin{alltt}
+http://repository.com/search?function=GetElements
+    &class[0]=Auxiliary
+    &property[0].name=hasLearningResourceType
+    &property[0].value[0]=(exercise\%20diagram)
+    &property[1].name=hasLearningObjective
+    &property[1].value[0]=(c1\%20s1k2)
+\end{alltt}
+\end{example}
+
+
+Se o termo da chamada é \textsf{(call GetType ?element)}, \textsf{(call GetPropertyValue ?element ?n [?dest])} ou \textsf{(call GetRelated ?element ?n)} então o valor de \textit{function} é GetType, GetPropertyValue ou GetRelated; e os valores \textit{key$_{i}$}=\textit{value$_{i}$} são:
+
+\begin{itemize}
+\item element[i]=\textit{e} para cada termo \textsf{e} da lista \textsf{?element};
+\item name=\textit{n} para o termo constante \textsf{?n}; e
+\item dest=\textit{d} para cada termo \textsf{d} da lista \textsf{?dest}.
+\end{itemize}
+
+\begin{example}
+A função \textsf{(call GetPropertyValue aux1 hasLearningObjective comp1)}  é representado no repositório com URL base \textsf{http://repository.com} mediante a requisição:
+
+\begin{alltt}
+http://repository.com/search?function=GetPropertyValue
+    &elements[0]=aux1
+    &name=hasLearningObjective&dest[0]=comp1
+\end{alltt}
+\end{example}
+
+\subsection{Integração do gerador de cursos com CopperCore}
+
+O Coppercore \citep{vogten2006coppercore} é uma aplicação de código aberto em Java desenvolvida pela Universidade Aberta da Holanda que possibilita executar unidades de aprendizagem descritas na especificação IMS-LD. Assim, CopperCore é nosso motor de execução dos roteiros colaborativos obtidos pelo gerador de curso.
+
+A classe \textsf{CCPublishHandler} (Figura \ref{fig:classesJava}) implementa a classe \textsf{IPublishHandler} para definir a integração do gerador do curso com o sistema CopperCore. O método \emph{publishUoL} nesta classe é encarregado de publicar e as unidades de aprendizagem obtidas pelo gerador de curso, unidades definidas como pacotes ZIPs (\textit{files}) que contém arquivos de manifesto ``\textit{imsmanifest.xml}'' e todos os recursos necessários.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{figuras/coppercore}
+  \caption{Ambiente de execução da unidade de aprendizagem de CopperCore}
+  \label{fig:coppercore}
+\end{figure}
+
+Finalmente, o método \textit{createRunForUoL} é encarregado de criar ambientes de execução das unidades de aprendizagem usando a atribuição de papéis e grupos definidas na unidade de aprendizagem. A Figura \ref{fig:coppercore} apresenta a interface de um ambiente de execução da unidade de aprendizagem no sistema CopperCore.
+
+\section{Modelo conceitual da ferramenta de autoria}
+\label{sec:ferramentaUnidades}
+
+%Em nossa modelagem proposta no Capítulo \ref{cap:modelagem}, o gerador de curso é independente dos modelos de domínio a ser ensinado e de estudante apresentando uma ferramenta de edição dos modelos. 
+
+Nesta seção, descrevemos as principais características e funções da ferramenta de autoria das unidades de aprendizagem denominada ALD (\textit{Automated Learning Design}), ferramenta que emprega os Serviços Web baseados em RESTful fornecidos pelo gerador do cursos colaborativos (serviços detalhados na Seção \ref{sec:implementacaoGerador}). Além de possibilitar a autoria de unidades de aprendizagem, a ferramenta possibilita a edição dos modelos de estudante e de domínio a ser ensinado.
+
+\newpage
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.70\textwidth]{figuras/aldinitscreen}
+\caption{Tela inicial da ferramenta de autoria ALD}
+\label{fig:aldinitscreen}
+\end{figure}
+
+A Figura \ref{fig:aldinitscreen} mostra a tela inicial da ferramenta de autoria de roteiros. Na tela, o formulário permite ao projetista instrucional definir a URL base, usuário e senha do gerador de cursos colaborativos. A tela também apresenta um formulário que utiliza a interface \textsf{Register} do gerador de cursos colaborativos para registrar a URL base do repositório externo para ser usado no mediador de consultas apresentado na Subseção \ref{subsec:mediador}.
+A barra de menu superior na figura apresenta as opções de: edição do modelos de domínio a ser ensinado (\textit{Domain model}),  edição modelo de estudante (\textit{User model}) e gerenciamento de cursos (\textit{Planner}).
+
+\subsection{Edição do modelo de estudante}
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.60\textwidth]{figuras/aldmodelodeestudante01}
+\caption{Tela de edição do modelo de estudante}
+\label{fig:aldmodelodeestudante01}
+\end{figure}
+
+A tela de edição do modelo de estudante mostrada na Figura \ref{fig:aldmodelodeestudante01} possibilita a edição das informações de cada um dos estudantes. A figura mostra o formulário de edição das informações do estudante como nome do usuário, e-mail e descrição. 
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.58\textwidth]{figuras/aldmodelodeestudante02}
+\caption{Tela de edição de propriedades do modelo de estudante}
+\label{fig:aldmodelodeestudante02}
+\end{figure}
+
+A Figura \ref{fig:aldmodelodeestudante02} mostra o formulário de edição do modelo de estudante, as propriedades nível de competência (\textsf{hasCompetencyLevel}), histórico (\textsf{hasAlreadySeen}), personalidade (\textsf{hasPersonality}), experiência (\textsf{hasCLExperience}), etc.
+
+\subsection{Edição do modelo do domínio a ser ensinado}
+
+A tela mostrada na Figura \ref{fig:aldmodelodedominio01} consiste em um menu da esquerda divido em quatro blocos que possibilitam a edição dos elementos de conhecimento fundamental (\textit{Fundamental}), elementos de conhecimento auxiliar (\textsf{Auxiliary}), habilidades (\textsf{Skill}) e atitudes (\textsf{Attitudes}).
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.58\textwidth]{figuras/aldmodelodedominio01}
+\caption{Tela de edição do modelo de domínio a ser ensinado}
+\label{fig:aldmodelodedominio01}
+\end{figure}
+ 
+As relações entre os elementos do domínio a ser ensinado são definidas usando a tela mostrada na Figura \ref{fig:aldmodelodedominio02}. A tela é acessada usando o botão visualizar relações (\textit{View relations}).
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.50\textwidth]{figuras/aldmodelodedominio02}
+\caption{Tela de edição das relações do modelo de domínio a ser ensinado}
+\label{fig:aldmodelodedominio02}
+\end{figure}
+
+\newpage
+\subsection{Gerenciamento de cursos}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.70\textwidth]{figuras/aldplanner01}
+\caption{Tela inicial do gerenciamento de cursos}
+\label{fig:aldplanner01}
+\end{figure}
+
+A tela de gerenciamento de cursos mostrada na Figura \ref{fig:aldplanner01} apresenta a lista de unidades de aprendizagem obtidas pelo gerador no menu da esquerda. Uma unidade de aprendizagem é gerada usando o processo de geração apresentado na Subseção \ref{subsec:procesoGeracaoCursos}. A Figura \ref{fig:aldplanner01} apresenta o formulário pelo qual são definidos o estado inicial e a tarefa inicial pública.

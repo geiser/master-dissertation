@@ -1,0 +1,729 @@
+
+\chapter{Especificação IMS-LD}
+\label{ape:imsld}
+
+A especificação IMS-LD publicada no ano 2003 pelo consórcio IMS-GLC\footnote{IMS - Global Learning Consortium - \url{http://www.imsglobal.org/}} é definida como a especificação baseada na Linguagem de Modelagem Educacional (\textit{Education Modeling Language}, EML) que representam estratégias de aprendizagem e de instrução utilizadas na estruturação do conteúdo instrucional. A especificação descreve a estruturação do conteúdo instrucional como uma sequência de atividades a serem efetuadas pelos estudantes e docentes para alcançar objetivos educacionais \citep{koper2002educational, olivier2005learning}.
+
+\section{Metáfora de roteiro de teatro}
+\label{sec:elementosEstruturaEspecificacao}
+
+A especificação pode ser entendida mediante uma metáfora de roteiro de teatro, na qual o roteiro é definido como um conjunto de peças de teatro. As peças de teatro são compostas de um conjunto de atos, atores que despenham papéis, atividades e ambientes. Neste sentido papéis, atividades e ambiente definem os componentes do roteiro; enquanto, cada peça de teatro é definida como uma sequência de atos.
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.70\textwidth]{figuras/metodoIMSLD} 
+\caption{Diagrama dos elementos de roteiro como metáfora de roteiro de teatro}
+\label{fig:metodoIMSLD}
+\end{figure}
+
+Dessa maneira, como é mostrada na Figura \ref{fig:metodoIMSLD} um estudante pode assumir diferentes papéis em diferentes atos, o inicio e final de cada ato define um ponto de sincronização no que os papéis dos participantes são mudados. Os atos são definidos como uma sequência de atividades associadas a um conjunto de ambientes de apoio à aprendizagem. Finalmente, os ambientes de apoio à aprendizagem são compostos de objetos de aprendizagem e serviços.
+
+\section{Elementos da especificação}
+
+A especificação IMS-LD é definida como um conjunto de regras de validação de documentos XML (arquivos XSD), dessa maneira, uma estratégia de aprendizagem e de instrução é representada em um arquivo de manifesto que apresenta a estrutura básica mostrada na Figura \ref{list:manifestoIMSLD}. Assim, elementos da especificação estão localizados no elemento <learning-design> na seção <organizations> (linhas 15-19).
+
+\begin{figure}[htbp]
+\centering
+\begin{xmlcode}
+<?xml version="1.0" encoding="UTF-8"?>
+<imscp:manifest
+    xmlns:imscp="http://www.imsglobal.org/xsd/imscp_v1p1"
+    xmlns="http://www.imsglobal.org/xsd/imsld_v1p0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1 
+                            http://www.imsglobal.org/xsd/imscp_v1p1p3.xsd
+                            http://www.imsglobal.org/xsd/imsld_v1p0
+                            http://www.imsglobal.org/xsd/IMS_LD_Level_C.xsd"
+    identifier="imscp-f2434015-4ac43"> 
+  <imscp:metadata>
+    <imscp:schema>IMS Metadata</imscp:schema> 
+    <imscp:schemaversion>1.2</imscp:schemaversion> 
+  </imscp:metadata> 
+  <imscp:organizations> 
+    <learning-design identifier="example-imsld" level="C" uri="http://ime.usp.br/ld-34fd9e">
+      . . .
+    <learning-design>
+  </imscp:organizations>
+  <imscp:resources>
+    . . .
+  </imscp:resources>
+</imscp:manifest>
+\end{xmlcode}
+\caption{Estrutura básica do arquivo manifesto}
+\label{list:manifestoIMSLD}
+\end{figure}
+
+Para facilitar, a adoção e uso da especificação, os elementos do IMS-LD são divididos em três níveis A, B e C, sendo que o nível B integra o nível A e o nível C integra o nível B (consequentemente C integra o nível A). A Figura \ref{fig:elementosIMSLD} mostra o modelo conceitual da classificação e dos elementos da especificação IMS-LD detalhados a seguir. 
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.85\textwidth]{figuras/elementosIMSLD}
+\caption{Modelo conceitual dos elementos da especificação IMS-LD}
+\label{fig:elementosIMSLD}
+\end{figure}
+
+
+\subsection{Elementos do nível A}
+
+No nível A são definidos os elementos: títulos, objetivos de aprendizagem, pré-requisitos, papéis, atividades, ambientes de apoio à aprendizagem, peças de teatro, atos e papel-partes.
+
+\subsubsection{Títulos}
+
+Os títulos são representados mediante elementos <title> utilizados para efetuar a descrição de cada elemento da especificação IMS-LD. A Figura \ref{list:titleIMSLD} apresenta como exemplo a definição do título no elemento <learning-design>.
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<learning-design identifier="example" level="A" uri="http://example.br/imsld.xml">
+    <title>Sample IMS-LD</title>
+    \textit{. . .}
+</learning-design>
+\end{xmlcode}
+\caption{Exemplo do elemento título na especificação IMS-LD}
+\label{list:titleIMSLD}
+\end{figure}
+
+\subsubsection{Objetivos de aprendizagem e pré-requisitos}
+
+Os objetivos de aprendizagem são representados mediante um elemento <learning-objectives> que descreve os resultados esperados no processo de ensino-aprendizagem. Enquanto, os pré-requisitos são representados mediante um elemento <prerequisites> que descreve recursos de entrada como quaisquer pré-conhecimentos necessários. A Figura \ref{list:learningObjectivePrerequisiteIMSLD} apresenta como exemplo a definição dos objetivos de aprendizagem e pré-requisitos do elemento <learning-desing>.
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<learning-design identifier="example" level="A" uri="http://example.br/imsld.xml">
+  <title>Sample IMS-LD</title>
+  <learning-objectives>
+    <item isvisible="true" identifier="item-objectives-math" identifierref="res-123fd02">
+      <title>math discussion result</title>
+    </item>
+    <item isvisible="true" identifier="item-objectives-lang" identifierref="res-04ab347">
+      <title>language discussion result</title>
+    </item>
+  </learning-objectives>
+  <prerequisites>
+    <item isvisible="true" identifier="pre-math-logic" identifierref="res-24e9fa">
+      <title>set theory concept</title>
+    </item>
+  </prerequisites>
+  \textit{. . .}
+</learning-design>
+\end{xmlcode}
+\caption{Exemplo de objetivos de aprendizagem e pré-requisitos na especificação IMS-LD}
+\label{list:learningObjectivePrerequisiteIMSLD}
+\end{figure}
+
+Nos elementos objetivos de aprendizagem e pré-requisitos, a definição dos recursos instrucionais é efetuada mediante o elemento <item> que apresenta um atributo \textit{identifierref} como referencia a um identificador de recurso instrucional. A Figura \ref{list:learningObjectivePrerequisiteIMSLD} mostra a definição dos objetivos de aprendizagem como resultados da discussão de matemática (linhas 4-6) e resultados da discussão de linguagem (linha 7-9); enquanto, os pré-requisitos são definidos como um resumo da teoria de conjuntos (linhas 12-14).
+
+\subsubsection{Papéis}
+
+Os papéis são representados mediante um elemento <roles>, em que é definido um conjunto de elementos <learner> que representam papéis dos estudantes e um conjunto de elementos <staff> que representam papéis dos funcionários. Os atributos \textit{max-persons} e \textit{min-persons} nos papéis são utilizados para definir o número máximo e mínimo de participantes em cada papel.
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<learning-design identifier="example" level="A" uri="http://example.br/imsld.xml">
+  <title>Sample IMS-LD</title>
+  <components>
+    <roles>
+        <learner identifier="role-student">
+            <title>Student</title>
+            <learner identifier="role-tutor">
+              <title>Tutor</title>
+            </learner>
+            <learner identifier="role-tutee">
+              <title>Tutee</title>
+            </learner>
+        </learner>
+        <staff identifier="role-teacher">
+            <title>Teacher</title>
+        </staff>
+    </roles>
+    . . .
+  </components>
+   . . .
+</learning-design>
+\end{xmlcode}
+\caption{Exemplo de papéis na especificação IMS-LD}
+\label{list:papeisIMSLD}
+\end{figure}
+
+A Figura \ref{list:papeisIMSLD} apresenta como exemplo a definição dos papéis de estudante \textsf{role-student} (linhas 5-13), \textsf{role-tutor} (tutor, linhas 7-9) e \textsf{role-tutee} (aprendiz, linhas 10-12); e a definição de um papel de funcionário \textsf{role-teacher} (docente, linhas 14-16).
+
+\subsubsection{Atividades}
+
+As atividades são representadas mediante um elemento <activities>, no que são definidos: um conjunto de elementos <learning-activity> que representam as atividades de aprendizagem; um conjunto de elementos de elementos <support-activity> que representam atividades de suporte; e um conjunto de elementos <activity-structure> que representam estruturas de atividades.
+O elemento <activity-structure> é utilizado para agrupar atividades de aprendizagem e de suporte como uma lista de tipo sequencial ou seleção, no que os atributos: \textit{number-to-select} definem o número de atividades que devem ser concluídas para dar termino à estrutura de atividades; e \textit{structure-type} definem o tipo de estrutura sequencial (\textit{sequence}) ou seleção (\textit{selection}).
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<learning-design identifier="example" level="A" uri="http://example.br/imsld.xml">
+  <title>Sample IMS-LD</title>
+  <components>
+  <activities>
+      <learning-activity identifier="la-math-discussion">
+        <title>Discussion of math</title>
+        . . .
+        <environment-ref ref="env-math-discussion" />
+      </learning-activity>
+      <learning-activity identifier="la-individual-study" isvisible="true">
+        <title>Individual Study</title>
+        <activity-description>
+          <item identifier="item-individual-study" identifierref="res-individual-study">
+            <title>Individual study</title>
+          </item>
+        </activity-description>
+      </learning-activity>
+      <support-activity identifier="sa-support-discussion">
+        <title>Support discussion</title>
+        . . .
+      </support-activity>
+    </activities>
+  . . .
+  </components>
+   . . .
+</learning-design>
+\end{xmlcode}
+\caption{Exemplo de atividades de aprendizagem e de suporte na especificação IMS-LD}
+\label{list:atividadesIMSLD}
+\end{figure}
+
+A Figura \ref{list:atividadesIMSLD} mostra a definição das atividades de aprendizagem \textsf{la-math-discussion} (discussão de matemática, linhas 5-9) e \textsf{la-individual-study} (estudo individual, linhas 10-17), e a definição da atividade de suporte \textsf{sa-support-discussion} (suporte à discussão, linhas 18-21).
+
+Nas atividades definimos os ambientes de apoio à aprendizagem mediante elementos \newline <environment-ref> (referência ao ambiente); e a descrição de como efetuar as atividades mediante o elemento <activity-description> (descrição da atividade). As atividades de aprendizagem e suporte contêm: um elemento <complete-activity> utilizado para especificar quando a atividade termina podendo ser de seleção do usuário (\textit{user-choice}) ou de tempo limite (\textit{time-limit}). O elemento <on-completion> nas atividades representam elementos a ser executados após concluída a atividade; no nível A, o único elemento que pode ser definido é <feedback-description>  que agrupa recursos instrucionais a ser apresentados ao concluir a atividade.
+
+\subsubsection{Ambientes de apoio à aprendizagem}
+
+Os ambientes de apoio à aprendizagem são representados mediante um elemento <environments>, no que são definidos elementos <environment> que representam ambientes. Cada elemento <environment> contêm: elementos <learning-object> para representar objetos de aprendizagem; elementos <service> para representar serviços de apoio à aprendizagem; e elementos <enviroment-ref> para representar referencia a outros ambientes (a ser utilizados como sub-ambientes de apoio à aprendizagem).
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<learning-design identifier="example" level="A" uri="http://example.br/imsld.xml">
+  <title>Sample IMS-LD</title>
+  <components>
+    <environments>
+      <environment identifier="env-group-discussion">
+        <title>Group discussion</title>
+        <environment-ref ref="env-pair-group-discussion" />
+        <environment-ref ref="env-global-group-discussion" />
+      </environment>
+      <environment identifier="env-pair-group-discussion">
+        <title>Group discussion in pairs</title>
+        <learning-object identifier="lo-article-resume-editor" type="tool-object">
+          <item identifier="item-article-resume-editor" identifierref="res-html-editor" />
+        </learning-object>
+        <service identifier="serv-pair-group-discussion">
+          <conference conference-type="synchronous">
+            <participant role-ref="role-tutor" />
+            <participant role-ref="role-tutee" />
+            <item identifier="item-pair-discussion" identifierref="res-syn-discussion" />
+          </conference>
+        </service>
+      </environment>
+    </environments>
+  . . .
+  </components>
+</learning-design>
+\end{xmlcode}
+\caption{Exemplo de ambientes de apoio à aprendizagem na especificação IMS-LD}
+\label{list:ambientesIMSLD}
+\end{figure}
+
+A Figura \ref{list:ambientesIMSLD} apresenta a definição dos ambientes de apoio à aprendizagem \textsf{env-group-discussion} (ambiente de discussão de grupos, linhas 5-9)  e \textsf{env-pair-group-discussion} (ambiente de discussão em pares, linhas 10-22). O ambiente \textsf{env-group-discussion} é composto dos dois sub-ambientes \textsf{env-pair-group-discussion} e \textsf{env-global-group-discussion} (discussão global em grupos). O ambiente \textsf{env-pair-group-discussion} é formado pelos objetos de aprendizagem \textit{lo-article-resume-editor} e o serviço de apoio à aprendizagem \textsf{serv-pair-group-discussion} (serviço de comunicação síncrono para a discussão em pares, linhas 15-21).
+
+\subsubsection{Peças de teatro}
+
+As peças de teatro são representadas no elemento <method> mediante elementos <play> que definem o fluxo de atividades a ser executado durante o processo de ensino-aprendizagem como uma sequência de atos. Os atributos \textit{identifier} e \textit{isvisible} definem o identificador único e a visibilidade do elemento. Cada peça de teatro pode conter um elemento <complete-play> para definir quando é concluída a peça e conter um elemento <on-completion> para definir os elementos a ser apresentados à término da peça.
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<learning-design identifier="example" level="A" uri="http://example.br/imsld.xml">
+  . . .
+  <method>
+    <play identifier="play-group-discussion">
+      <title>Discussion with preparation activities</title>
+      <act identifier="act-group-discussion">
+        <title>Group discussion phase</title>
+        <role-part>
+          <role-ref ref="role-tutor" />
+          <learning-activity-ref ref="la-group-discussion" />
+        </role-par>
+        <role-part>
+          <role-ref ref="role-tutee" />
+          <learning-activity-ref ref="as-preparation" />
+        </role-par>
+      </act>
+      <complete-play>
+        <when-last-act-completed/>
+      </complete-play>
+    </play>
+    <play identifier="play-practice-exercises">
+      <title>Practice with exercises</title>
+      . . .
+      <on-completion>
+        <feedback-description>
+          <item identifier="item-exercises-solution" identifierref="res-exercise-solution"/>
+        </feedback-description>
+      </on-completion>
+    </play>
+  </method>
+</learning-design>
+\end{xmlcode}
+\caption{Exemplo de peças de teatro na especificação IMS-LD}
+\label{list:playIMSLD}
+\end{figure}
+
+A Figura \ref{list:playIMSLD} apresenta como exemplo dois peças de teatro \textsf{play-group-discussion} (discussão em grupos, linhas 4, 20) e \textsf{play-practice-exercises} (prática com exercícios, linhas 21-29). O término da peça de teatro discussão é definido como a finalização do último ato. Enquanto, os elementos a ser apresentados ao termino da peça de teatro prática com exercícios é a apresentação do recurso com a solução dos exercícios.
+
+\subsubsection{Atos}
+
+Os atos de uma peça de teatro são representados mediante elementos <act> definidos como um conjunto de elementos <role-part> no que é definida a associação entre papéis e atividades. Em cada elemento peça de teatro deve existir pelo menos um ato. Quando houver mais de um ato em uma peça de teatro, estes são apresentados de forma sequencial do primeiro até o último.
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<learning-design identifier="example" level="A" uri="http://example.br/imsld.xml">
+  . . .
+  <method>
+    <play identifier="play-group-discussion">
+      <title>Discussion with preparation activities</title>
+      <act identifier="act-preparation">
+        <title>Preparation phase</title>
+        <role-part>
+          <role-ref ref="role-learner" />
+          <activity-structure-ref ref="as-preparation" />
+        </role-part>
+        <on-completion>
+          <feedback-description>
+            <item identifier="item-feedback-prep" identifierref="res-feedback">
+          </feedback-description>
+        </on-completion>
+      </act>
+      <act identifier="act-discussion">
+        <title>Group discussion phase</title>
+        . . .
+      </act>
+    </play>
+  </method>
+</learning-design>
+\end{xmlcode}
+\caption{Exemplo de atos na especificação IMS-LD}
+\label{list:actIMSLD}
+\end{figure}
+
+Na Figura \ref{list:actIMSLD}, a peça de teatro discussão em grupo é definida como uma sequência dos atos \textsf{act-preparation} (preparação, linhas 6-17) e \textsf{act-discussion} (discussão, linhas 18-21). No ato preparação, o elemento <on-completion> (linhas 12-16) é utilizado para apresentar ao término do ato um recurso instrucional com o \textit{feedback} da preparação.
+
+\subsubsection{Elementos papel-parte}
+
+A associação entre papéis e atividades nos atos representada mediante elementos <role-part>, nos quais a relação é definida por uma referência a um papel mediante o elemento <role-ref> e uma referência a uma atividade mediante um elemento <learning-activity-ref>, <support-activity-ref>, <activity-structure-ref> ou <environment-ref>.
+As atividades definidas nos elementos papel-parte de um ato são efetuadas simultaneamente. Quando um ato têm o atributo \textit{isVisible} definido com valor \textit{false}, os hiper-vínculo das atividades definidas no ato na arvore de atividades é visível, mas o conteúdo não é acessível.
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<learning-design identifier="example" level="A" uri="http://example.br/imsld.xml">
+  . . .
+  <method>
+    <play identifier="play-group-discussion">
+      <title>Preparation with discussion activities</title>
+	  . . .
+      <act identifier="act-group-discussion">
+        <title>Group discussion phase</title>
+        <role-part>
+          <role-ref ref="role-tutor" />
+          <learning-activity-ref ref="la-group-discussion" />
+        </role-par>
+        <role-part>
+          <role-ref ref="role-tutee" />
+          <learning-activity-ref ref="as-preparation" />
+        </role-par>
+        <role-part>
+          <role-ref ref="role-teacher">
+          <environment-ref ref="env-monitoring-discussion" />
+        </role-part>
+        <complete-act>
+          <when-role-part-completed ref="role-teacher" />
+        </complete-act>
+      </act>
+    </play>
+  </method>
+</learning-design>
+\end{xmlcode}
+\caption{Exemplo de elementos papel-parte na especificação IMS-LD}
+\label{list:papelParteIMSLD}
+\end{figure}
+
+A Figura \ref{list:papelParteIMSLD} mostra os elementos papel-parte definidos no ato \textsf{act-group-discussion} (fase discussão em grupos, linhas 7-24). Os elementos papel-parte no exemplo definem: a associação de estudantes com papel tutores com a atividade discussão de grupo (linhas 9-12); a associação de estudantes com papel aprendiz com a atividade preparação (linhas 13-16); e a associação dos docentes com o ambiente de monitoramento da discussão (linhas 17-20).
+
+\newpage
+\subsection{Elementos dos níveis B e C}
+
+No nível B e C são definidos: propriedades, elementos externos, serviços de monitoramento, cálculos numéricos, condições, elementos <when-property-value-is-set>, elementos <change-property-value> e notificações.
+
+\subsubsection{Propriedades}
+
+As propriedades são variáveis utilizadas para manter informação do sistema, usuários e papéis. As propriedades são definidas no elemento <properties> para seu uso posterior em outros elementos da especificação (por exemplo, como condição de termino de uma atividade) ou em arquivos externos XHTML de tipo \textit{imsldcontent}. Os elementos definem: um título mediante um elemento <title>, um tipo de dado mediante um elemento <datatype>, um valor inicial mediante um elemento <initial-value> e um conjunto de restrições mediante um elemento <restriction>. As propriedades são:
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<learning-design identifier="example" level="C" uri="http://example.br/imsld.xml">
+  <title>Sample IMS-LD</title>
+  <components>
+    <properties>
+      <locpers-property identifier="prop-score">
+        <title>Score of questionarie 01</title>
+        <initial-value>0</initial-value>
+        <datatype datatype="integer" />
+      </locpers-property>
+      <rolepers-property identifier="prop-score-questionarie-one">
+        <title>Score in questionarie</title>
+        <role-ref ref="role-tutee" />
+        <datatype datatype="string" />
+        <initial-value>A</initial-value>
+        <restriction restriction-type="enumeration">A</restriction>
+        <restriction restriction-type="enumeration">B</restriction>
+        <restriction restriction-type="enumeration">C</restriction>
+      </rolepers-property>
+      <globpers-property identifier="prop-email">
+        <global-definition uri="http://www.ime.usp.br/property/email" />
+        <title>Email address</title>
+        <datatype datatype="string" />
+        <initial-value>noname@ime.usp.br</initial-value>
+      </globpers-property>
+      <glob-property identifier="prop-alert">
+        <global-definition uri="http://www.ime.usp.br/error/alert" />
+        <title>Message of alert</title>
+        <datatype datatype="string" />
+        <initial-value>ERROR: Some error ocurred in the system</initial-value>
+      </glob-property>
+    </properties>
+    . . .
+  </components>
+  . . .
+</learning-design>
+\end{xmlcode}
+\caption{Exemplo de propriedades na especificação IMS-LD}
+\label{list:propertyIMSLD}
+\end{figure}
+
+\begin{description}
+\item[Propriedades locais] definidas mediante elementos <loc-property> são propriedades acessíveis unicamente no contexto da execução da unidade de aprendizagem. Isto quer dizer que propriedades deste tipo são iniciadas após a definição do conjunto de participantes e do aspeto temporal da unidade no ambiente virtual de aprendizagem.
+
+\item[Propriedades locais individuais] definidas mediante elementos <locpers-property> são propriedades locais que apresentam um valor distinto por cada participante. A Figura \ref{list:propertyIMSLD} apresenta a definição da propriedade local individual \textit{prop-score} (linhas 5-9) de tipo inteiro utilizada para definir o valor atingido por cada estudante em um questionário.
+
+\item[Propriedades locais por papel] definidas mediante elementos <locrole-property> são propriedades locais que apresentam um valor distinto por cada papel. A Figura \ref{list:propertyIMSLD} apresenta a definição da propriedade local por papel \textit{prop-score-questionarie-one} (linhas 10-17) de tipo \textit{string} utilizada para definir o valor atingido por participantes com papel \textit{tutee}.
+
+\item[Propriedades globais individuais] definidas mediante elementos <globpers-property> são propriedades acessíveis em quaisquer contexto de execução da unidade de aprendizagem apresentando um valor distinto por cada participante. Por exemplo, na Figura \ref{list:propertyIMSLD} a propriedade \textsf{prop-email} (linhas 19-24) de tipo \textit{string} é empregada para definir os correios eletrônicos de cada participante.
+
+\item[Propriedades globais] definidas mediante elementos <glob-property> são propriedades acessíveis em quaisquer contexto de execução da unidade de aprendizagem. A Figura \ref{list:propertyIMSLD} apresenta a propriedade global \textsf{prop-alert} (linhas 25-30) utilizada para definir a mensagem de alerta a ser utilizada na unidade de aprendizagem.
+\end{description}
+
+\subsubsection{Elementos externos}
+
+Elementos externos são elementos da especificação IMS-LD que podem ser utilizados em arquivos externos com conteúdo de tipo \textit{imsldcontent}. Um elemento externo é utilizado para visualizar ou definir o valor de uma propriedade ou grupo de propriedades definidas na especificação. Os elementos globais são:
+
+\begin{description}
+\item[Visualização de uma propriedade e de um grupo de propriedades] definidas como elementos <view-property> e <view-property-group> utilizados para mostrar o valor corrente da propriedade ou de um grupo de propriedades, onde: o atributo \textit{view} com valores \textit{value} ou \textit{title-value} específica se é mostrado unicamente um valor ou o titulo e valor da propriedade; o atributo \textit{property-of} define se a visualização da propriedade corresponde ao próprio participante (\textit{self}) ou grupo de participantes relativos à propriedade (\textit{supported-person}); e o atributo \textit{ref} é referido ao identificador da propriedade. A Figura \ref{list:viewpropertyIMSLD} mostra o uso da visualização da propriedade \textsf{prop-score} (linha 8) em um arquivo externo.
+
+\item[Definir o valor de uma propriedade e de um grupo de propriedade] mediante elementos <set-property> e <set-property-group> utilizados para definir o valor de uma propriedade ou grupo de propriedades, onde: o atributo \textit{view} com valores \textit{value} ou \textit{title-value} específica se é mostrado unicamente um valor ou o titulo e valor da propriedade; o atributo \textit{property-of} define se a visualização da propriedade corresponde ao próprio participante (\textit{self}) ou grupo de participantes relativos à propriedade (\textit{supported-person}); o atributo \textit{ref} é referida ao identificador da propriedade; e o atributo \textit{max-transactions} define o número máximo de vezes em que é possível mudar o valor da propriedade. A Figura \ref{list:viewpropertyIMSLD} mostra a definição da propriedade \textsf{prop-email} (linha 12) utilizado para definir o correio eletrônico de um participante durante a execução da unidade de aprendizagem.
+\end{description}
+
+\begin{figure}[htbp]
+\centering
+\begin{xmlcode}
+<html>
+  <head><title>Questionarie of math</title></head>
+  <body>
+	<div>
+	  Questionarie 1)
+	  What is the area of triangle ?
+      <div id="questionarie-answer">
+        <view-property property-of="self" view="title-value" ref="prop-score"/>
+      </div>
+      <div id="user-information">
+        Input your email acount:
+        <set-property property-of="self" view="value" ref="prop-email"  />
+      </div>
+    </div>
+  </body>
+</html>
+\end{xmlcode}
+\caption{Exemplo dos elementos globais <view-property> e <set-property>}
+\label{list:viewpropertyIMSLD}
+\end{figure}
+
+\subsubsection{Serviço de monitoramento}
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<learning-design identifier="example" level="C" uri="http://example.br/imsld.xml">
+  <title>Sample IMS-LD</title>
+  <components>
+    <enviroments>
+      <enviroment identifier="env-monitoring-discussion">
+        <enviroment-ref ref="env-group-discussion">
+        <service identifier="serv-monitoring">
+          <monitor>
+            <title> Monitoring properties of discussion members
+            <role-ref ref="role-student" />
+            <item identifier="item-monit" identifierref="res-monitoring-property"/>
+          </monitor>
+        </service>
+      </enviroment>
+    </enviroments>
+  </components>
+  . . .
+</learning-design>
+\end{xmlcode}
+\caption{Exemplo de serviço de monitoramento na especificação IMS-LD}
+\label{list:monitorIMSLD}
+\end{figure}
+
+Os serviços de monitoramento são definidos mediante elementos <monitor> nos serviços dos ambientes de apoio à aprendizagem. Nos serviço de monitoramento: o elemento <role-ref> ou elemento <self> podem ser utilizados para definir se no monitor serão visualizados e definidas propriedades do próprio participante ou de um papel. Por exemplo, na Figura \ref{list:monitorIMSLD} é definido um serviço de monitoramento com identificador  \textsf{serv-monitoring} (linhas 7-13), no que as propriedades mostradas pelo monitor são propriedades dos participantes com papel \textsf{role-student} (linha 10).
+
+\subsubsection{Cálculos numéricos}
+
+No manifesto da unidade de aprendizagem podem ser efetuadas operações aritméticas (adição, subtração, divisão e multiplicação) para o cálculo de valores numéricos utilizando propriedades e valores constantes, os cálculos são definidos mediante elementos <calculate>. A figura \ref{list:calculoIMSLD} apresenta como exemplo a operação aritmetica Total=Value1+Value2+Value3.
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<change-property-value>
+  <property-ref ref="total" />
+  <property-value>
+    <calculate>
+      <sum>
+        <property-ref ref="value3">
+        <sum>
+          <property-ref ref="value2">
+          <property-ref ref="value1">
+        </sum>
+      </sum>
+    </calculate>
+  </property-value>
+</change-property-value>
+\end{xmlcode}
+\caption{Exemplo de cálculo numérico na especificação IMS-LD}
+\label{list:calculoIMSLD}
+\end{figure}
+
+\subsubsection{Condições}
+
+As condições são definidas no elemento <conditions> mediante estruturas de tipo \textit{if-then-else}, que podem ser aninhada quaisquer número de níveis (complexidade cíclica). Condições são utilizadas como forma básica de definição de comportamentos dinâmicos durante o processo de execução da unidade de aprendizagem. Todas as condições são avaliadas a cada mudança de valor em quaisquer propriedades e durante a finalização de cada atividade, ato e peça de teatro.
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<learning-design identifier="example" level="C" uri="http://example.br/imsld.xml">
+  <title>Sample IMS-LD</title>
+  <components> 
+    <conditions>
+      <!--the condition below hide or shows examples that the students may use-->
+      <if>
+        <is>
+          <property-ref ref="prop-availability-examples"/>
+          <property-value>with examples</property-value>
+        </is>
+      </if>
+      <then>
+        <show>
+          <class class="examples"/>
+        </show>
+      </then>
+      <!--the condition below shows the practice and testing activity -->
+      <if>
+        <not>
+          <or>
+            <no-value>
+              <property-ref ref="prop-completion-test-advising"/>
+            </no-value>
+            <no-value>
+              <property-ref ref="prop-completion-test-anticipating"/>
+            </no-value>
+          </or>
+        </not>
+      </if>
+      <then>
+        <show>
+          <learning-activity-ref ref="la-request-grade"/>
+          <environment-ref ref="env-background"/>
+        </show>
+      </then>
+    </conditions>
+    . . .
+  </components>
+  . . .
+</learning-design>
+\end{xmlcode}
+\caption{Exemplo de condições na especificação IMS-LD}
+\label{list:condicoesIMSLD}
+\end{figure}
+
+A Figura \ref{list:condicoesIMSLD} apresenta a definição das condições utilizadas para: (1) mostrar ou ocultar seções de classe \textit{example} (linhas 6-16); e (2) mostrar a atividade de aprendizagem \textsf{la-request-grade} e o ambiente \textsf{env-background} (linhas 18-35).
+
+\newpage
+\subsubsection{Elemento <when-property-value-is-set>}
+
+O elemento <when-property-value-is-set> é empregado para definir a condição de término das atividades (de aprendizagem e suporte), atos, peça de teatros e unidade de aprendizagem mediante: um elemento de referencia a uma propriedade definido como um elemento <property-ref>; e um valor da propriedade definido como um elemento <property-value>. Assim, o elemento <when-property-value-is-set> é definido como parte dos elementos <complete-activity>, <complete-act>, <complete-play> e <complete-unit-of-learning>.
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<learning-design identifier="example" level="C" uri="http://example.br/imsld.xml">
+  <title>Sample IMS-LD</title>
+  <components> 
+    <activities>
+      <learning-activity isvisible="true" identifier="la-questionnaire-ld">
+        <title>Complete the question</title>
+        <environment-ref ref="E-questionnaire-ld"/>
+        <activity-description>
+          <title>Check your knowledge of LD</title>
+          <item identifier="item-questionnaire-ld" identifierref="res-questionnaire-ld">
+            <title>Questionnaire of LD</title>
+          </item>
+        </activity-description>
+        <complete-activity>
+          <when-property-value-is-set>
+            <property-ref ref="prop-score-questionnaire"/>
+            <property-value>10</property-value>
+          </when-property-value-is-set>
+        </complete-activity>
+      </learning-activity>
+    </activities>
+    . . .
+  </components>
+  . . .
+</learning-design>
+\end{xmlcode}
+\caption{Exemplo do elemento <when-property-value-is-set>}
+\label{list:whenpropertyIMSLD}
+\end{figure}
+
+A Figura \ref{list:whenpropertyIMSLD} apresenta como exemplo o uso do elemento <when-property-value-is-set> utilizado para definir que a condição do término da atividade \textsf{la-questionnaire-ld} (linhas 5-18) é o valor numérico 10 na propriedade \textsf{prop-score-questionnaire} (linha 17).
+
+\subsubsection{Elemento <change-property-value>}
+
+O elemento <change-property-value> é empregado no elemento <on-completion> para definir a mudança de valores nas propriedades depois do acontecimento de eventos como a conclusão de atividades (de aprendizagem e suporte), atos e peça de teatro. A Figura \ref{list:changepropertyIMSLD} apresenta como exemplo, a definição da mudança na propriedade \textsf{prop-complete-discussion} (linhas 22-25), efetuada ao término do ato discussão em grupos.
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<learning-design identifier="example" level="C" uri="http://example.br/imsld.xml">
+  <title>Sample IMS-LD</title>
+  . . .
+  <method>
+    <play identifier="play-group-discussion">
+      <title>Discussion with preparation activities</title>
+      . . .
+      <act identifier="act-group-discussion">
+        <title>Group discussion phase</title>
+        <role-part>
+          <role-ref ref="role-tutor" />
+          <learning-activity-ref ref="la-group-discussion" />
+        </role-par>
+        <role-part>
+          <role-ref ref="role-tutee" />
+          <learning-activity-ref ref="la-group-discussion" />
+        </role-par>
+        <complete-act>
+          <when-role-part-completed ref="R-teacher" />
+        </complete-act>
+        <on-completion>
+          <change-property-value>
+            <propety-ref ref="prop-complete-discussion" />
+            <property-value>true</property-value>
+          </change-property-value>
+        </on-completion>
+      </act>
+    </play>
+  </method>
+</learning-design>
+\end{xmlcode}
+\caption{Exemplo do elemento <change-property-value>}
+\label{list:changepropertyIMSLD}
+\end{figure}
+
+\subsubsection{Notificação}
+
+As notificações utilizadas para efetuar o envio de mensagens ao término das atividades, atos e peças de teatro ou na mudança do valor de uma propriedade são definidas mediante elementos <notification>. Os elementos são declarados nos elementos <on-completion> ou nas condições <then>. Nos elementos <notification> os destinatários são definidos nos elementos <email-data> por meio dos atributos \textit{email-property-ref} e \textit{username-property-ref} (opcional) utilizados para definir a propriedade que contem o email e nome dos participantes a serem notificados. O elemento <role-ref> define o conjunto de participantes a ser notificados. Enquanto, o assunto da mensagem é definido no elemento <subject>.
+
+\begin{figure}[htbp]
+\centering 
+\begin{xmlcode}
+<learning-design identifier="example" level="C" uri="http://example.br/imsld.xml">
+  <title>Sample IMS-LD</title>
+  <components> 
+    <activities>
+      . . .
+      <support-activity identifier="sa-make-extra-exercise">
+        <title>Make description of extra exercise to advanced learners</title>
+        <activity-description>
+          <item identifier="item-make-extra-exercise" identifierref="res-e102af7"/>
+        </activity-description>
+        <complete-activity>
+          <user-choice />
+        </complete-activity>
+        <on-completion>
+          <notification>
+            <email-data email-property-ref="prop-email">
+              <role-ref ref="role-tutee" />
+            </email-data>
+            <subject>New exercise available</subject>
+          </notification>
+        </on-completion>
+      </support-activity>
+    </activities>
+    . . .
+  </components>
+  . . .
+</learning-design>
+\end{xmlcode}
+\caption{Exemplo de notificação na especificação IMS-LD}
+\label{list:notificationIMSLD}
+\end{figure}
+
+A Figura \ref{list:notificationIMSLD} mostra como exemplo de notificação, o envio da mensagem que informa que um novo exercício está disponível para todos os estudantes com papel \textsf{rol-tutee} (linhas 15-20); a notificação é enviada ao término da atividade de suporte \textsf{sa-make-extra-exercise} (linhas 6-22).
+
+\newpage
+\section{Relação com outras especificações}
+
+A especificação IMS-LD pode ser integrada com outras especificações existentes na definição do manifesto da unidade da unidade de aprendizagem. Assim:
+
+\begin{itemize}
+\item A especificação IMS-CP é utilizada para definir uma unidade de aprendizagem como um pacote ZIP;
+\item A especificação IMS-MD é utilizada para definir a informação associadas ao elemento <learning-design> para sua busca, classificação etc;
+\item A especificação IMS-QTI é utilizada de duas formas, a primeira é efetuada na definição do elemento <learning-object>, e a segunda é efetuada mediante a referência a um recurso externo que é definido usando esta especificação;
+\item A especificação IMS-RDCEO é utilizada para definir objetivos de aprendizagem e pré-requisitos  ligados a recursos definidos segundo esta especificação; e 
+\item A especificação IMS-SS para definir os percursos de navegação das atividades podendo ser integrada na unidade de aprendizagem.
+\end{itemize}
+
+Existem outras especificações que podem ser integradas na especificação IMS-LD, mas que não são relevantes no momento. Neste trabalho, a integração é efetuada unicamente com a especificação IMS-CP para definir uma unidade de aprendizagem como um pacote ZIP em qual são incluídos todos os recursos instrucionais necessários. Assim, como é mostrada na Figura \ref{fig:imscpvsimsld} um arquivo ZIP definido como uma unidade de aprendizagem contém:
+
+\begin{figure}[htbp]
+\centering 
+ \includegraphics[width=0.75\textwidth]{figuras/imscpvsimsld}
+\caption{Integração da especificação IMS-CP e IMS-LD}
+\label{fig:imscpvsimsld}
+\end{figure}
+
+\begin{itemize}
+\item Um arquivo manifesto em formato XML nomeado ``\textit{imsmanifest.xml}'', que descreve a estratégia de aprendizagem e de instrução a ser empregada;
+\item Arquivos com conteúdos de tipo \textit{webcontent} (HTML, XHTML) ou de tipo \textit{imsldcontent}; e
+\item Arquivos e recursos de quaisquer tipos utilizados no manifesto.
+\end{itemize}
+
+
+
+%Uma vez criada a unidade de aprendizagem como um arquivo de pacote zip na fase de autoria (\textit{design-time}), a unidade de aprendizagem é publicada para se uso mediante a configuração da unidade por meio da administração de papéis e/ou usuários e a execução da unidade por um \textit{IMS-LD player} na fase de execução (\textit{run-time}). Na fase de execução os IMS-LD player como por exemplo Reload LD Player, CooperCore e Sled apresentam pelo geral uma janela dividida em três áreas ilustradas na Figura \ref{fig:sampleCooperCore}, na qual são nomeadas: (1) \emph{Área de árvore de atividades} que mostram a estrutura de conteúdos como metáfora de peça de teatro, ato, estrutura de atividades e atividades; (2) \emph{Área de visualização de conteúdo} que apresenta o conteúdo dos arquivos de tipo web (\textit{webcontent}) ou imsld (\textit{imsldcontent}; e (3) \emph{Área de ambientes}, em que são mostrados a estrutura dos ambientes (\textit{enviroment}) associados a cada atividade.
+
+%\begin{figure}[htbp]
+%\centering 
+%\includegraphics[width=0.75\textwidth]{figuras/sampleCooperCore}
+%\caption{Áreas de um \textit{IMS-LD player} (\textit{CooperCore}) que executa uma unidade de aprendizagem}
+%\label{fig:sampleCooperCore}
+%\end{figure}
+

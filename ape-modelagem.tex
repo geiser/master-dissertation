@@ -1,0 +1,47 @@
+
+
+\chapter{Modelagem}
+\label{ape:modelagem}
+
+
+
+
+
+
+\section{Atividades de grupo}
+
+\subsection{Brainstorm}
+
+\begin{figure}[htbp]
+\centering
+\begin{apejshopcode}
+   (:method (createLDBrainstormGroupActivity ?goals ?groups)
+      ((assign ?id (call GetUUID rp)))
+      ((!startLDElement role-part ((identifier ?id))
+                        ((Brainstorm GroupActivity) ?id ?goals ?groups))
+       (createLDTitle (Brainstorm GroupActivity) ?goals)
+       (createBrainstormGroupActivity ?goals ?groups)
+       (!endLDElement role-part ?id)))
+   
+   (:method (createBrainstormGroupActivity ?goals ?groups)
+      ()
+      ((createLDGroup ?goals ?groups)
+       (createLDBrainstormSessions ?goals ?groups)))
+   
+   (:method (createLDBrainstormSessions ?goals ?groups)
+      ((assign ?id (call GetUUID as)))
+      ((!startLDElement activity-structure-ref ((ref ?id)))
+       (!startLDElement activity-structure ((identifier ?id)
+                                            (structure-type sequence))
+                        ((Brainstorm Sessions) ?id ?goals ?groups))
+       (createLDTitle (Brainstorm Sessions) ?goals)
+       (createBrainstormSessions ?goals ?groups)
+       (!endLDElement activity-structure ?id)
+       (!endLDElement activity-structure-ref)))
+   
+   (:method (createBrainstormSessions ?goals ?groups)
+      ()
+      ((createLDBrainstormSession ?goals ?groups)))
+\end{apejshopcode}
+\caption{Brainstorm}
+\end{figure}

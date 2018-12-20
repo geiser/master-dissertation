@@ -1,0 +1,415 @@
+
+\documentclass[openany,11pt,twoside,a4paper]{book}
+
+% ---------------------------------------------------------------------------- %
+% Pacotes
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[pdftex]{graphicx}
+\usepackage{setspace}
+\usepackage{indentfirst}
+\usepackage{makeidx}
+\usepackage[nottoc]{tocbibind}
+\usepackage{courier}                            % usa o Adobe Courier no lugar de Computer Modern Typewriter
+\usepackage{type1cm}                            % fontes realmente escaláveis
+\usepackage{listings}                           % formatar codigo-fonte (ex. em Java)
+\usepackage{titletoc}
+\usepackage[bf,small,compact]{titlesec} % cabeçalhos dos títulos: menores e compactos
+\usepackage[fixlanguage]{babelbib}
+\usepackage[font=small,format=plain,labelfont=bf,up,textfont=it,up]{caption}
+\usepackage[usenames,svgnames,dvipsnames]{xcolor}
+\usepackage[a4paper,top=2.54cm,bottom=2.0cm,left=2.0cm,right=2.54cm]{geometry}
+%\usepackage[pdftex,plainpages=false,pdfpagelabels,pagebackref,colorlinks=true,citecolor=black,linkcolor=black,urlcolor=black,filecolor=black,bookmarksopen=true]{hyperref} % links em preto
+\usepackage[pdftex,plainpages=false,pdfpagelabels,pagebackref,colorlinks=true,citecolor=DarkGreen,linkcolor=NavyBlue,urlcolor=DarkRed,filecolor=green,bookmarksopen=true]{hyperref}
+\usepackage[all]{hypcap}                        % soluciona o problema com o hyperref e capitulos
+\usepackage[round,sort,nonamebreak]{natbib}     % citação bibliografica textual(plainnat-ime.bst)
+\bibpunct{(}{)}{;}{a}{\hspace{0.4ex},}{.} % estilo de citação. Veja alguns exemplos em http://merkel.zoneo.net/Latex/natbib.php
+
+%\usepackage{subcaption}
+
+% -------------------------------------------------------------------------- %
+% additional package
+\usepackage{longtable}
+\usepackage{fancyvrb}	% verbatim
+\usepackage{lscape}
+\usepackage{url}
+%\usepackage{algorithmic} \usepackage{algorithm}                    % pseudocodigo (english)
+%\usepackage{algorithmic}
+\usepackage[linesnumbered,lined,boxed,ruled,figure]{algorithm2e}    % pseudocodigo (portuguese)
+\usepackage{subfig}						                            % imagens compostas
+\usepackage{enumerate}                                              % enumeraçao personalizada
+\usepackage{enumitem}
+\usepackage{verbatim}                                               % verbatim
+\usepackage{multirow}                                               % mutiples filas em columnas
+\usepackage{amsthm}                                                 % teoremas, definições e exemplos
+\usepackage{alltt}                                                  % verbatim melhorado
+
+\usepackage{tikz,fullpage}                                          % figuras com tike
+\usepackage{tikz-uml}
+%\usetikzlibrary{decorations.markings,shapes,arrows}
+%\usepackage{pgfkeys,pgffor,pgfcalendar,pgfpages}
+%\usetikzlibrary{shapes,arrows,decorations.pathmorphing,backgrounds,positioning,fit}
+\usepackage[svgnames]{xcolor}
+\pgfdeclarelayer{edgelayer}
+\pgfdeclarelayer{nodelayer}
+
+\definecolor{hexcolor0xd6d6d6}{rgb}{0.839,0.839,0.839}
+
+
+\fontsize{60}{62}\usefont{OT1}{cmr}{m}{n}{\selectfont}
+% ---------------------------------------------------------------------------- %
+% Cabeçãlhos similares ao TAOCP de Donald E. Knuth
+\usepackage{fancyhdr}
+%\usepackage{lineno}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{#1}}{}}
+\renewcommand{\sectionmark}[1]{\markright{\MakeUppercase{#1}}{}}
+\renewcommand{\headrulewidth}{0pt}
+
+% ---------------------------------------------------------------------------- %
+\graphicspath{{./figuras/}}       % pasta das figuras (recomendavel)
+\frenchspacing                          % arruma o espaco: id est
+\urlstyle{same}                          % URL com o mesmo estilo do texto e nao mono-spaced
+\makeindex                                % para o indice remissivo
+\raggedbottom                           % para nao permitir espacos extra no texto
+\fontsize{60}{62}\usefont{OT1}{cmr}{m}{n}{\selectfont}
+\cleardoublepage
+\normalsize
+
+% ---------------------------------------------------------------------------- %
+% listing usados para o codigo fonte
+% Ref: http://en.wikibooks.org/wiki/LaTeX/Packages/Listings
+\lstset{ %
+language=Lisp,                  % choose the language of the code
+basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+numbers=left,                   % where to put the line-numbers
+numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+stepnumber=1,                   % the step between two line-numbers. If it's 1 each line will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+frame=single,	                % adds a frame around the code
+framerule=1.0pt,
+tabsize=2,	                    % sets default tabsize to 2 spaces
+captionpos=b,                   % sets the caption-position to bottom
+breaklines=true,                % sets automatic line breaking
+breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+%escapeinside={\%*}{*)},        % if you want to add a comment within your code
+backgroundcolor=\color[rgb]{1.0,1.0,1.0},
+rulecolor=\color[rgb]{0.8,0.8,0.8},
+extendedchars=true,
+xleftmargin=10pt,
+xrightmargin=10pt,
+framexleftmargin=10pt,
+framexrightmargin=10pt}
+
+% ---------------------------------------------------------------------------- %
+% Corpo do texto
+\begin{document}
+\frontmatter 
+% cabeçalho para as páginas das seções anteriores ao capitulo 1 (frontmatter)
+\fancyhead[RO]{{\footnotesize\rightmark}\hspace{2em}\thepage}
+\setcounter{tocdepth}{2}
+\fancyhead[LE]{\thepage\hspace{2em}\footnotesize{\leftmark}}
+\fancyhead[RE,LO]{}
+\fancyhead[RO]{{\footnotesize\rightmark}\hspace{2em}\thepage}
+
+\onehalfspacing  % espaçamento
+
+% ---------------------------------------------------------------------------- %
+% definição de novos ambientes (environment)
+\theoremstyle{definition}
+\newtheorem{definition}{Definição}[chapter]
+\newtheorem{example}{Exemplo}[chapter]
+
+\setlength\fboxsep{10pt}                                 % espaços na caixa delimitadora
+\setlength\fboxrule{0.5pt}                               % borde da caixa
+
+\DefineVerbatimEnvironment{jshopcode}{Verbatim}
+{fontsize=\footnotesize, commandchars=\\\{\}, numbers=left, frame=single, fontfamily=cmtt, codes={\catcode`$=3\catcode`^=7\catcode`_=8}}
+
+
+\DefineVerbatimEnvironment{apejshopcode}{Verbatim}
+{fontsize=\scriptsize, commandchars=\\\{\}, numbers=left, frame=single, fontfamily=cmtt, codes={\catcode`$=3\catcode`^=7\catcode`_=8}}
+
+
+\DefineVerbatimEnvironment{xmlcode}{Verbatim}
+{fontsize=\footnotesize, commandchars=\\\{\}, numbers=left, frame=single, fontfamily=cmtt}
+
+% ---------------------------------------------------------------------------- %
+% Capa
+% Nota: O titulo para as teses/dissertações do IME-USP.
+\thispagestyle{empty}
+\begin{center}
+    \vspace*{2.3cm}
+    \textbf{\Large{Planejamento instrucional\\
+                   automatizado em aprendizagem\\
+                   colaborativa com suporte computacional\\
+                   utilizando planejamento hierárquico}}\\
+    \vspace*{1.2cm}
+    \Large{Geiser Chalco Challco}
+    
+    \vskip 2cm
+    \textsc{
+    Dissertação apresentada\\[-0.25cm] 
+    ao\\[-0.25cm]
+    Instituto de Matemática e Estatística\\[-0.25cm]
+    da\\[-0.25cm]
+    Universidade de São Paulo\\[-0.25cm]
+    para\\[-0.25cm]
+    obtenção do título\\[-0.25cm]
+    de\\[-0.25cm]
+    Mestre em Ciências}
+    
+    \vskip 1.5cm
+    Programa: Ciência da Computação\\
+    Orientador: Prof. Dr. Marco Aurélio Gerosa\\
+%    Coorientador: Prof. Dr. Nome do Coorientador
+    
+    \vskip 1cm
+    \normalsize{Durante o desenvolvimento deste trabalho o autor recebeu auxílio financeiro do CNPq}
+    
+    \vskip 0.5cm
+    \normalsize{São Paulo, Novembro de 2012}
+\end{center}
+
+% ---------------------------------------------------------------------------- %
+% Página de rosto (SÓ PARA A VERSÃO DEPOSITADA - ANTES DA DEFESA)
+% Resolução CoPGr 5890 (20/12/2010)
+%
+% IMPORTANTE:
+%   Coloque um '%' em todas as linhas
+%   desta página antes de compilar a versão
+%   final, corrigida, do trabalho
+%
+%
+%\newpage
+%\thispagestyle{empty}
+%    \begin{center}
+%        \vspace*{2.3 cm}
+%        \textbf{\Large{Planejamento instrucional automatizado em aprendizagem colaborativa com suporte computacional utilizando planejamento hierárquico}}\\
+%        \vspace*{2 cm}
+%    \end{center}
+%
+%    \vskip 2cm
+%
+%    \begin{flushright}
+%	Esta é a versão original da dissertação/tese elaborada pelo\\
+%	candidato Geiser Chalco Challco, tal como \\
+%	submetida à Comissão Julgadora.
+%    \end{flushright}
+%
+%\pagebreak
+
+% ---------------------------------------------------------------------------- %
+% Página de rosto (só para a versão final)
+% Nota: O tí­tulo para a tese/dissertação do IME-USP devem caber em um 
+% orifí­cio de 10,7cm de largura x 6,0cm de altura que há na capa fornecida pela SPG.
+\newpage
+\thispagestyle{empty}
+    \begin{center}
+        \vspace*{2.3 cm}
+    \textbf{\Large{Planejamento instrucional\\
+                   automatizado em aprendizagem\\
+                   colaborativa com suporte computacional\\
+                   utilizando planejamento hierárquico}}\\
+        \vspace*{2 cm}
+    \end{center}
+
+    \vskip 2cm
+
+    \begin{flushright}
+	Esta versão da dissertação contém as correções e alterações sugeridas\\
+	pela Comissão Julgadora durante a defesa da versão original do trabalho,\\
+	realizada em 11/09/2012. Uma cópia da versão original está disponível no\\
+	Instituto de Matemática e Estatística da Universidade de São Paulo.
+
+    \vskip 2cm
+
+    \end{flushright}
+    \vskip 4.2cm
+
+    \begin{quote}
+    \noindent Comissão Julgadora:
+    
+    \begin{itemize}
+		\item Prof. Dr. Marco Aurélio Gerosa (orientador) - IME-USP
+		\item Profª. Drª. Leliane Nunes de Barros - IME-USP
+		\item Prof. Dr. Seiji Isotani - ICMC-USP
+    \end{itemize}
+      
+    \end{quote}
+\pagebreak
+
+\pagenumbering{roman}
+
+% ---------------------------------------------------------------------------- %
+% Agradecimentos
+\chapter*{Agradecimentos}
+Em primeiro lugar, gostaria de agradecer a meu orientador, Prof. Dr. Marco Aurélio Gerosa por seu apoio ao longo dos meus anos no mestrado. Independentemente de quanto ele tinha que fazer, estava sempre disponível para discutir ideias e sugestões. Eu também sou profundamente grato por sua paciência e cuidados na revisão desta dissertação.
+
+Gostaria também de agradecer a Profa. Dra. Leliane Nunes de Barros por seu grande interesse e entusiasmo em aplicações de planejamento em Inteligência Artificial que inspirou minha pesquisa desde o início. Meu agradecimento especial para o Prof. Dr. Seiji Isotani pelas sugestões e contribuições durante a defensa. Espero que a minha pesquisa tenha superado todas as expetativas da banca examinadora.
+
+Na Universidade de São Paulo, tive o privilégio de ser membro de dois grupos, primeiro do grupo Groupware Workbench e depois do grupo ATP, grupos que escutaram meus discursos e criticaram minha pesquisa durante todo o tempo, fazendo-me pensar novamente sobre minhas ideias e crenças. Um grande obrigado para Straus Michalsky, Carlos Leonardo Herrera Muñoz, Edith Zaida Sonco Mamani, Lucas Santos de Oliveira, Victoriano Alfonso Phocco Diaz, Ewout ter Haar, André Tierno Yamin, Talita Raquel Romero e Helbert dos Santos.
+
+Finalmente, agradeço profundamente aos meus pais, cujo apoio econômico e emocional tornaram meus estudos possíveis.
+
+% ---------------------------------------------------------------------------- %
+% Resumo
+\chapter*{Resumo}
+\textbf{Planejamento instrucional automatizado em aprendizagem colaborativa com suporte computacional utilizando planejamento hierárquico}\\
+
+Em Aprendizagem Colaborativa com Suporte Computacional (ACSC), o planejamento instrucional consiste em obter uma sequência de interações instrucionais que definem o conteúdo instrucional como a representação do que deve ser ensinado e da forma em que os participantes devem interagir, denominada informação de planejamento instrucional. O desenvolvimento, adaptação e personalização de unidades concisas de estudo compostas por recursos instrucionais e informação de planejamento instrucional, denominadas \emph{unidades de aprendizagem}, envolve um processo de planejamento instrucional complexo que consome muito tempo e apresenta um conjunto de tarefas repetitivas a serem efetuadas pelos projetistas instrucionais.
+
+Neste trabalho, o planejamento instrucional em ACSC é modelado como um problema de planejamento hierárquico para dar suporte ao desenvolvimento, adaptação e personalização das unidades de aprendizagem de forma automática. A modelagem consiste na representação do domínio a ser ensinado, das caraterísticas dos estudantes e das estratégias de planejamento instrucional na linguagem do sistema JSHOP2ip, um sistema de planejamento hierárquico desenvolvido para dar solução aos problemas específicos de planejamento instrucional.
+
+Para avaliar a modelagem proposta, efetuamos o desenvolvimento de um gerador de cursos colaborativos como um serviço Web usando a modelagem proposta e o sistema JSHOP2ip, no qual foram avaliados o desempenho, a modelagem das estratégias e a saída do planejador. Além disso, para demonstrar a viabilidade do modelo proposto em situações reais, efetuamos o desenvolvimento de uma ferramenta de autoria de unidades de aprendizagem que emprega o gerador de cursos colaborativos.\newline
+
+%O desenvolvimento, adaptação e personalização de unidades de aprendizagem com enfoque na aprendizagem colaborativa levando em consideração características, interesses e conhecimentos individuais envolve um planejamento instrucional complexo, que consome muito tempo e apresenta um conjunto de tarefas repetitivas a serem efetuadas pelos projetistas instrucionais.
+%Neste trabalho, o planejamento instrucional em aprendizagem colaborativa é modelado como um problema de planejamento hierárquico da Área de Inteligência Artificial envolvendo a modelagem do domínio a ser ensinado, das características dos estudantes e das tarefas e métodos de planejamento instrucional. O modelo proposto é representado na linguagem do sistema de planejamento hierárquico JSHOP2ip para o desenvolvimento de um gerador de cursos, no qual foram avaliados os resultados da modelagem proposta, demonstrando a viabilidade de sua aplicação em situações reais.\newline
+
+\noindent \textbf{Palavras-chave:}
+aprendizagem colaborativa,
+planejamento instrucional,
+planejamento em inteligência artificial,
+planejamento hierárquico,
+roteiros colaborativos,
+gerador de cursos.
+
+
+
+
+% ---------------------------------------------------------------------------- %
+%Abstract
+\chapter*{Abstract}
+\textbf{Automated instructional design in computer-supported collaborative learning using hierarchical planning}\\
+
+In Computer Supported Collaborative Learning (CSCL), the goal of instructional design is to obtain a instructional interaction sequence that define the instructional content as a representation of what should be taught and the way in which participants must interact, called instructional planning information. The development, adaptation and personalization of basic units of study comprised of the instructional resources and instructional planning information, called \emph{units of learning}, that involves a complex instructional planning process, time consuming and repetitive.
+
+In this work, the instructional design in CSCL is modeled as hierarchical planning problem to support the development, adaptation and personalization for units of learning. The modeling is the representation of the domain to be taught, the characteristics of students and instructional strategies in JSHOP2ip, an independent hierarchical planning system designed to solve problems of instructional design.
+
+To evaluate the proposed model, we developed a collaborative course generator as a Web service using the proposed model and JSHOP2ip system, upon which we evaluated the performance, modeling strategies and the output scheduler. Furthermore, to demonstrate the feasibility of the proposed model in real situations, we developed an authoring tool for units of learning employing the collaborative course generator.\newline
+
+%The adaptation and personalization for each student groups in units of learning (courses, topics, subtopics, modules and lessons) with collaborative learning focus taking into account their characteristics, interests and knowledges involve an instructional design that requires a comprehensive set of skills, consumes a lot of time and has a set of repetitive tasks to be done by the authors (teachers and instructional designers). In this dissertation, the instructional design of these units of learnings is modeling as planning problem in the field of Artificial Intelligence that involve the modeling of the domain to be taught, the student characteristics and the instructional design tasks and methods. The proposed model is represented in the hieraquical planning system JSHOP2ip for the development of a adaptive courseware generator in order to evaluate the results of the modeling, demonstrating the feasibility of model in real situations.\newline
+
+\noindent \textbf{Keywords:}
+collaborative learning,
+instructional design,
+automated planning,
+hierarchical task network planning,
+collaborative scripts,
+adaptive courseware generator.
+
+
+% ---------------------------------------------------------------------------- %
+%\chapter*{Resumo estendido}
+
+%Em Aprendizagem Colaborativa com Suporte Computacional (ACSC), o planejamento instrucional consiste em obter uma sequência de interações instrucionais que definem o conteúdo instrucional como a representação do que deve ser ensinado e da forma em que os participantes devem interagir, denominada informação de planejamento instrucional. O desenvolvimento, adaptação e personalização de unidades concisas de estudo compostas por recursos instrucionais e informação de planejamento instrucional, denominadas \emph{unidades de aprendizagem}, envolve um processo de planejamento instrucional complexo que consome muito tempo e apresenta um conjunto de tarefas repetitivas a serem efetuadas pelos projetistas instrucionais.
+
+%Neste trabalho, o planejamento instrucional em ACSC é modelado como um problema de planejamento hierárquico para dar suporte ao desenvolvimento, adaptação e personalização das unidades de aprendizagem de forma automática. A modelagem consiste na representação do domínio a ser ensinado, das caraterísticas dos estudantes e das estratégias de planejamento instrucional na linguagem do sistema JSHOP2ip, um sistema de planejamento hierárquico desenvolvido para dar solução aos problemas específicos de planejamento instrucional.
+
+%Para avaliar a modelagem proposta, efetuamos o desenvolvimento de um gerador de cursos colaborativos como um serviço Web usando a modelagem proposta e o sistema JSHOP2ip, no qual foram avaliados o desempenho, a modelagem das estratégias e a saída do planejador. Além disso, para demonstrar a viabilidade do modelo proposto em situações reais, efetuamos o desenvolvimento de uma ferramenta de autoria de unidades de aprendizagem que emprega o gerador cursos colaborativos.
+
+%Em Aprendizagem Colaborativa com Suporte Computacional (ACSC), o planejamento instrucional de unidades de aprendizagem consiste em obter uma sequência de interações instrucionais a serem utilizadas no desenvolvimento, adaptação e personalização de unidades de aprendizagem.% colaborativa roteiros de suporte computacional denominados roteiros colaborativos.
+
+%Em Inteligência Artificial, a área de planejamento estuda o processo de geração automática de sequências de interações instrucionais denominadas planos por meio da computação. Ao serem executados os planos por um agente inteligente de um estado inicial conduzirá à satisfação de determinados objetivos. Portanto, percebe-se a existência de uma relação direta entre planejamento instrucional em ACSC e planejamento automatizado da Área de Inteligência Artificial.
+
+%Os padrões de roteiros colaborativos,  fornecem diretrizes e regras como tarefas e métodos de projeto instrucional que representam o conhecimento de projeto instrucional utilizado no desenvolvimento, adaptação e personalização de roteiros de ACSC. O planejamento hierárquico é uma técnica de planejamento automatizado que utiliza métodos de decomposição de uma tarefa em sub-tarefas como representação do conhecimento específico de domínio ­possibilitando a obtenção de planos consistentes e coerentes. Portanto, tarefas e métodos de projeto instrucional podem ser representadas como tarefas e métodos de decomposição em planejamento hierárquico.
+
+%Essas observações levaram-nos a efetuar a modelagem do planejamento instrucional de unidades de aprendizagem em ACSC como um problema de planejamento automático e a representação do modelo proposto na linguagem do sistema de planejamento hierárquico JSHOP2, um sistema de planejamento hierárquico independente do domínio.
+
+%Para avaliar a modelagem proposta efetuamos o desenvolvimento de um gerador de cursos usando o sistema JSHOP2, no qual o planejamento instrucional é iniciado a partir da definição dos objetivos pedagógicos e da seleção dos participantes do curso. Neste sistema, as unidades de aprendizagem são geradas como um pacote de arquivos que cont\^{e}m todos recursos necessários e um arquivo de manifesto que descreve os roteiros colaborativos na especificação IMS-LD.
+
+
+% ---------------------------------------------------------------------------- %
+\headsep = 20pt
+\tableofcontents    % imprime
+
+% ---------------------------------------------------------------------------- %
+\chapter{Lista de Abreviaturas}
+\begin{tabular}{lp{0.5cm}l}
+ACSC            &   & Aprendizagem Colaborativa com Suporte Computacional \\
+ALD            &   & Projeto de Aprendizagem Automático  (\textit{Automated Learning Design}) \\
+AVA             &   & Ambiente Virtual de Aprendizagem \\
+IA                & & Inteligência Artificial \\
+IL                & & Instrucional e Aprendizagem (\textit{Instructional and Learning}) \\
+%IMS-CP      & & IMS \textit{Content Package} \\
+%IMS-LD      & & IMS \textit{Learning Design} \\
+STI             &   & Sistemas Tutores Inteligentes \\
+\end{tabular}
+%
+% ---------------------------------------------------------------------------- %
+%\chapter{Lista de Si­mbolos}
+%\begin{tabular}{ll}
+%        $\gamma$    & Funcao de decomposicao \emph{gamma}.\\
+%        $\Sigma$    & Sistema de transicao de estados \emph{sigma}.\\
+%        $\pi$       & Plano de solucao \emph{pi} do algori­tmo de planejamento.\\
+%\end{tabular}
+
+% ---------------------------------------------------------------------------- %
+% Listas de figuras e tabelas criadas automaticamente
+\listoffigures
+\listoftables
+
+% ---------------------------------------------------------------------------- %
+% Capítulos do trabalho
+
+\mainmatter
+
+% cabeçalho para as páginas de todos
+\fancyhead[RE,LO]{\thesection}
+
+%\singlespacing
+\onehalfspacing
+%\headsep = 25pt
+
+% estrutura de documentos
+\include{cap-introducao}
+\include{cap-referencialTeorico}
+%\include{cap-planejamentoInstrucional}
+%\include{cap-planejamentoHierarquico}
+%\include{cap-planejamentoIA}
+\include{cap-modelagem}
+\include{cap-modelagemPedagogico}
+\include{cap-implementacao}
+\include{cap-avaliacao}
+\include{cap-trabalhosRelacionados}
+\include{cap-conclusoes}
+
+% cabeçalho para os apêndices
+\renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{\appendixname\ \thechapter}} {\MakeUppercase{#1}} }
+\fancyhead[RE,LO]{}
+
+\appendix
+
+%\include{ape-glosario}
+\include{ape-planejamentoClassico}
+\include{ape-jshop2}
+\include{ape-imsld}
+\include{ape-axiomasOperadoresPropositoGeral}
+\include{ape-axiomasPlanejamentoInstrucional}
+%\include{ape-modelagem}
+%\include{ape-CLFPs}
+
+%\include{ape-padroesInteracao}
+
+
+% ---------------------------------------------------------------------------- %
+% Bibliografia
+\backmatter \singlespacing
+\bibliographystyle{plainnat-ime} 
+\bibliography{bibliografia} 
+
+% ---------------------------------------------------------------------------- %
+% i­ndice remissivo
+%\index{TBP|see{periodicidade região codificante}}
+%\index{DSP|see{processamento digital de sinais}}
+%\index{STFT|see{transformada de Fourier de tempo reduzido}}
+%\index{DFT|see{transformada discreta de Fourier}}
+%\index{Fourier!transformada|see{transformada de Fourier}}
+%\printindex   % imprime o indice remissivo no documento 
+
+\end{document}

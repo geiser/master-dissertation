@@ -1,0 +1,248 @@
+
+\chapter{Formalismo da linguagem JSHOP2ip}
+\label{ape:formalismoJSHOP2ip}
+
+O sistema de planejamento JSHOP2ip utiliza as estruturas apresentadas a seguir para efetuar a descrição do domínio e problema de planejamento. Os operadores, métodos e axiomas no domínio de planejamento e os átomos e rede de tarefa inicial no problema de planejamento são compostos de expressões lógicas que combinam átomos lógicos por meio de conjunções e disjunções.
+Apresentamos a seguir a descrição das estruturas empregadas.
+
+\section{Símbolos}
+
+A linguagem de primeira ordem \textsf{L} apresenta um vocabulário definido como a estrutura
+
+\begin{center}
+\textsf{$\langle$ V',C',P',F',T',N', M' $\rangle$},
+\end{center}
+
+em que: \textsf{V'} é um conjunto infinito de símbolos de variável; \textsf{C'} é um conjunto finito de símbolos de constante; \textsf{P'} é um conjunto finito de símbolos de predicado; \textsf{F'} é um conjunto finito de símbolos de função;  \textsf{T'} é um conjunto finito de símbolos de tarefa composta; \textsf{N'} é um conjunto finito de símbolos de tarefa primitiva que denotam ações; e \textsf{M'} é um conjunto infinito de símbolos de nome. Os símbolos utilizam as seguintes convenções:
+
+\begin{itemize}
+\item símbolos de variável iniciam com uma marca de interrogação, por exemplo \textsf{?var};
+\item símbolos de tarefa primitiva iniciam com uma marca de exclamação, por exemplo \textsf{!pickup};
+\item símbolos de constante, de predicado, de função e de tarefa composta iniciam com uma letra.
+\end{itemize}
+
+Nas estruturas a seguir colchetes representam termos opcionais a ser definidos na modelagem.
+
+\section{Termos}
+
+Um termo é quaisquer das estruturas seguintes: um símbolo de variável, um símbolo de constante, um símbolo de nome, um valor numérico, uma lista de termos ou um termo de chamada de função.
+
+\newpage
+
+\begin{description}
+\item[Lista de termos] Uma lista de termos é definido mediante a estrutura:
+
+\begin{center}
+\textsf{(t$_{1}$ t$_{2}$ ... t$_{n}$ [ . l ])},
+\end{center}
+
+na qual: \textsf{t$_{1}$}, \textsf{t$_{2}$}, ..., \textsf{t$_{n}$} são termos e \textsf{l} é uma lista de termos. Os termos da lista \textsf{l} são incluídos depois do termo \textsf{t$_{n}$}.
+
+\item[Termo de chamada] Um termo de chamada de função é definido mediante a estrutura:
+
+\begin{center}
+\textsf{(call $f$ t$_{1}$ t$_{2}$ ... t$_{n}$)},
+\end{center}
+
+onde \textsf{$f$} é um símbolo de função e cada \textsf{t$_{i}$} é um termo. O termo de chamada de função é utilizado para efetuar cálculos complexos ou consultas externas utilizando os  parâmetros \textsf{t$_{1}$}, \textsf{t$_{2}$}, ..., \textsf{t$_{n}$}. Os valores de \textsf{$f$} primitivos são \textsf{<}, \textsf{<=}, \textsf{=}, \textsf{>}, \textsf{>=}, \textsf{!=}, \textsf{+}, \textsf{-}, \textsf{*}, \textsf{/}, \textsf{$\hat{ }$}, e \textsf{Member}.
+\end{description}
+
+\section{Átomos lógicos}
+
+Um átomo lógico é definido mediante a estrutura:
+
+\begin{center}
+\textsf{(p t$_{1}$ t$_{2}$ ... t$_{n}$)},
+\end{center}
+
+onde \textsf{p} é um símbolo predicado e cada \textsf{t$_{i}$} é um termo.
+
+\section{Expressão lógica}
+
+Uma expressão lógica é um átomo lógico ou uma estrutura complexa composta de conjunções, disjunções, negações, implicações, atribuições ou termos de chamada.
+
+\begin{description}
+\item[Conjunção] Uma conjunção é definida mediante a estrutura: \textsf{([and] L$_{1}$ L$_{2}$ ... L$_{n}$ )}, onde cada \textsf{L$_{i}$} é uma expressão lógica. 
+
+\item[Disjunção] Uma disjunção é definida mediante a estrutura: \textsf{(or L$_{1}$ L$_{2}$ ... L$_{n}$)}, onde cada \textsf{L$_{i}$} é uma expressão lógica.
+
+\item[Negação] Uma negação é definida mediante a estrutura: \textsf{(not L)}, onde \textsf{L} é uma expressão lógica.
+
+\item[Implicação] Uma implicação é definida mediante a estrutura: \textsf{(imply Y Z)}, onde \textsf{Y} e \textsf{Z} são expressões lógicas que definem uma implicação lógica. Isto é  \textsf{(Y $\leftarrow$ Z)}.
+
+\item[Quantificador Universal] Um quantificador universal é definida mediante a estrutura: \textsf{(forall V Y Z)}, na qual \textsf{Y} e \textsf{Z} são expressões lógicas e \textsf{V} é uma lista de variáveis e \textsf{Y} são expressões lógicas. A expressão de quantificação universal efetua a substituição da lista de variáveis \textsf{V} em \textsf{Y} para avaliar o valor de verdade nas expressões lógicas \textsf{Z}.
+
+\item[Atribuição] Uma atribuição é definida mediante a estrutura: \textsf{(assign v t)}, onde \textsf{v} é um símbolo de variável e \textsf{t} é um termo. A atribuição efetua a substituição do termo \textsf{t} no símbolo de variável \textsf{v}.
+\end{description}
+
+\section{Pré-condições lógicas}
+
+Uma pré-condição lógica é uma expressão lógica ou qualquer uma das duas seguintes formas condicionais de: primeira pré-condição satisfazível e pré-condição ordenada.
+
+\begin{description}
+\item[Primeira pré-condição lógica satisfazível] Uma primeira pré-condição lógica satisfazível é definida mediante a estrutura: \textsf{(:first L)}, onde \textsf{L} é uma expressão lógica. Se a expressão lógica \textsf{L} é satisfazível durante o processo de planejamento, o restante de condições alternativas não serão avaliadas.
+
+\item[Pré-condição lógica ordenada] Uma pré-condição lógica ordenada tem a forma: \textsf{(:sort-by v [f] L)}, onde \textsf{v} é um símbolo de variável, \textsf{f} é um nome da classe que implementa a interface \emph{Comparator} de Java (os valores primitivo de \textsf{f} podem ser \textsf{<} e \textsf{>}) e \textsf{L} é uma expressão lógica. A pré-condição lógica ordenada faz com que se efetue a substituição do símbolo variável \textsf{v} na expressão lógica \textsf{L} em uma ordem especificada pela função de comparação \textsf{f}.
+\end{description}
+
+\section{Axiomas}
+
+Um axioma é definido mediante a estrutura:
+
+\begin{center}
+\textsf{(:- a [name$_{1}$] L$_{1}$ [name$_{2}$] L$_{2}$ ... [name$_{n}$] L$_{n}$)}
+\end{center}
+
+onde \textsf{a} é um átomo lógico e os restantes de elementos da estrutura \textsf{[name$_{1}$] L$_{1}$ [name$_{2}$] L$_{2}$ ... [name$_{n}$] L$_{n}$}  são um conjunto de pré-condições lógicas \textsf{$L_{i}$} com nome \textsf{name$_{i}$}. O nome nas precondições lógicas tem unicamente propósito de depuração e não apresentam significado semântico. O axioma \textsf{a} é verdadeiro se \textsf{L$_{1}$} é verdadeiro; ou se \textsf{L$_{1}$} é falso e \textsf{L$_{2}$} é verdadeiro; ou se \textsf{L$_{1}$} e \textsf{L$_{2}$} são falsos e \textsf{L$_{3}$} é verdadeiro; ... ; ou se \textsf{L$_{1}$}, \textsf{L$_{2}$}, ..., \textsf{L$_{n-1}$} são falsos e \textsf{L$_{n}$} é verdadeiro.
+
+\section{Um átomo de tarefa}
+
+Um átomo de tarefa é definido mediante a estrutura:
+
+\begin{center}
+\textsf{([:immeditate] s r$_{1}$ r$_{2}$ ... r$_{n}$)}
+\end{center}
+
+onde \textsf{s} é um símbolo de tarefa e os argumentos \textsf{r$_{1}$}, \textsf{r$_{2}$}, \textsf{r$_{3}$}, ..., \textsf{r$_{n}$} são termos. Um átomo de tarefa é primitivo se o símbolo de tarefa \textsf{s} é um símbolo de tarefas primitiva, isto é \textsf{s $\in$ N'}; e um átomo de tarefa é composta se o símbolo de tarefa \textsf{s} é um símbolo de tarefas composta, isto é \textsf{s $\in$ T'}.
+Um átomo de tarefa sem a palavra \textsf{:immediate} é chamada de ordinário, enquanto se a tarefa inclui a palavra \textsf{:immediate} é chamada de tarefa de alta prioridade.
+
+\section{Lista de tarefas}
+
+Uma lista de tarefas é uma tarefa atômica ou uma estrutura:
+
+\begin{center}
+\textsf{([:unordered] [tasklist$_{1}$ tasklist$_{2}$ ... tasklist$_{n}$])},
+\end{center}
+
+onde \textsf{tasklist$_{1}$ tasklist$_{2}$ ... tasklist$_{n}$} são uma lista de tarefas. Note aqui que \textsf{n} pode ser zero, assim a lista de tarefas pode ser uma lista vazia. A palavra \textsf{:unordered} na lista de tarefas é utilizada para indicar que não existe restrições de ordem nos elementos da lista de tarefas \textsf{tasklist$_{1}$}, \textsf{tasklist$_{2}$}, ... \textsf{tasklist$_{n}$}; se a palavra não é utilizada esto quer dizer que os elementos da lista de tarefas \textsf{tasklist$_{1}$}, \textsf{tasklist$_{2}$}, ..., \textsf{tasklist$_{n}$} apresentam as restrições de ordem
+
+\begin{center}
+\textsf{tasklist$_{1}$ $\prec$ tasklist$_{2}$ $\prec$ ... $\prec$ tasklist$_{n}$}.
+\end{center}
+
+\section{Operador}
+
+Um operador de planejamento é definido mediante a estrutura:
+
+\begin{center}
+\textsf{(:operator h P D A [c])}
+\end{center}
+
+onde:
+
+\begin{itemize}
+\item \textsf{h} é um átomo de tarefa primitiva; 
+\item \textsf{P} (pré-condição) é uma pré-condição lógica;
+\item \textsf{D} (lista de elementos a ser removida) é uma lista de elementos com símbolos de variáveis definas em \textsf{h} e \textsf{P}. Os elementos de \textsf{D} podem ser:
+
+\begin{itemize}
+\item Um conjunto de átomos lógicos;
+\item Condições de proteção de átomos lógicos; e
+\item Expressões de forma \textsf{(forall V Y Z)}, onde \textsf{V} é uma lista de variáveis em \textsf{Y}, \textsf{Y} é uma expressão lógica e \textsf{Z} é uma lista de átomos lógicos que contém símbolos de variáveis existentes em \textsf{h}, \textsf{P} e \textsf{V}.
+\end{itemize}
+\item \textsf{A} (lista de elementos a ser adicionada) é uma lista de elementos com símbolos de variáveis definidas em \textsf{h} e \textsf{P}. Os elementos de \textsf{D} são os mesmos da lista a ser removida; e
+\item \textsf{c} (custo) é o custo da ação. Se \textsf{c} é omitido, o custo do operador é 1.
+\end{itemize}
+
+As condições de proteção são expressões da forma \textsf{(:protection a)}, onde \textsf{a} é um átomo lógico. O propósito das condições de proteção na lista é indicar ao planejador que não pode ser executada ações que removam ou modifiquem o átomo \textsf{a}. O propósito das condições de proteção na lista a ser removida é de remover uma condição de proteção definida previamente.
+
+As expressões de forma \textsf{(forall V Y Z)} na lista a ser removida e na lista a ser adicionada representam um conjunto de átomos lógicos que são obtidos da substituição dos símbolos de variáveis de \textsf{V} pelos valores que satisfazem as condições \textsf{Y}.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:operator (!mover ?t ?l1 ?l2)
+      \textit{;; precondições}
+      ((em ?t ?l1))
+      \textit{;; átomos a ser removidos}
+      ((em ?t ?l1))
+      \textit{;; átomos a ser adicionados}
+      ((em ?t ?l2)))
+\end{jshopcode}
+\caption{Exemplo de um operador hierárquico}
+\label{list:exampleOperator}
+\end{figure}
+
+\begin{example}
+A Figura \ref{list:exampleOperator} mostra a representação de um operador de planejamento que representa as ações de mover um transporte \textsf{?t} da localização \textsf{?l1} à localização \textsf{?l2}.
+\end{example}
+
+\section{Métodos}
+
+Um método é definido mediante a estrutura:
+
+\begin{center}
+\textsf{(:method h [name$_{1}$] L$_{1}$ T$_{1}$ [name$_{2}$] L$_{2}$ T$_{2}$ ... [name$_{n}$] L$_{n}$ T$_{n}$)}
+\end{center}
+
+onde:
+
+\begin{itemize}
+\item \textsf{h} é um átomo de tarefa composta;
+\item cada \textsf{L$_{i}$} (pré-condição do método) é uma pré-condição lógica.
+\item cada \textsf{T$_{i}$} é uma lista de tarefas na qual o método decompõe a tarefa \textsf{h}; e
+\item cada \textsf{name$_{i}$} é um nome opcional de cada par \textsf{(L$_{i}$ T$_{i}$)}.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (transportar-pacote ?p ?t ?l1 ?l2)
+      \textit{;; precondições}
+      ((em ?p ?l1)
+       (em ?p ?l2))
+      \textit{;; subtarefas}
+      ((despachar ?t ?l1)
+       (!carregar ?t ?p)
+       (!mover ?t ?l1 ?l2)
+       (!descarregar ?t ?p)
+       (retornar ?t ?l1)))
+\end{jshopcode}
+\caption{Exemplo da representação de um método hierárquico}
+\label{list:exampleMethod}
+\end{figure}
+
+\begin{example}
+A Figura \ref{list:exampleMethod} mostra a representação em JSHOP2 de um
+método HTN que representa o método de decomposição (c) de transportar o
+pacote \textsf{?p} com o transporte \textsf{?t} da localização \textsf{?l1}
+à localização \textsf{?l2} apresentada no Exemplo 2.4. O método no exemplo
+efetua a decomposição da tarefa \textsf{transportar-pacote} nas subtarefas
+das linhast 5-10 \textsf{despachar}, \textsf{!carregar}, \textsf{!mover},
+\textsf{!descarregar} e \textsf{retornar} se as pré-condições lógicas das
+linhas 2-4 são satisfazíveis.
+\end{example}
+
+\section{Domínio de planejamento}
+
+O domínio de planejamento é definido mediante a estrutura:
+
+\begin{center}
+\textsf{(defdomain domain-name (d$_{1}$ d$_{2}$ ... d$_{n}$))},
+\end{center}
+
+\noindent onde \textsf{domain-name} é o nome do domínio e cada \textsf{d$_{j}$} é um operador, um método ou um axioma.
+
+\section{Problema de planejamento}
+
+O problema de planejamento é definido mediante a estrutura:
+
+
+\begin{alltt}\sffamily
+        (defproblem problem-name domain-name ([a\(\sb{1,1}\) a\(\sb{1,2}\) ... a\(\sb{1,n\sb{1}}\)]) T\(\sb{1}\)
+                                                             ([a\(\sb{2,1}\) a\(\sb{2,2}\) ... a\(\sb{2,n\sb{2}}\)]) T\(\sb{2}\)
+                                                             . . .
+                                                             ([a\(\sb{m,1}\) a\(\sb{m,2}\) ... a\(\sb{m,n\sb{m}}\)]) T\(\sb{m}\))
+\end{alltt}
+
+onde \textsf{problem-name} é o nome do problema de planejamento, e \textsf{domain-name} é o nomes do domínio; cada lista \textsf{(a$_{n,1}$ a$_{n,2}$ ... a$_{n,m}$)} é uma lista de átomos \textsf{a$_{i,j}$} que representam o estado inicial; e cada termo \textsf{T$_{i}$} é uma lista de tarefas a ser atingidas.
+
+\section{Plano}
+
+O plano de ações obtido pelo algoritmo de planejamento é uma estrutura:
+
+\begin{center}
+\textsf{(h$_{1}$ h$_{2}$ ... h$_{n}$)},
+\end{center}
+
+onde cada \textsf{h$_{i}$} é uma instancia de um operador \textsf{o$_{i}$} (uma ação). Se \textsf{p = (h$_{1}$ h$_{2}$ ... h$_{n}$)}; então, o resultado da execução de \textsf{p} no estado inicial $s_{0}$ é \textsf{S(p) = $\gamma$($\gamma$(... $\gamma$($\gamma$(s, h$_{1}$), h$_{2}$), ...,), h$_{n}$)}.

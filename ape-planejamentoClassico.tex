@@ -1,0 +1,168 @@
+
+\chapter{Planejamento clássico}
+\label{ape:planejamentoClassico}
+
+
+Em planejamento clássico, o plano de solução para atingir os objetivos é obtido da busca no espaço de estados das ações que devem ser adicionadas ao plano, para que depois da execução um estado meta seja alcançado. A fim de manter uma semântica bem definida na representação do estado corrente e ações, a técnica de planejamento clássico utiliza um modelo simplificado e restrito pelas seguintes suposições \citep{ghallab2004automated}:
+
+\begin{description}
+\item[A0: $\Sigma$ é finito.] O sistema de transição de estados tem um número finito de estados.
+\item[A1: $\Sigma$ é completamente observável.] O sistema de planejamento sabe com exatidão qual é o estado atual do mundo.
+\item[A2: $\Sigma$ é determinístico.] A ação efetuada no sistema de transição de estado leva a um único estado possível.
+\item[A3: $\Sigma$ é estático.] No sistema de transição de estados, não existem eventos externos ao agente, o único que manipula o estado do mundo é o agente.
+\item[A4: Metas restritivas.] Os objetivos são representados por um conjunto de estados meta.
+\item[A5: Planos sequenciais.] O plano solução é uma sequência de ações a serem executadas na ordem indicada.
+\item[A6: Tempo implícito.] A ação efetuada pelo sistema é executada uma por vez e não há informações sobre a duração.
+\item[A7: Planejamento \textit{offline}.] O plano de ações obtido pelo planejador é executado pelo agente sem realimentação sobre o processo de execução do plano, isto quer dizer que uma vez obtido o plano ele não muda durante o processo de execução.
+\end{description}
+
+Os planejadores que utilizam a técnica de planejamento clássico recebem como entrada a descrição do problema de planejamento formalizada como a n-upla $P=\langle D, s_0, G \rangle$, em que $D$ é a descrição do sistema de transição de estados $\Sigma$ nomeado \emph{domínio de planejamento}, $s_0$ é a representação do estado inicial e $G$ é a representação dos objetivos a serem atingidos.
+
+A descrição do \emph{domínio de planejamento} $D$ em planejamento clássico é formalizado como a n-upla $\langle S, A, \gamma \rangle$, em que:
+
+\begin{itemize}
+\item $S$=\{$s_1$, $s_2$, ...\} é um conjunto finito ou recursivamente enumerável de estados;
+\item $A$=\{$a_1$, $a_2$, ...\} é um conjunto finito ou recursivamente enumerável de ações; e
+\item $\gamma$: $S$x$A$ $ \rightarrow S$ é a função de transição de estados que define como uma ação muda de estado.
+\end{itemize}
+
+O \emph{plano de solução} consiste em uma sequência de ações $\pi$=($a_{1}$, $a{2}$, ..., $a_{n}$) que, ao serem executadas pelo controlador a partir do estado inicial $s_{0}$, levam a um estado meta $s_{g}$ que satisfaz os objetivos definidos em $G$; isto é
+$\gamma(s_{0},a_{1}) = s_{1}$, $\gamma(s_{1},a_{2}) = s_{2}$, ..., $\gamma(s_{n-1},a_{n}) = s_{g}$.
+
+Os problemas de planejamento envolvem uma grande quantidade de estados e ações, portanto, é necessário utilizar meios simbólicos de uma linguagem $L$ para reduzir a representação explícita do domínio de planejamento. Assim, \citet{ghallab2004automated} apresentam três tipos de representação: a representação em teoria de conjuntos, a representação clássica e a representação com variáveis de estado. As duas primeiras são discutidas a seguir.
+
+
+% --------------------------------------------------------------------------- %
+\section{Representação em teoria de conjuntos}
+\label{sec:representacaoTeoriaConjuntos}
+
+A teoria de conjuntos representa estados e ações como um conjuntos de proposições, no qual um elemento não representado explicitamente no estado $s$ é interpretado como falso.
+
+Seja $L$=\{$p_{1}$, $p_{2}$, ..., $p_{n}$\} um conjunto finito de símbolos de proposição utilizados para representar a descrição do sistema de transição de estados $\Sigma$,  um domínio­ de planejamento $D$ em teoria de conjuntos é representado como uma n-upla $D=(S,A,\gamma)$, na qual:
+
+\begin{itemize}
+\item Cada estado $s_{i} \in S$ é composto por um subconjunto de $L$, no qual a proposição $p$ é verdadeira se e somente se $p \in s_{i}$, e $p$ é falsa se $p \notin s_{i}$.
+\item Cada ação $a_{i} \in A$ é uma expressão sintática de $L$, denotada pela n=upla
+\begin{center}
+$a = \langle$ \emph{precond}($a$), \emph{efeitos}$^{-}$($a$), \emph{efeitos}$^{+}$($a$) $\rangle$,
+\end{center}
+na qual: as pré-condições \emph{precond}($a$) são proposições que devem ser verdadeiras no estado corrente $s_{i}$ para efetuar a ação $a$; os efeitos negativos \emph{efeitos}$^{-}$($a$) são proposições a serem removidas do estado corrente; e os efeitos positivos (\emph{efeitos}$^{+}$($a$)) são proposições a serem adicionadas.
+
+\item  A função de transição de estados é $\gamma(s,a)$=($s$ $\setminus$ \emph{efeitos}$^{-}$($a$)) $\cup$ \emph{efeitos}$^{+}$($a$). Dessa forma, cada ação $a$ aplicável num estado $s_{i}$ leva a um outro estado válido $s_{j} \in S$.
+\end{itemize}
+
+\begin{example}
+Utilizando os símbolos \textsf{t1-in-loc1} e \textsf{t2-in-loc2} para representar as localizações do transporte \textsf{t1}; e os símbolos \textsf{p1-in-loc1}, \textsf{p1-in-loc2} e \textsf{p1-in-t1} para representar localizações do pacote \textsf{p1}. O estado inicial \textsf{s$_{0}$} de um problema de planejamento logístico de transporte de pacotes mostrado na Figura \ref{fig:exemploPlanejamentoConjunto} é representado por \textsf{s$_{0}$=\{t1-in-loc1, p1-in-loc2\}}. No problema, a ação de mover o transporte \textsf{t1} da localização \textsf{loc1} até a localização \textsf{loc2} é representada pela n-upla \textsf{a$_{1}$=$\langle$ \{t1-in-loc1\}, \{t1-in-loc1\}, \{t1-in-loc2\} $\rangle$}.
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.75\textwidth]{figuras/exemploPlanejamentoConjunto}
+\caption{Exemplo de representação em teoria de conjuntos}
+\label{fig:exemploPlanejamentoConjunto}
+\end{figure}
+
+\end{example}
+
+% --------------------------------------------------------------------------- %
+\section{Representação clássica}
+\label{sec:representacaoClassica}
+
+A representação clássica generaliza a representação em teoria dos conjuntos utilizando notação proveniente de uma linguagem de primeira ordem, na qual existe um número finito de símbolos de predicados e constantes. Assim, conectivos lógicos são utilizados no lugar de proposições, enquanto os estados são representados como um conjunto de literais totalmente instanciados.
+
+\begin{definition}
+\label{def:repEstadoClassica}
+Um estado $s$ é um conjunto de átomos lógicos totalmente instanciados composto apenas de símbolos de constante.
+\end{definition}
+
+Dizemos que um átomo $p$ é verdadeiro no estado $s$ se e somente se $p \in s$; e dizemos que um estado $s_{g}$ atinge os objetivos $G$ ($s_{g}$ \emph{satisfaz} $G$), se e somente se todo átomo positivo de $G$ está em $s_{g}$ e nenhum átomo negativo de $G$ está em $s_{g}$.
+
+\begin{example}
+\label{exa:planejamentoLogistica}
+Considere o problema de planejamento logístico da Figura \ref{fig:exemploPlanejamentoClassico} em que há: cinco localizações \textsf{loc1}, \textsf{loc2}, \textsf{loc3}, \textsf{loc4} e \textsf{loc5}; dois transportes \textsf{t1} e \textsf{t2}; e três pacotes \textsf{p1}, \textsf{p2} e \textsf{p3}. Seja $L$=\{\textsf{loc1, loc2, loc3, loc4, loc5, t1, t2, p1, p2, p3}\} o conjunto de símbolos constantes, utilizamos o símbolo de predicado \textsf{(em $x$ $y$)} para representar a localização de um determinado transporte ou pacote $x$ no lugar $y$ e o símbolo de predicado \textsf{(disponível $x$)} para representar a disponibilidade do transporte $x$. Dessa maneira, o estado inicial $s_{0}$ mostrado na figura é representado por:
+
+\begin{alltt}\sffamily
+\(S\sb{0}\) = \{(em p1 loc1), (em p2 loc2), (em t1 loc5), (em t2 loc3), (disponível t1), (disponível t2)\}
+\end{alltt}
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.80\textwidth]{figuras/exemploPlanejamentoClassico}
+\caption{Exemplo de representação clássica}
+\label{fig:exemploPlanejamentoClassico}
+\end{figure}
+\end{example}
+
+\newpage
+Na representação clássica, operadores de planejamento são utilizados para generalizar o conjunto de ações $A$ do domínio de planejamento.
+
+\begin{definition}
+\label{def:operadorPlanejamento}
+Um operador de planejamento é definido formalmente pela tripla
+\begin{center}
+$o$ = $\langle$ \emph{nome}($o$), \emph{precond}($o$), \emph{efeitos}($o$)
+$\rangle$, tal que:
+\end{center}
+
+\begin{itemize}
+\item \emph{nome}($o$) é o nome do operador expresso da forma ($n$ $x_{1}$ $x_{2}$ ... $x_{k}$), em que $n$ é um símbolo constante que define um nome único entre os operadores e $x_{1}$, $x_{2}$, ..., $x_{k}$ são símbolos variáveis que definem a lista de argumentos;
+\item \emph{precond}($o$) é o conjunto de pré-condições expresso por literais que determinam a aplicabilidade das ações generalizadas pelo operador; e
+\item \emph{efeitos}($o$) é o conjunto de efeitos positivos, \emph{efeitos}$^{+}$($o$), e efeitos negativos, \emph{efeitos}$^{-}$($o$), do conjunto de ações generalizadas pelo operador.
+\end{itemize}
+
+A função de transição de estados $\gamma$ é representada em teoria de conjuntos como:
+
+\begin{center}
+$\gamma(s,a)$=($s$ $\setminus$ \emph{efeitos}$^{-}$($a$)) $\cup$ \emph{efeitos}$^{+}$($a$)
+\end{center}
+\end{definition}
+
+\begin{example}
+\label{exa:operadoresPlanejamento}
+No domínio de planejamento da Figura \ref{fig:exemploPlanejamentoClassico}, os operadores para efetuar a operação logística de transporte de pacotes são:
+
+\begin{tabular}{ll}
+
+\begin{tabular}{ll}
+            & \\
+\multicolumn{2}{l}{\textrm{(a)} \textit{mover transporte $t$ de $x$ até $y$}}\\
+nome:       & \textsf{(mover $t$ $x$ $y$)}\\
+precond:    & \textsf{(em $t$ $x$)}\\
+efeitos:    & \textsf{(not (em $t$ $x$)), (em $t$ $y$)}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+            & \\
+\multicolumn{2}{l}{\textrm{(b)} \textit{carregar no transporte $t$ um pacote $p$}}\\
+nome:       & \textsf{(carregar $t$ $p$)}\\
+precond:    & \textsf{(em $p$ $x$), (em $t$ $x$)}\\
+efeitos:    & \textsf{(not (em $p$ $x$)), (em $p$ $t$)}\\
+\end{tabular}
+\\
+\begin{tabular}{ll}
+            & \\
+\multicolumn{2}{l}{\textrm{(c)} \textit{descarregar do transporte $t$ um pacote $p$}}\\
+nome:       & \textsf{(descarregar $t$ $p$)}\\
+precond:    & \textsf{(em $p$ $t$), (em $t$ $x$)}\\
+efeitos:    & \textsf{(not (em $p$ $t$)), (em $p$ $x$)}\\
+\end{tabular}
+&
+\begin{tabular}{ll}
+            & \\
+\multicolumn{2}{l}{\textrm{(d)} \textit{reservar o transporte $t$}}\\
+nome:       & \textsf{(reservar $t$)}\\
+precond:    & \textsf{(disponível $t$)}\\
+efeitos:    & \textsf{(not (disponível $t$))}\\
+\end{tabular}
+\\
+\begin{tabular}{ll}
+            & \\
+\multicolumn{2}{l}{\textrm{(e)} \textit{deixar disponível o transporte $t$}}\\
+nome:       & \textsf{(disponibilizar $t$)}\\
+precond:    & \textsf{(not (disponível $t$))}\\
+efeitos:    & \textsf{(disponível $t$)}\\
+\end{tabular}
+& \\
+\end{tabular}
+\end{example}
+
+

@@ -1,0 +1,2373 @@
+
+
+\chapter{Avaliações}
+\label{cap:avaliacao}
+
+Este capítulo descreve as avaliações efetuadas no protótipo de gerador de cursos colaborativos. Na Seção \ref{sec:avaliacaoTecnica} é apresentada a avaliação de desempenho efetuada sob o gerador de cursos colaborativos. Para uma avaliação da modelagem proposta na Seção \ref{sec:exemploModelagem} apresentamo exemplos da modelagem de estrategias de planejamento instrucional. Finalmente, na Seção  \ref{sec:avaliacaoSaida} apresentamos a avaliação da saída do planejador no modelo proposto.
+
+\section{Avaliação de desempenho}
+\label{sec:avaliacaoTecnica}
+
+Se o gerador de cursos colaborativos deve ser utilizado em situações de aprendizagem real, o processo de planejamento instrucional automatizado deve ser efetuado em tempo hábil. Nesta seção descrevemos os resultados dos testes efetuados que avaliam o desempenho do planejador sob diferentes condições.
+
+Para minimizar a influência da latência causada pela rede em aplicações Web, os repositórios com informações dos modelos de domínio a ser ensinado e de estudante, os componentes do gerador de curso e os testes são executados no mesmo computador, um computador PC padrão com processador Intel de 2.4GHz com 4GB de memória RAM.
+
+Como os testes são desenvolvidos para medir o desempenho do planejador, as influências de outros  componentes como o mediador e o componente de conversão são minimizadas. Os modelos de estudante e de domínio a ser ensinado são substituídos por um modelo que retorna valores aleatórios para cada consulta.
+
+Os testes foram efetuados empregando a tarefa pública \textsf{createLDFundamentaUoL}, tarefa de maior nível de abstração que envolve outras tarefas públicas como subtarefas de menor nível. Os testes da tarefa pública foram executados empregando 2, 4, 8, 16 e 32 objetivos educacionais com 32, 64, 128 e 256 estudantes. Cada tarefa de geração foi repetida 10 vezes sendo calculada a média do tempo. 
+
+\begin{table}[htbp]%\small
+\centering
+\begin{tabular}{|c|r|r|r|r|r|}
+\hline
+\textbf{Estudantes/objetivos}
+         & \textbf{2} & \textbf{4} & \textbf{8} & \textbf{16} & \textbf{32} \\ \hline \hline
+  32  &    12,17 &    12,25 &   14,46 &    15,13 &   16,79 \\ \hline
+  64  &    17,23 &    27,23 &   35,37 &    37,23 &   47,98 \\ \hline
+128  &    81,51 &    94,85 & 108,81 & 135,36 & 139,21 \\ \hline
+256  &  154,83 & 297,45 & 328,31 & 371,20 & 417,60 \\ \hline
+\end{tabular}
+\caption{Tempo em segundos empregado na geração da tarefa \textsf{createLDFundamentaUoL}}
+\label{tab:createLDFundamentaUoL}
+\end{table}
+
+\begin{figure}[htbp]
+  \centering
+\begin{tikzpicture}[x=0.4cm,y=0.01cm]
+
+  \def\xmin{0}
+  \def\xmax{32}
+  \def\ymin{0}
+  \def\ymax{500}
+
+  % grid
+  \draw[style=help lines, ystep=100, xstep=2] (\xmin,\ymin) grid (\xmax,\ymax);
+
+  % axes
+  \draw[->] (\xmin,\ymin) -- (\xmax,\ymin) node[right] {nro objetivos};
+  \draw[->] (\xmin,\ymin) -- (\xmin,\ymax) node[above] {tempo (segundos)};
+
+  % xticks and yticks
+  \foreach \x in {0,2,...,32} \node at (\x, \ymin) [below] {\x};
+  \foreach \y in {100,200,300,400,500} \node at (\xmin,\y) [left] {\y};
+
+  % plot the data from the file data.dat
+  % smooth the curve and mark the data point with a dot
+  \draw[color=blue] plot[smooth,mark=*,mark size=1pt] file {data1.dat} node [right] {32 estudantes};
+  \draw[color=green] plot[smooth,mark=*,mark size=1pt] file {data2.dat} node [right] {64 estudantes};
+  \draw[color=violet] plot[smooth,mark=*,mark size=1pt] file {data3.dat} node [right] {128 estudantes};
+  \draw[color=red] plot[smooth,mark=*,mark size=1pt] file {data4.dat} node [right] {256 estudantes};
+
+  % generate and plot another a curve y = 0.1 x^2 + 2.5
+  % this generates the files figure.parabola.gnuplot and figure.parabola.table 
+  %\draw[color=red, domain=\xmin:\xmax] plot[id=parabola]
+  %function{0.1*x**2 + 2.5} node [right] {$y=0.1\,x^2 + 2.5$};
+\end{tikzpicture}
+  \caption{Gráfico do número de objetivos e tempo necessário para a geração de cursos}
+  \label{fig:tempoCreateLDFundamentaUoL}
+\end{figure}
+
+A Tabela \ref{tab:createLDFundamentaUoL} e a Figura \ref{fig:tempoCreateLDFundamentaUoL} fornece detalhes do tempo (em segundo) de geração dos cursos usando a tarefa \textsf{createLDFundamentaUoL}. Na tabela, o tempo necessário para gerar um curso com 32 estudantes e 2 objetivos educacionais é de 12,17 segundos, enquanto o tempo necessário para gerar um curso com 32 objetivos educacionais e 256 estudantes é de 10,12.
+
+\begin{table}[htbp]%\small
+\centering
+\begin{tabular}{|c|r|r|r|r|r|}
+\hline
+\textbf{Estudantes/objetivos} & \textbf{2} & \textbf{4} & \textbf{8} & \textbf{16} & \textbf{32} \\ \hline \hline
+32    & 3.528 &   7.240 & 14.654  & 28.486 &  56.234 \\ \hline
+64    & 4.237 &   8.756 & 16.458  & 33.126 &  67.128 \\ \hline
+128  & 5.348 & 10.248 & 20.456 & 41.245 &   80.436 \\ \hline
+256  & 7.796 & 14.567 & 29.678 & 61.234 & 131.146 \\ \hline
+\end{tabular}
+\caption{Tamanho do plano gerado pela tarefa \textsf{createLDFundamentaUoL}}
+\label{tab:planSizeCreateLDFundamentaUoL}
+\end{table}
+
+
+\begin{figure}[htbp]
+  \centering
+\begin{tikzpicture}[x=0.4cm,y=0.00005cm]
+
+  \def\xmin{0}
+  \def\xmax{32}
+  \def\ymin{0}
+  \def\ymax{150000}
+
+  % grid
+  \draw[style=help lines, ystep=5000, xstep=2] (\xmin,\ymin) grid (\xmax,\ymax);
+
+  % axes
+  \draw[->] (\xmin,\ymin) -- (\xmax,\ymin) node[right] {nro objetivos};
+  \draw[->] (\xmin,\ymin) -- (\xmin,\ymax) node[above] {tamanho (nro ações)};
+
+  % xticks and yticks
+  \foreach \x in {0,2,...,32} \node at (\x, \ymin) [below] {\x};
+  %\foreach \y in {2,4,...,10} \node at (\xmin,\y) [left] {\y};
+
+  % plot the data from the file data.dat
+  % smooth the curve and mark the data point with a dot
+  \draw[color=blue] plot[smooth,mark=*,mark size=1pt] file {dataA.dat} node [right] {32 estudantes};
+  \draw[color=green] plot[smooth,mark=*,mark size=1pt] file {dataB.dat} node [right] {64 estudantes};
+  \draw[color=violet] plot[smooth,mark=*,mark size=1pt] file {dataC.dat} node [right] {128 estudantes};
+  \draw[color=red] plot[smooth,mark=*,mark size=1pt] file {dataD.dat} node [right] {256 estudantes};  
+
+  % generate and plot another a curve y = 0.1 x^2 + 2.5
+  % this generates the files figure.parabola.gnuplot and figure.parabola.table 
+  %\draw[color=red, domain=\xmin:\xmax] plot[id=parabola]
+  %function{0.1*x**2 + 2.5} node [right] {$y=0.1\,x^2 + 2.5$};
+\end{tikzpicture}
+  \caption{Gráfico do número de objetivos e tamanho do plano para a geração de cursos}
+  \label{fig:planSizeCreateLDFundamentaUoL}
+\end{figure}
+
+A Tabela \ref{tab:planSizeCreateLDFundamentaUoL} e a Figura \ref{fig:planSizeCreateLDFundamentaUoL} mostra as médias no tamanho do plano de solução obtido pelo gerador. Na tabela, um curso gerado para 2 objetivos educacionais e 32 é em média de 3528 operadores que representam 352 elementos <learning-activity> e 650 recursos instrucionais. Se cada elemento <learning-activity> tem uma média de tempo de aprendizagem de dois minutos, a conclusão deste curso levaria entre 11 e 12 horas.
+
+Os resultados mostrados nos testes demostram que o processo de planejamento instrucional automatizado no gerador de cursos colaborativos é rápido minimizando os fatores externos. O desempenho em casos de uso real depende do componente mediador (tempo de resposta dos repositórios externos) e a latência da rede, como consequência, o tempo meio para gerar um curso com 02 objetivos e 32 estudantes requere 4:30 minutos ao invés de 10.324 segundos. 
+
+Para sistemas Web, as experiências conduzidas por \citet{bhatti2000integrating} mostram que a taxa de espera de mais de 11 segundos é inaceitável. No entanto, o tamanho do plano solução e a quantidade de elementos de roteiros obtidos justifica a espera devido a que em média são gerados mais de 150 elementos em menos de um segundo.
+
+\newpage
+\section{Avaliação da modelagem de estratégias}
+\label{sec:exemploModelagem}
+
+Nesta seção, a avaliação da modelagem de estratégias de planejamento instrucional proposta nesta dissertação é efetuada utilizando os esquemas de roteiros apresentados no Capítulo \ref{cap:modelagemEstrategias}. A validação da modelagem é efetuada mediante a modelagem de estratégias extraídas dos padrões de roteiros ``\textit{peer tutoring}'' e ``jigsaw''.
+
+\subsection{Exemplo de microrroteiro: Peer tutoring}
+\label{subsec:exemploModelagemMicroroteiros}
+
+O padrão de roteiro \textit{Peer tutoring} é definido como o fluxo de eventos IL mostrado na Figura \ref{fig:expeerTutoring}, no qual estudantes com papel tutor e estudantes com papel aprendiz obtêm benefícios a partir de suas interações. Nos eventos IL, os tutores terão de obter mais conhecimento, a fim de ensinar e organizar seus conhecimentos de forma compreensível. Enquanto, os aprendizes irão adquirir seu conhecimento do ensino dos tutores.
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.37\textwidth]{figuras/peerTutoringInteractionFlow2}
+\caption{Representação gráfica do microrroteiro Peer-Tutoring \citep{isotani2009ontological}}
+\label{fig:expeerTutoring}
+\end{figure}
+
+A seguir apresentamos a modelagem de algumas estratégias de planejamento instrucional extraídas do padrão \textit{Peer tutoring}. Neste trabalho usando 6 padrões de microrroteiros também foram modeladas: 12 estratégias de eventos IL, 16 estratégias de interações cíclicas e direcionadas, 6 estratégias de padrões de interação de microrroteiros, 6 estratégias de fases dos cenários colaborativos, 9 estratégias de definição de estratégias de aprendizagem, 10 estratégias de papéis colaborativos e 6 estratégias de cenários colaborativos detalhadas no \textit{website}
+\begin{center}
+\url{http://www.ime.usp.br/~geiser/dissertacao/microrroteiros/}
+\end{center}
+
+\subsubsection{Cenário colaborativo: Peer tutoring}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDPeerTutoringCLScenario ?goals ?groups)
+      ()
+      ((createLDPeerTutoringCLScenario! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (createLDPeerTutoringCLScenario! ?goals ?groups)
+      ((assign ?id (call GetUUID play)))
+      ((!startLDElement play ((identifier ?id))
+                        ((PeerTutoring CLScenario) ?id ?goals ?groups))
+       (!!changeCLGrouping ())
+       (createLDTitle (PeerTutoring CLScenario) ?goals)
+       (createPeerTutoringCLScenario ?goals ?groups)
+       (!endLDElement play ?id)))
+   
+   \textit{;; fall-back}
+   (:method (createLDPeerTutoringCLScenario ((?c ?ol) (?c ?el)) (?tutors ?tutees))
+      ((hasKnowledgeType ?c Fundamental)
+       (equivalent (any tuning) ?ol)
+       (equivalent (any accretion) ?el)
+       \textit{;; get goals}
+       (getCurrentLearningResourceType ?types)
+       (getLearnerPropertyQuery ?tmpq1 ?c ?tutors)
+       (buildPropertyQuery ?q1 hasLearningResourceType ?types
+                           ((class Auxiliary)
+                            (property hasLearningObjective ?c ?ol) . ?tmpq1))
+       (getOrBuildReadyAux ?oaux ?q1 ?tutors)
+       (getGoalFromAuxiliary ?ogoal ?oaux ?c ?ol)
+       (getLearnerPropertyQuery ?tmpq2 ?c ?tutees)
+       (buildPropertyQuery ?q2 hasLearningResourceType ?types
+                           ((class Auxiliary)
+                            (property hasLearningObjective ?c ?el) . ?tmpq2))
+       (getOrBuildReadyAux ?eaux ?q2 ?tutees)
+       (getGoalFromAuxiliary ?egoal ?eaux ?c ?el)
+       (assign ?id (call GetUUID play)))
+      ((!startLDElement play ((identifier ?id))
+              ((PeerTutoring CLScenario) ?id (?ogoal ?egoal) (?tutors ?tutees)))
+       (!!changeCLGrouping ())
+       (!!changeFundCompetency ?c)
+       (createLDTitle (PeerTutoring CLScenario) (?ogoal ?egoal))
+       (createPeerTutoringCLScenario (?ogoal ?egoal) (?tutors ?tutees))
+       (!endLDElement play ?id)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação do cenário colaborativo Peer Tutoring}
+\label{list:LDPeerTutoringCLScenarioJShop2}
+\end{figure}
+
+Utilizando o esquema da Figura \ref{list:LDCLScenarioJShop2}, a Figura \ref{list:LDPeerTutoringCLScenarioJShop2} mostra a estratégia de criação do cenário colaborativo \textit{Peer tutoring} no que o método \textsf{\textit{fall-back}} (linha 16-41) apresenta a restrição de níveis de competência \textsf{(any tuning)} para o nível \textsf{?ol} (linha 18) e restrição \textsf{(any accretion)} para o nível \textsf{?el} (linha 19). Logo, os elementos de conhecimento de tipo auxiliar \textsf{?oaux} e \textsf{?eaux} são obtidos empregando o axiomas \textsf{getOrBuildReadyAux} (linhas 26, 32). Finalmente, os objetivos educacionais \textsf{?ogoal} e \textsf{?egoal} são obtidos usando o axioma \textsf{getGoalFromAuxiliary} (linha 27, 33).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createPeerTutoringCLScenario! ((?oc ?ol) (?ec ?el)) (?tutors ?tutees))
+      ((hasKnowledgeType ?oc Auxiliary)
+       (equivalent (any tuning) ?ol)
+       (hasKnowledgeType ?ec Auxiliary)
+       (equivalent (any accretion) ?el))
+      ((createLDPeerTutoringPhase ((?oc ?ol) (?ec ?el)) (?tutors ?tutees))))
+\end{jshopcode}
+\caption{Representação dos métodos associados à tarefa \textsf{createPeerTutoringCLScenario}}
+\label{list:createPeerTutoringCLScenarioJShop2}
+\end{figure}
+
+Utilizando o esquema da Figura \ref{list:CLScenarioJShop2}, os métodos associados à tarefa \textsf{createPeerTutoringCLScenario} são mostrados na Figura \ref{list:createPeerTutoringCLScenarioJShop2}. O método apresentado na figura não efetua a busca de elemento de conhecimento auxiliar nem objetivos educacionais relativos aos elementos, devido a que todos os elementos auxiliares necessários foram definidos nas competências \textsf{?oc} e \textsf{?ec}.
+
+\subsubsection{Fase no cenário colaborativo: Peer tutoring}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}      
+(:method (createLDPeerTutoringPhase ?goals ?groups)
+   ((assign ?id (call GetUUID act))
+    (assing ?as (call GetUUID as)))
+   ((!startLDElement act ((identifier ?id))
+         ((PeerTutoring Phase) ?id ?goals ?groups))
+    (createLDTitle (PeerTutoring Phase) ?goals)
+    (!!addInWorldState (class CurrentLDInteractions ?as))
+    (createPeerTutoringPhase ?goals ?groups)
+    (!!removeFromWorldState (class CurrentLDInteractions ?as))
+    (!endLDElement act ?id)))
+   
+(:method (createPeerTutoringPhase (?ogoal ?egoal) (?tutors ?tutees))
+   ()
+   ((createLDLearningByTeachingStrategy (?ogoal) (?tutors))
+    (createLDLearningByBeingTaughtStrategy (?egoal) (?tutees))
+    (createLDPeerTutoringInteractions (?ogoal ?egoal) (?tutors ?tutees))))
+\end{jshopcode}
+\caption{Esquema de representação da estratégia de criação da fase \textit{Peer tutoring}}
+\label{list:peerTutoringCLPhaseJShop2}
+\end{figure}
+
+Utilizando o esquema de representação mostrado na Figura \ref{list:clPhaseJShop2}, a Figura \ref{list:peerTutoringCLPhaseJShop2} apresenta a representação da estratégia de criação de fases para o cenário colaborativo \textit{Peer tutoring}, na que são definidas as estratégias de aprendizagem por ensino (\textsf{LearningByTeaching}) (linha 14) e de sendo ensinado (\textsf{LearningByBeingTaught}) (linha 15).
+
+\subsubsection{Estratégia de aprendizagem: Aprendizagem por ensino}
+
+Utilizando o esquema de representação da Figura \ref{list:learningStrategyJShop2}, a Figura \ref{list:learningByTeachingJShop2} mostra a representação das tarefas e métodos empregados para representar a criação da estratégia de aprendizagem por ensino (\textsf{LearningByTeaching}). A estratégia de aprendizagem é definida como a construção de um papel de estudante \textsf{PeerTutor} mediante a tarefa \textsf{createLDPeerTutorRole} (linha 11) e de um padrão de interação mediante a tarefa \textsf{createLDPeerTutorInteractions} (linha 12).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDLearningByTeachingStrategy ?goals ?groups)
+      ((assign ?id (call GetUUID rp)))
+      ((!startLDElement role-part ((identifier ?id))
+            ((LearningByTeaching Strategy) ?id () ?groups))
+       (createLDTitle (LearningByTeaching Strategy) ?goals)
+       (createLearningByTeachingStrategy ?goals ?groups)
+       (!endLDElement role-part ?id)))
+   
+   (:method (createLearningByTeachingStrategy ?goals ?groups)
+      ()
+      ((createLDPeerTutorRole ?goals ?groups)
+       (createLDPeerTutorInteractions ?goals ?groups)))
+   
+   (:method (createLDPeerTutorInteractions ?goals ?groups)
+      ((getElement ?as ((class CurrentLDInteractions))))
+      ((!startLDElement activity-structure-ref ((ref ?as)))
+       (!endLDElement activity-structure-ref)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação da estratégia aprendizagem por ensino}
+\label{list:learningByTeachingJShop2}
+\end{figure}
+
+\subsubsection{Papel dos estudantes: Peer tutor}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDPeerTutorRole ?goals ?groups)
+      ()
+      ((createLDPeerTutorRole! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (createLDPeerTutorRole! ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (getElement ?e ((class CurrentLDElement)))
+       (getPropertyValue ?u ?e hasCurrentUoL)
+       (buildPropertyQuery ?query hasParticipant ?learners
+                           ((class Role)
+                            (class PeerTutor)
+                            (property hasCurrentUoL ?u)))
+       (getElement ?id ?query)
+       (forall (?l) ((exist ?l ?learners))
+               ((getPropertyValue ?id ?l hasRole))))
+      ((!startLDElement role-ref ((ref ?id)))
+       (!endLDElement role-ref)))
+   
+   \textit{;; fall-back}
+   (:method (createLDPeerTutorRole ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (assign ?id (call GetUUID role)))
+      ((!startLDElement role-ref ((ref ?id)))
+       (!startLDElement learner ((identifier ?id))
+            ((PeerTutor Instructional Role) ?id () (?learners)))
+       (createLDTitle (PeerTutor Role) ())
+       (createPeerTutorRole ?id ?learners)
+       (!endLDElement learner ?id)
+       (!endLDElement role-ref)))
+   
+   (:method (createPeerTutorRole ?role ?learners)
+      ()
+      ((addUsersToRole ?learners ?role)
+       (createLDPeerTutorInformation ?role ?learners)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação do papel \emph{Peer tutor}}
+\label{list:peerTutorRoleJShop2}
+\end{figure}
+
+Utilizando o esquema de representação da Figura \ref{list:roleJShop2}, a Figura \ref{list:peerTutorRoleJShop2} mostra a representação da estratégia de criação do papel \textit{Peer-tutor}, papel de tipo instrucional \textsf{Instructional} (linha 26) definido no método \textsf{\textit{fall-back}} (linhas 21-30).
+
+\newpage
+\subsubsection{Padrão de interação: Peer tutoring}
+
+Utilizando o esquema de representação da Figura \ref{list:interactionJShop2}, a Figura \ref{list:peertutoringInteractionJShop2} mostra a representação da estratégia de criação do padrão de interação \textit{Peer tutoring}. A tarefa é definida como fluxos de interações direcionadas e cíclicas: transmissão de conhecimento e requisitar detalhes sobre o problema, \textsf{KnowlTransmissionReqProblemDetail} (linha 20); e meta-reconhecimento do progresso de aprendizagem, \textsf{MetarecognizeProgress} (linha 21).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDPeerTutoringInteractions ?goals ?groups)
+      ((getElement ?e ((class CurrentLDElement)))
+       (getRelateds ?strategies (?e) 1 inverseIsPartOf
+                    ((class Strategy)))
+       (assign ?id (call GetUUID as)))
+      ((!!changeCurrentLDElement ?strategies)
+       (!startLDElement activity-structure-ref ((ref ?id)))
+       (startLDElement! activity-structure ((identifier ?id)
+                                            (structure-type selection))
+                        ((PeerTutoring Interactions) ?id ?goals ?groups))
+       (createLDTitle (PeerTutoring Interactions) ?goals)
+       (createPeerTutoringInteractions ?goals ?groups)
+       (!endLDElement activity-structure ?id)
+       (!endLDElement activity-structure-ref)
+       (!!changeCurrentLDElement (?e))))
+   
+   (:method (createPeerTutoringInteractions ?goals ?groups)
+      ()
+      ((createLDPeerTutoringInteractionEnvironment ?goals ?groups)
+       (createLDKnowlTransmissionReqProblemDetailInteractions ?goals ?groups)
+       (createLDMetarecognizeProgressInteractions ?goals ?groups)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação do padrão de interação \textit{Peer tutoring}}
+\label{list:peertutoringInteractionJShop2}
+\end{figure}
+
+
+\subsubsection{Fluxo de interações direcionadas: meta-reconhecimento do progresso}
+
+Utilizando o esquema de representação da Figura \ref{list:InteractionJShop2}, a estratégia de criação de um fluxo de interação de meta-reconhecimento do progresso de aprendizagem (\textsf{MetarecognizeProgress}) é mostrada na Figura \ref{list:metarecognizeProgressInteractionJShop2}. A tarefa de criação do fluxo de interações direcionadas e cíclicas do meta-reconhecimento é conformado pelos eventos IL: demostrar como resolver um problema, \textsf{DemonHowSolveProblem}  (linhas 30, 37); monitorar, \textsf{Monitoring} (linhas 31, 39); e notificar estado corrente de estudante, \textsf{NotifyHowLearnerIs} (linhas 32, 40).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDMetarecognizeProgressInteractions ?goals ?groups)
+      ((assign ?id (call GetUUID as)))
+      ((!startLDElement activity-structure-ref ((ref ?id)))
+       (startLDElement! activity-structure ((identifier ?id)
+                                            (structure-type sequence))
+               ((MetarecognizeProgress Interactions) ?id ?goals ?groups))
+       (createLDTitle (MetarecognizeProgress Interactions) ?goals)
+       (createMetarecognizeProgressInteractions ?goals ?groups)
+       (!endLDElement activity-structure ?id)
+       (!endLDElement activity-structure-ref)))
+   
+   (:method (createMetarecognizeProgressInteractions ?goals ?groups)
+      ()
+      ((createMetarecognizeProgressInteractions! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (createMetarecognizeProgressInteractions! ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (getElement ?e ((class CurrentLDElement)))
+       (getPropertyValue ?u ?e hasCurrentUoL)
+       (getRelateds ?interactions (?e) -1 isPartOf
+                    ((class Interactions)
+                     (property hasCurrentUoL ?u)))
+       (buildPropertyQuery ?tmpQuery hasGoal ?goals
+                           ((class InteractionEnvironment)
+                            (property hasCurrentUoL ?u)))
+       (buildPropertyQuery ?query hasParticipant ?learners ?tmpQuery)
+       (getRelateds ?environments ?interactions 1 inverseIsPartOf ?query)
+       (different ?environments ()))
+      ((createLDDemonHowSolveProblemILEvent ?goals ?groups)
+       (createLDMonitoringILEvent ?goals ?groups)
+       (createLDNotifyHowLearnerIsILEvent ?goals ?groups)))
+   
+   \textit{;; fall-back}
+   (:method (createMetarecognizeProgressInteractions ?goals ?groups)
+      ()
+      ((createLDMetarecognizeProgressInteractionEnvironment ?goals ?groups)
+       (createLDDemonHowSolveProblemILEvent ?goals ?groups)
+       (createLDMonitoringILEvent ?goals ?groups)
+       (createLDNotifyHowLearnerIsILEvent ?goals ?groups)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação do fluxo de interações meta-reconhecimento}
+\label{list:metarecognizeProgressInteractionJShop2}
+\end{figure} 
+
+\newpage
+\subsubsection{Evento IL: Monitorar}
+
+Utilizando os esquemas de representação das Figuras \ref{list:ILEventJShop2}, \ref{list:ILEventDescriptionJShop2} e \ref{list:ILEnvironmentJShop2}; a estratégia de criação do evento IL \textit{Monitoring} é definida mediante as tarefa e métodos hierárquicos mostrados nas Figuras \ref{list:monitoringILEventJSHOP2}, \ref{list:monitoringILEventDescriptionJShop2} e \ref{list:monitoringILEnvironmentJShop2}.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDMonitoringILEvent ?goals ?groups)
+      ((assign ?id (call GetUUID la)))
+      ((!startLDElement learning-activity-ref ((ref ?id)))
+       (startLDElement! learning-activity ((identifier ?id))
+                        ((Monitoring ILEvent) ?id ?goals ?groups))
+       (createLDTitle (Monitoring ILEvent) ?goals)
+       (createMonitoringILEvent ?goals ?groups)
+       (!endLDElement learning-activity ?id)
+       (!endLDElement learning-activity-ref)))
+   
+   (:method (createMonitoringILEvent ?goals ?groups)
+      ()
+      ((createMonitoringILEvent! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (createMonitoringILEvent! ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (getElement ?e ((class CurrentLDElement)))
+       (getPropertyValue ?u ?e hasCurrentUoL)
+       (getRelateds ?interactions (?e) -1 isPartOf
+                    ((class Interactions)
+                     (property hasCurrentUoL ?u)))
+       (buildPropertyQuery ?tmpQuery hasGoal ?goals
+                           ((class InteractionEnvironment)
+                            (property hasCurrentUoL ?u)))
+       (buildPropertyQuery ?query hasParticipant ?learners ?tmpQuery)
+       (getRelateds ?environments ?interactions 1 inverseIsPartOf ?query)
+       (different ?environments ()))
+      ((createLDMonitoringILEventDescription ?goals ?groups)))
+   
+   \textit{;; fall-back}
+   (:method (createMonitoringILEvent ?goals ?groups)
+      ()
+      ((createLDMonitoringILEnvironment ?goals ?groups)
+       (createLDMonitoringILEventDescription ?goals ?groups)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação do evento IL Monitorar (\emph{Monitoring})}
+\label{list:monitoringILEventJSHOP2}
+\end{figure}
+
+A Figura \ref{list:monitoringILEventDescriptionJShop2} mostra a representação da estratégia de criação de ações associadas ao evento IL Monitorar (\textsf{Monitoring}), no qual: as ações associadas aos eventos instrucional e de aprendizagem são a verificação (\textsf{Checking}) e sendo objeto de verificação (\textsf{BeingChecked}). Enquanto, a Figura \ref{list:monitoringILEnvironmentJShop2} mostra a representação da estratégia de criação do ambiente de apoio à aprendizagem associado ao evento IL Monitorar (\textsf{Monitoring}).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDMonitoringILEventDescription ?goals ?groups)
+      ()
+      ((!startLDElement activity-description)
+       (createLDTitle (Monitoring ILEventDescription) ?goals)
+       (createMonitoringILEventDescription ?goals ?groups)
+       (!endLDElement activity-description)))
+   
+   (:method (createMonitoringILEventDescription ?goals ?groups)
+      ()
+      ((createMonitoringILEventDescription! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (createMonitoringILEventDescription! ?goals (?instructors ?learners))
+      ((getElement ?iactivity ((class Checking)
+                               (class ILEventDescription)))
+       (getElement ?lactivity ((class BeingChecked)
+                               (class ILEventDescription))))
+      ((createLDInstructItem ?iactivity ?instructors)
+       (createLDLearningItem ?lactivity ?learners)))
+   
+   \textit{;; fall-back}
+   (:method (createMonitoringILEventDescription ?goals (?instructors ?learners))
+      ((assign ?iaction (call BuildElement ((class Checking)
+                                            (class ILEventDescription))))
+       (assign ?laction (call BuildElement ((class BeingChecked)
+                                            (class ILEventDescription)))))
+      ((createLDInstructItem ?iaction ?instructors)
+       (createLDLearningItem ?laction ?learners)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação  de ações associadas ao evento IL Monitorar}
+\label{list:monitoringILEventDescriptionJShop2}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDMonitoringILEnvironment ?goals ?groups)
+      ((assign ?id (call GetUUID env)))
+      ((!startLDElement environment-ref ((ref ?id)))
+       (!startLDElement environment ((identifier ?id))
+                        ((Monitoring ILEnvironment) ?id ?goals ?groups))
+       (createLDTitle (Monitoring ILEnvironment) ?goals)
+       (createEnvironment ?goals ?groups)
+       (!endLDElement environment ?id)
+       (!endLDElement environment-ref)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação do ambiente no evento IL Monitorar}
+\label{list:monitoringILEnvironmentJShop2}
+\end{figure}
+
+\newpage
+\subsection{Exemplo de macrorroteiro: Jigsaw}
+\label{subsec:exemploModelagemMacroroteiros}
+
+O padrão de roteiro \textit{Jigsaw} é definido como o diagrama mostrado na Figura \ref{fig:exmacroJIGSAW}, no qual os estudantes são enfrentados à resolução de um problema complexo que pode ser dividido em subproblemas. O fluxo de sessões de aprendizagem definidas pelo padrão possibilitam: promover a interdependência positiva, promover a responsabilidade individual e fomentar a discussão.
+
+O fluxo de sessões de aprendizagem é estruturado em: uma fase individual na que cada estudante trabalha individualmente em um dos subproblemas; uma fase de especialização na que cada grupo de estudantes estudam um mesmo subproblema; e uma fase Jigsaw na que são reunidos todos os estudantes para contribuir com a resolução do problema principal. 
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.65\textwidth]{figuras/diagramJIGSAW}
+\caption{Diagrama do macrorroteiro Jigsaw}
+\label{fig:exmacroJIGSAW}
+\end{figure}
+
+A seguir apresentamos a modelagem de algumas estratégias de planejamento instrucional extraídas do padrão \textit{Jigsaw}. Neste trabalho usando 3 padrões de macrorroteiros foram modeladas: 4 estratégias de sessões de aprendizagem, 8 estratégias de atividades de grupo, 8 estratégias de atividades de grupo, 10 estratégias de fases, 3 estratégias de macrorroteiros detalhadas no \textit{website}
+\begin{center}
+\url{http://www.ime.usp.br/~geiser/dissertacao/macrorroteiros/}
+\end{center}
+
+\subsubsection{Macrorroteiro: Jigsaw}
+
+Utilizando o esquema de representação da Figura \ref{list:LDScriptJShop2}, a Figura \ref{list:createLDJigsawScriptJSHOP2} mostra a representação da estratégia de criação do macrorroteiro \textit{Jigsaw}, no que o método \textsf{fall-back} (linhas 16-42) efetua a seleção de um elemento auxiliar \textsf{?aux} (linhas 19-28) composto de mais de um elemento auxiliar \textsf{?subauxs} (linhas 29-32). O número de participantes do roteiro \textsf{?nroLearners} deve ser duas vezes maior ao número de sub-elementos \textsf{?nroSubAuxs} (linhas 33-34) para que durante a fase de especialização exista como mínimo dois participantes estudando juntos cada um dos sub-elementos.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDJigsawScript ?goals ?groups)
+      ()
+      ((createLDJigsawScript! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (createLDJigsawScript! ?goals ?groups)
+      ((assign ?id (call GetUUID play)))
+      ((!startLDElement play ((identifier ?id))
+                        ((Jigsaw Script) ?id ?goals ?groups))
+       (!!changeCLGrouping ())
+       (createLDTitle (Jigsaw Script) ?goals)
+       (createJigsawScript ?goals ?groups)
+       (!endLDElement play ?id)))
+   
+   \textit{;; fall-back}
+   (:method (createLDJigsawScript ?fgoals ?groups)
+      ((getCompFromGoals ?c ?fgoals)
+       (hasKnowledgeType ?c Fundamental)
+       (assign ?learners (call ConcatList ?groups))
+       (getLearnerPropertyQuery ?tmpq1 ?c ?learners)
+       (getLevelsFromGoals ?levels ?fgoals)
+       (buildPropertyQuery ?tmpq2 hasLearningObjective ?c ?levels ?tmpq1)
+       (getCurrentLearningResourceType ?types)
+       (buildPropertyQuery ?query hasLearningResourceType ?types
+                           ((class Auxiliary) . ?tmpq2))
+       (getElements ?unsortAuxs ?query)
+       (sortByAlreadySeen ?auxs ?unsortAuxs ?learners)
+       (assignIterator ?aux ?auxs)
+       (getRelateds ?subauxs (?aux) 1 inverseIsPartOf
+                    ((class Auxiliary)))
+       (length ?nroSubAuxs ?subauxs)
+       (call > ?nroSubAuxs 1)
+       (length ?nroLearners (call ConcatList ?groups))
+       (call >= ?nroLearners (call * 2 ?nroSubAuxs))
+       (getGoalsFromAuxiliary ?goals ?aux ?c ?levels)
+       (assign ?id (call GetUUID play)))
+      ((!startLDElement play ((identifier ?id))
+                        ((Jigsaw Script) ?id ?goals ?groups))
+       (!!changeFundCompetency ?c)
+       (createLDTitle (Jigsaw Script) ?goals)
+       (createJigsawScript ?goals ?groups)
+       (!endLDElement play ?id)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação do macrorroteiro Jigsaw}
+\label{list:createLDJigsawScriptJSHOP2}
+\end{figure}
+
+\newpage
+
+Utilizando o esquema de representação da Figura \ref{list:createNameScriptJShop2}, a Figura \ref{list:createJigsawScriptJShop2} mostra o método associados à tarefa \textsf{createJigsawScript} que define a criação das fases \textsf{Individual}, \textsf{Expert} e \textsf{Jigsaw} (linhas 15-17). No método, os objetivos \textsf{?subGoals} são obtidos mediante o axioma \textsf{getGoalsFromAuxiliaries} (linha 14) usando os subelementos auxiliares \textsf{?subauxs} (linhas 4-6).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createJigsawScript ?goals ?groups)
+      ((getCompFromGoals ?c ?goals)
+       (hasKnowledgeType ?c Auxiliary)
+       (getPropertyValue ?aux ?c hasKnowledge)
+       (getRelateds ?subauxs (?aux) 1 inverseIsPartOf
+                    ((class Auxiliary)))
+       (length ?nroSubAuxs ?subauxs)
+       (call > ?nroSubAuxs 1)
+       (assign ?learners (call ConcatList ?groups))
+       (length ?nroLearners ?learners)
+       (call >= ?nroLearners (call * 2 ?nroSubAuxs))
+       (getElement ?e ((class CurrentLDElement)))
+       (getPropertyValue ?fc ?e hasFundCompetency)
+       (getGoalsFromAuxiliaries ?subGoals ?subauxs ?fc))
+      ((createLDIndividualPhase ?subGoals ?groups)
+       (createLDExpertPhase ?subGoals ?groups)
+       (createLDJigsawPhase ?goals ?groups)))
+\end{jshopcode}
+\caption{Métodos associados à tarefa \textsf{createJigsawScript}}
+\label{list:createJigsawScriptJShop2}
+\end{figure}
+
+\subsubsection{Fase: Jigsaw}
+
+A Figura \ref{list:jigsawPhaseJShop2} mostra a representação da estratégia de criação da fase \textit{Jigsaw} pertencente ao macrorroteiro \textit{Jigsaw}. A formação de grupos não é definida devido a que todos os participantes na fase serão reunidos para contribuir na resolução do problema.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDJigsawPhase ?goals ?groups)
+      ((assign ?id (call GetUUID act)))
+      ((!startLDElement act ((identifier ?id))
+                        ((Jigsaw Phase) ?id () ?groups))
+       (createLDTitle (Jigsaw Phase) ?goals)
+       (createJigsawPhase ?goals ?groups)
+       (!endLDElement act ?id)))
+   
+   (:method (createJigsawPhase ?goals ?groups)
+      ()
+      ((createLDJigsawGroupActivity ?goals ?groups)))
+\end{jshopcode}
+\caption{Representação da fase Jigsaw}
+\label{list:jigsawPhaseJShop2}
+\end{figure}
+
+\newpage
+\subsubsection{Atividade de grupo: Jigsaw}
+
+Utilizando o esquema de representação da Figura \ref{list:groupActivityJShop2}, a Figura \ref{list:jigsawGroupActivityJShop2} mostra a representação da estratégia de criação da atividade de grupo \textsf{Jigsaw}. A estratégia define a atividade de grupo como: um conjunto de sessões de discussão definidas pelo método de decomposição distributiva associado à tarefa \textsf{distributeDiscussionSession} (linha 34) e uma sessão de conclusão definida pela tarefa \textsf{createLDJigsawSession} (linha 35).
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDJigsawGroupActivity ?goals ?groups)
+      ((assign ?id (call GetUUID rp)))
+      ((startLDElement! role-part ((identifier ?id))
+                        ((Jigsaw GroupActivity) ?id ?goals ?groups))
+       (createLDTitle (Jigsaw GroupActivity) ?goals)
+       (createJigsawGroupActivity ?goals ?groups)
+       (!endLDElement role-part ?id)))
+   
+   (:method (createJigsawGroupActivity ?goals ?groups)
+      ()
+      ((createLDGroup ?goals ?groups)
+       (createLDJigsawSessions ?goals ?groups)))
+   
+   (:method (createLDJigsawSessions ?goals ?groups)
+      ((assign ?id (call GetUUID as)))
+      ((!startLDElement activity-structure-ref ((ref ?id)))
+       (startLDElement! activity-structure ((identifier ?id)
+                                            (structure-type sequence))
+                        ((Jigsaw Sessions) ?id ?goals ?groups))
+       (createLDTitle (Jigsaw Sessions) ?goals)
+       (createJigsawSessions ?goals ?groups)
+       (!endLDElement activity-structure ?id)
+       (!endLDElement activity-structure-ref)))
+       
+   (:method (createJigsawSessions ?goals ?groups)
+      ((assign ?learners (call ConcatList ?groups))
+       (getElement ?e ((class CurrentLDElement)))
+       (getCompFromGoals ?comp ?goals)
+       (getPropertyValue ?aux ?comp hasKnowledge)
+       (getRelateds ?subAuxs (?aux) 1 inverseIsPartOf
+                    ((class Auxiliary)))
+       (getPropertyValue ?c ?e hasFundCompetency)
+       (getGoalsFromAuxiliaries ?subGoals ?subAuxs ?c))
+      ((distributeDiscussionSession ?subGoals ?learners)
+       (createLDJigsawSession ?goals ?groups)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação da atividades de grupo \textit{Jigsaw}}
+\label{list:jigsawGroupActivityJShop2}
+\end{figure}
+
+\subsubsection{Sessão de aprendizagem: Discussão}
+
+Utilizando os esquemas de representação das Figuras \ref{list:sessionJShop2}, \ref{list:outputJShop2}, \ref{list:activitySessionJShop2} e \ref{list:sessionDescriptionJShop2} ; a estratégia de criação da sessão de aprendizagem discussão (\textsf{Discussion}) é definida mediante as tarefas e métodos hierárquicos mostrados nas Figuras \ref{list:discussionSessionJShop2}, \ref{list:resumeDiscussionJShop2}, \ref{list:discussionActivitySessionJShop2} e \ref{list:discussionSessionDescriptionJShop2}.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDDiscussionSession ?goals ?groups)
+      ((assign ?id (call GetUUID la)))
+      ((!startLDElement learning-activity-ref ((ref ?id)))
+       (startLDElement! learning-activity ((identifier ?id))
+                        ((Discussion Session) ?id ?goals ?groups))
+       (createDiscussionSession ?goals ?groups)
+       (!endLDElement learning-activity ?id)
+       (!endLDElement learning-activity-ref)))
+   
+   (:method (createDiscussionSession ?goals ?groups)
+      ()
+      ((createLDResumeDiscussionOutput ?goals ?groups)
+       (createDiscussionActivity ?goals ?groups)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação da sessão de aprendizagem discussão}
+\label{list:discussionSessionJShop2}
+\end{figure}
+
+\newpage
+A Figura \ref{list:discussionSessionJShop2} mostra a representação da estratégia de criação da sessão de aprendizagem discussão, na que a tarefa \textsf{createExpertSession} consiste de: um resumo da discussão como recurso de saída definida pela tarefa \textsf{createLDResumeDiscussionOutput} (linha 12); e um atividade de aprendizagem definida pela tarefa \textsf{createDiscussionActivity} (linha 13). A estratégia de criação do resumo da discussão  (\textsf{ResumeDiscussion}) é mostrada na Figura \ref{list:resumeDiscussionJShop2}.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDResumeDiscussionOutput ?goals ?groups)
+      ()
+      ((!startLDElement learning-objectives)
+       (createResumeDiscussionOutput ?goals ?groups)
+       (!endLDElement learning-objectives)))
+   
+   (:method (createResumeDiscussionOutput ?goals ?groups)
+      ((getElement ?e ((class CurrentLDElement)))
+       (buildPropertyQuery ?tmpQuery hasParticipant (call ConcatList ?groups)
+                           ((class Output)
+                            (class ResumeDiscussion)
+                            (relation isPartOf ?e)))
+       (buildPropertyQuery ?query hasGoal ?goals ?tmpQuery)
+       (assign ?output (call BuildElement ?query)))
+      ((createLDItem ?output)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação de resumos de discussão}
+\label{list:resumeDiscussionJShop2}
+\end{figure}
+
+A Figura \ref{list:discussionActivitySessionJShop2} mostra a estratégia de criação da atividade a ser efetuada na sessão de aprendizagem discussão definida como um ambiente de apoio à aprendizagem e uma descrição da sessão de aprendizagem no método \textsf{\textit{fall-back}} (linhas 12-16). Enquanto, o método \textsf{\textit{mandatory}} (linhas 6-9) define a atividade como um roteiro definido mediante à tarefa \textsf{createLDScriptCLScenario!}.
+A estratégia de criação da descrição de sessão discussão é mostrada na Figura \ref{list:discussionSessionDescriptionJShop2}.
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createDiscussionActivity ?goals ?groups)
+      ()
+      ((createDiscussionActivity! ?goals ?groups)))
+  
+   \textit{;; mandatory}
+   (:method (createDiscussionActivity! ?goals ?groups)
+      ((getElement ?e ((class CurrentLDElement)))
+       (getType UoL ?e))
+      ((createLDScriptCLScenario! ?goals ?groups)))
+   
+   \textit{;; fall-back}
+   (:method (createDiscussionActivity ?goals ?groups)
+      ((getElement ?e ((class CurrentLDElement)))
+       (getType Session ?e))
+      ((createLDDiscussionEnvironment ?goals ?groups)
+       (createLDDiscussionSessionDescription ?goals ?groups)))
+\end{jshopcode}
+\caption{Esquema de representação de estratégias de criação das atividades em sessões}
+\label{list:discussionActivitySessionJShop2}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDDiscussionSessionDescription ?goals ?groups)
+      ()
+      ((!startLDElement activity-description)
+       (createLDTitle (Discussion SessionDescription) ?goals)
+       (createDiscussionSessionDescription ?goals ?groups)
+       (!endLDElement activity-description)))
+   
+   (:method (createDiscussionSessionDescription ?goals ?groups)
+      ()
+      ((createDiscussionSessionDescription! ?goals ?groups)))
+   
+   \textit{;; mandatory}
+   (:method (createDiscussionSessionDescription! ?goals ?groups)
+      ((getElement ?act ((class Discussion)
+                         (class ActivityDescription))))
+      ((createLDItem ?act)))
+   
+   \textit{;; fall-back}
+   (:method (createDiscussionSessionDescription ?goals ?groups)
+      ((assign ?act (call BuildElement ((class Discussion)
+                                        (class ActivityDescription)))))
+      ((createLDItem ?act)))
+\end{jshopcode}
+\caption{Representação da estratégia de criação da descrição na sessão discussão}
+\label{list:discussionSessionDescriptionJShop2}
+\end{figure}
+
+\newpage
+\subsubsection{Combinação dos padrões de macrorroteiro com Jigsaw}
+
+\begin{figure}[htbp]
+\centering
+\begin{jshopcode}
+   (:method (createLDScript! ?goals ?groups)
+      relative-jigsaw-uol
+      ((getCompFromGoals ?c ?goals)
+       (hasKnowledgeType ?c Auxiliary)
+       (getPropertyValue ?aux ?c hasKnowledge)
+       (getRelateds ?subauxs (?aux) 1 inverseIsPartOf ((class Auxiliary)))
+       (length ?nroSubAuxs ?subauxs)
+       (call > ?nroSubAuxs 1)
+       (length ?nroLearners (call ConcatList ?groups))
+       (call >= ?nroLearners (call * 2 ?nroSubAuxs))
+       (getElement ?e ((class CurrentLDElement)))
+       (getRelateds ?lds (?e) -1 isPartOf ((class Script)
+                                     (class Jigsaw)))
+       (same ?lds ()))
+      \textit{;; complexity}
+      (:relative 3 ((assign ?learners (call ConcatList ?groups))
+                    (length ?nroLearners ?learners)
+                    (filterByQuery ?expLearners ?learners
+                                   ((property hasCLExperience (high very-high))))
+                    (length ?nroExpLearners ?expLearners)
+                    (call > ?nroExpLearners (call / ?nroLearners 2))))
+      \textit{;; skills and attitudes}
+      (:relative 1 ((getRelateds ?pi-variants (positive-interdependence) -1 isVariantOf)
+                    (getElement ?e ((class CurrentLDElement)))
+                    (getPropertyValue ?u ?e hasCurrentUoL)
+                    (getPropertyValue ?attitude1 ?u hasAttitude)
+                    (or (same ?attitude1 positive-interdependence)
+                        (exist ?attitude1 ?pi-variants))))
+      (:relative 1 ((getRelateds ?ia-variants (individual-accountability) -1 isVariantOf)
+                    (getElement ?e ((class CurrentLDElement)))
+                    (getPropertyValue ?u ?e hasCurrentUoL)
+                    (getPropertyValue ?attitude2 ?u hasAttitude)
+                    (or (same ?attitude2 individual-accountability)
+                        (exist ?attitude2 ?ia-variants))))
+      (:relative 1 ((getRelateds ?d-variants (discussion) -1 isVariantOf)
+                    (getElement ?e ((class CurrentLDElement)))
+                    (getPropertyValue ?u ?e hasCurrentUoL)
+                    (getPropertyValue ?skill1 ?u hasSkill)
+                    (or (same ?skill1 discussion)
+                        (exist ?skill1 ?d-variants))))
+      ((createLDJigsawScript ?goals ?groups)))
+\end{jshopcode}
+\caption{Método de combinação do padrão Jigsaw}
+\label{list:createLDScriptJigsawJShop2}
+\end{figure}
+
+Utilizando o esquema da Figura \ref{list:createLDScriptCLScenarioMandatory}, o método associado à tarefa \textsf{createLDScript!} que definem a combinação dos padrões de macrorroteiros com o padrão \textsf{Jigsaw} é mostrado na Figura \ref{list:createLDScriptJigsawJShop2}. No método, a condição lógica é definida como o número de estudantes \textsf{?nroLearners} deve ser maior do que o dobro de sub-elementos auxiliares \textsf{?nroSubAuxs} do elemento \textsf{?aux} (linhas 3-10). A condição de complexidade é definida como maior preferência, se os estudantes têm um nível alto de experiência (linhas 16-21). As condições de habilidades e atitudes são independência positiva (linhas 23-28), responsabilidade individual (linhas 29-34) e discussão (linhas 35-40).
+
+% --------------------------------------------------------------------------- %
+\section{Avaliação da saída do planejador}
+\label{sec:avaliacaoSaida}
+
+\pgfsetlayers{edgelayer,nodelayer,main}
+
+A avaliação da saída do planejador no modelo proposto foi efetuada mediante a geração de uma unidade de aprendizagem correspondente ao tópico ``Métodos de validade'', pertencente ao módulo ``Lógica básica'' extraída do currículo de Ciências de Computação \citep{cassel2008computer}.
+
+
+\begin{figure}[htbp]
+\begin{center}
+    \begin{tikzpicture}[scale=1]
+    %\draw[help lines] (0,0) grid (0,2);
+    \node (s1) at (0,0) [circle, draw] {$s_{1}$};
+    \node (s2) at (1.5,0) [circle, draw] {$s_{2}$};
+    \node (s3) at (3,0) [circle, draw] {$s_{3}$};
+    \node (s4) at (4.5,1.5) [circle, draw] {$s_{4}$};
+    \node (s5) at (4.5,0) [circle, draw] {$s_{5}$};
+    \node (s6) at (4.5,-1.5) [circle, draw] {$s_{6}$};
+    \draw [->] (s1) to node[]{} (s2);
+    \draw [->] (s2) to node[]{} (s3);
+    \draw [->] (s3) to node[]{} (s4);
+    \draw [->] (s3) to node[]{} (s5);
+    \draw [->] (s3) to node[]{} (s6);
+    %\draw[help lines] (0,0) grid (3,4);
+    \node (k2) at (10,1.5) [circle, draw] {$k_{2}$};
+    \node (k1) at (8,0) [circle, draw] {$k_{1}$};
+    \node (k3) at (10,-1.5) [circle, draw] {$k_{3}$};
+    \draw [->] (k1) to (k2);
+    \draw [->] (k1) to (k3);
+   \end{tikzpicture}
+\end{center}
+\caption{Habilidades (esquerda) e elementos de conhecimento de tipo fundamental (direita)}
+\label{fig:exemploSkillKnowledge}
+\end{figure}
+
+No exemplo, devido ao gerador de cursos ser independente do domínio a ser ensinado, utilizamos a ferramenta ALD para definir as estruturas de habilidades e de elementos de conhecimento de tipo fundamental mostrados na Figura \ref{fig:exemploSkillKnowledge} (com relações de pré-requisito identificadas mediante linhas sólidas), na qual: $s_{1}$, $s_{2}$, $s_{3}$, $s_{4}$, $s_{5}$ e $s_{6}$ são as habilidades ``conhecimento'', ``compreensão'', ``aplicação'', ``análise'', ``síntese'' e ``avaliação''; e  $k_{1}$, $k_{2}$ e $k_{3}$ são os elementos de conhecimento de tipo fundamental ``método da tabela de verdade'', ``método da árvore semântica'' e ``método da negação ou absurdo''.
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.85\textwidth]{figuras/exemplorelacaocompetencia}
+\caption{Relações entre competência e exercícios usados na validação da saída do planejador}
+\label{fig:exemplorelacaocompetencia}
+\end{figure}
+
+Empregando as habilidades e os conhecimentos fundamentais apresentados acima, na ferramenta ALD são definidas as competências cognitivas $c_{1}$, $c_{2}$ e $c_{3}$ como ``aplicar ($s_{3}$) o método da tabela verdade ($k_{1}$)'', ``aplicar ($s_{3}$) o método da árvore semântica ($k_{2}$)'' e ``aplicar ($s_{3}$) o método da negação ou absurdo ($k_{3}$)''. Logo, efetuamos a definição dos elementos de conhecimento de tipo auxiliar e efetuamos a relação com as competências usando as propriedades de pré-requisitos (\textsf{hasPrerequisite}) e de objetivos de aprendizagem (\textsf{hasLearningObjective}). Em nosso exemplo, 34 exercícios foram criados e relacionados com os diferentes níveis de competências referentes à competência ``aplicar o método da negação ou absurdo'' ($c_{3}$), como é mostrada na Figura \ref{fig:exemplorelacaocompetencia} na qual as relações são objetivos de aprendizagem.
+
+Finalmente, devido ao gerador de cursos ser independente da informação dos estudantes, o projetista instrucional usando a ferramenta ALD define o modelo de estudante mediante a informação da Tabela \ref{tab:exampleLearnerModel} como registros de competências, históricos e preferências.
+
+\begin{table}[htbp]%\small
+\centering
+\begin{tabular}{|c|r|r|r|r|r|c|c|}
+\hline
+ & \multicolumn{3}{|c|}{\textbf{competências}} & \multicolumn{2}{|c|}{\textbf{históricos}} & \multicolumn{2}{|c|}{\textbf{preferências}} \\
+\hline
+\hline
+\textbf{identificador} & \textbf{$c_{1}$} & \textbf{$c_{2}$} & \textbf{$c_{3}$} & \textbf{$r_{1}$} & \textbf{$r_{2}$} & \textbf{personalidade} & \textbf{experiência} \\ \hline \hline
+estudante1  & s1k2 & s0k3 & s4k2 & sim & não & introversion & high \\ \hline
+estudante2  & s2k3 & s2k2 & s4k2 & sim & não & extraversion & high \\ \hline
+estudante3  & s2k2 & s2k2 & s3k2 & sim & sim & ambiversion & medium \\ \hline
+estudante4  & s1k2 & s2k2 & s3k2 & sim & sim & extraversion & medium \\ \hline
+estudante5  & s2k2 & s0k3 & s3k1 & não & não & introversion & medium \\ \hline
+estudante6  & s2k3 & s1k2 & s3k1 & não & não & introversion & medium \\ \hline
+estudante7  & s2k3 & s1k2 & s3k0 & não & sim & extraversion & low \\ \hline
+estudante8  & s1k2 & s0k3 & s3k0 & não & sim & ambiversion & low \\ \hline
+\end{tabular}
+\caption{Informação do modelo de estudante usada na validação da saída do planejador}
+\label{tab:exampleLearnerModel}
+\end{table}
+
+Na validação da saída do planejador, a tarefa de planejamento instrucional inicial ``criação de uma unidade de aprendizagem para o tópico métodos de validade'' definida para os estudantes ``estudante1, estudante2, ... e estudante8'' é representada como:
+
+\begin{alltt}\sffamily
+\(t\sb{0}\) = (createLDFundamentalUoL ((\(c\sb{1}\) s4k3) (\(c\sb{2}\) s4k3) (\(c\sb{3}\) s4k3)) () (positive-interdependence)
+                                         ((estudante1 estudante2 estudante3 estudante4 ... estudante8)
+                                          (estudante1 estudante2 estudante3 estudante4 ... estudante8)
+                                          (estudante1 estudante2 estudante3 estudante4 ... estudante8)))
+\end{alltt}
+
+
+Usando o domínio a ser ensinado, o modelo de estudante e a tarefa inicial definidas acima apresentamos a seguir partes do resultado obtido no planejamento instrucional em ACSC, os quais são: um plano de seções para um objetivo educacional; um plano de sessões práticas para uma seção prática; um plano de sessões definidas pelo macrorroteiro ``\textit{jigsaw}'' para uma sessão de prática; e um plano de interações definidas pelo microrroteiro ``\textit{distributed cognition}'' para uma sessão do macrorroteiro.
+
+\newpage
+\subsection{Plano de seções para um objetivo educacional}
+
+A Tabela \ref{tab:exemploPlanoSecoes} mostra o plano de seções a ser obtido para o objetivo educacional ``aplicar o método da negação ou absurdo no nível autônomo e restruturação'' ($c_{3}$ s4k3). O plano consiste das seções ``introdução'', ``desenvolvimento'', ``prática'' e ``mostrar as relações'' definidas pelo cenário pedagógico ``descobrir como aplicar o método da negação ou absurdo''.
+
+\begin{table}[htbp]
+\begin{tabular}{|p{16cm}|}
+\hline
+\begin{center}\underline{Tópico: ``Métodos de validade''}\end{center}
+Objetivos educacionais:
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Aplicar o método da tabela verdade no nível autônomo e restruturação ($c_{1}$ s4k3).
+\item Aplicar o método da árvore semântica no nível autônomo e restruturação ($c_{2}$ s4k3).
+\item \underline{Aplicar o método da negação ou absurdo} no nível autônomo e restruturação ($c_{3}$ s4k3).
+\end{itemize}
+\\ \hline
+Modelo de estudante, estado corrente (nível de competência para $c_{3}$):
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Autônomo e aperfeiçoamento (s4k2) - estudante1, estudante2.
+\item Associativo e aperfeiçoamento (s3k2) - estudante3, estudante4.
+\item Associativo e crescimento (s3k1) - estudante5, estudante6.
+\item Associativo e sem conhecimento (s3k0) - estudante7, estudante8.
+\end{itemize}
+\\ \hline
+Resultado, plano de seções:
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Ensaio para aplicar o método da tabela verdade ($play_{1}$).
+\item Ensaio para aplicar o método da árvore semântica ($play_{2}$).
+\item Descobrir como aplicar o método da negação ou absurdo ($play_{3}$).
+\begin{itemize}\setlength{\itemsep}{-3pt}
+\item Introdução para aplicar o método da negação ou absurdo ($act_{1}$).
+\item Desenvolvimento para aplicar o método da negação ou absurdo ($act_{2}$).
+\item \underline{Prática para aplicar o método da negação ou absurdo} ($act_{3}$).
+\item Mostrar as relações para aplicar o método da negação ou absurdo ($act_{4}$).
+\end{itemize}
+\end{itemize}
+\\ \hline
+\end{tabular}
+\caption{Resultado esperado das seções a serem obtidas para um objetivo educacional}
+\label{tab:exemploPlanoSecoes}
+\end{table}
+
+Empregando o gerador de cursos e a tarefa inicial $t_{0}$, o processo de planejamento hierárquico mostrado na Figura \ref{fig:exemploSecaoDecomposicaoHTN} obtém o plano de seções \textsf{P} apresentado a seguir mediante:
+
+\begin{enumerate} %[(\arabic)]
+ \item[(1)] o sequenciamento dos objetivos educacionais mediante a decomposição distributiva da tarefa \textsf{createFundamentalUoL}; e
+ \item[(2)] a seleção do cenário pedagógico descoberta (\textit{discover}) mediante a decomposição da tarefa \textsf{createFundamentalScript}.
+\end{enumerate}
+
+\newpage
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tikzpicture}[scale=1.5]
+\tikzstyle{task}=[rectangle,fill=Black,draw=Black]
+\tikzstyle{method}=[circle,fill=White,draw=Black,minimum size=2mm,inner sep=0pt]
+\tikzstyle{action}=[rectangle,fill=hexcolor0xd6d6d6,draw=Black]
+\tikzstyle{more}=[rectangle,fill=White,draw=White]
+\tikzstyle{zeta}=[fill=Black,->]
+\tikzstyle{texto}=[text badly centered, font=\tiny]
+\begin{pgfonlayer}{nodelayer}
+	%createLDFundUoL
+	\node [style=task] (3) at (0, 5) {};
+	\draw (0, 4.75) node [style=texto] {createLDFundamentalUoL};
+	\node [style=method] (6) at (0, 4.5) {};
+	\node [style=action] (4) at (-2, 3.75) {};
+	\draw (-2, 3.5) node [style=texto] {!start $ld_{1}$};
+	\node [style=more] (32) at (-1, 3.75) {...};
+	\node [style=task] (0) at (0, 3.75) {};
+	\node [style=more] (33) at (1, 3.75) {...};
+	\node [style=action] (15) at (2, 3.75) {};
+	\draw (2, 3.5) node [style=texto] {!end $ld_{1}$};
+	%method sort
+	\node [style=method] (5) at (0, 3.25) {};
+	\draw (1, 3.25) node [style=texto] {(1) seq. de objetivos};
+	%createLDFundScript $c_{1}$
+	\node [style=task] (1) at (-2.5, 2.75) {};
+	\draw (-2.5, 2.5) node [style=texto] {createLDFundamentalScript $c_{1}$};
+	\node [style=method] (27) at (-2.5, 2.25) {};
+	\node [style=action] (19) at (-3.25, 1.5) {};
+	\draw (-3.25, 1.25) node [style=texto] {!start $play_{1}$};
+	\node [style=more] (34) at (-2.5, 1.5) {...};
+	\node [style=action] (20) at (-1.75, 1.5) {};
+	\draw (-1.75, 1.25) node [style=texto] {!end $play_{1}$};
+	%createLDFundScript $c_{2}$
+	\node [style=task] (2) at (0, 2.75) {};
+	\draw (0, 2.5) node [style=texto] {createLDFundamentalScript $c_{2}$};
+	\node [style=method] (26) at (0, 2.25) {};
+	\node [style=action] (24) at (-0.75, 1.5) {};
+	\draw (-0.75, 1.25) node [style=texto] {!start $play_{2}$};
+	\node [style=more] (35) at (0, 1.5) {...};
+	\node [style=action] (11) at (0.75, 1.5) {};
+	\draw (0.75, 1.25) node [style=texto] {!end $play_{2}$};
+	%createLDFundScript $c_{3}$
+	\node [style=task] (16) at (2.5, 2.75) {};
+	\draw (2.5, 2.5) node [style=texto] {createLDFundamentalScript $c_{3}$};
+	\node [style=method] (7) at (2.5, 2.25) {};
+	\node [style=action] (10) at (1.5, 1.5) {};
+	\draw (1.75, 1.25) node [style=texto] {!start $play_{3}$};
+	\node [style=more] (36) at (2.25, 1.5) {...};
+	\node [style=task] (17) at (3, 1.5) {};
+	\node [style=action] (9) at (3.75, 1.5) {};
+	\draw (3.75, 1.25) node [style=texto] {!end $play_{3}$};
+	%method discover
+	\node [style=method] (25) at (3, 1) {};
+	\draw (4.15, 1) node [style=texto] {(2) sel. cenário (\textit{discover})};
+	%createIntroductionPhase
+	\node [style=task] (31) at (0, 0.5) {};
+	\draw (0, 0.25) node [style=texto] {createLDIntroductionPhase};
+	\node [style=method] (8) at (0, 0) {};
+	\node [style=action] (14) at (-0.75, -0.75) {};
+	\draw (-0.75, -1) node [style=texto] {!start $act_{1}$};
+	\node [style=more] (37) at (0, -0.75) {...};
+	\node [style=action] (21) at (0.75, -0.75) {};
+	\draw (0.6, -1) node [style=texto] {!end $act_{1}$};
+	%createDevelopPhase
+	\node [style=task] (18) at (2, 0.5) {};
+	\draw (2, 0.25) node [style=texto] {createLDDevelopPhase};
+	\node [style=method] (28) at (2, 0) {};
+	\node [style=action] (13) at (2.75, -0.75) {};
+	\draw (2.6, -1) node [style=texto] {!end $act_{2}$};
+	\node [style=more] (38) at (2, -0.75) {...};
+	\node [style=action] (23) at (1.25, -0.75) {};
+	\draw (1.5, -1) node [style=texto] {!start $act_{2}$};
+	%createPracticePhase
+	\node [style=task] (30) at (4, 0.5) {};
+	\draw (4, 0.25) node [style=texto] {createLDPracticePhase};
+	\node [style=method] (29) at (4, 0) {};
+	\node [style=action] (22) at (3.25, -0.75) {};
+	\draw (3.5, -1) node [style=texto] {!start $act_{3}$};
+	%\node [style=more] (39) at (3.7, -0.75) {...};
+	%\node [style=task] (st8) at (4, -0.75) {};
+	\node [style=more] (st8) at (4, -0.75) {...};
+	\node [style=action] (12) at (4.75, -0.75) {};
+	\draw (4.65, -1) node [style=texto] {!end $act_{3}$};
+	%method1
+	%\node [style=method] (me1) at (4, -1.25) {};
+	%createLDPracticeGroupActivity
+	%\node [style=task] (t9) at (4, -1.75) {};
+	%\draw (4.25, -2) node [style=texto] {createLDPracticeGroupActivity};
+	%\node [style=method] (m9) at (4, -2.25) {};
+	%\node [style=action] (ao9) at (3.25, -2.75) {};
+	%\draw (3.25, -3) node [style=texto] {!start $rp_{0}$};
+	%\node [style=more] (mo9) at (3.75, -2.75) {...};
+	%\node [style=task] (st9) at (4.25, -2.75) {};
+	%\node [style=action] (ac9) at (4.75, -2.75) {};
+	%\draw (4.75, -3) node [style=texto] {!end $rp_{0}$};
+	%method2andtask
+	%\node [style=method] (m10) at (4.25, -3.25) {};
+	%\node [style=task] (st10a) at (3.75, -3.75) {};
+	%\draw (3.5, -4) node [style=texto] {createLDGroup};
+	%\node [style=task] (st10b) at (4.75, -3.75) {};
+	%\draw (5.25, -4) node [style=texto] {createLDPracticeSessions};
+	%createConnectionPhase
+	\node [style=task] (40) at (6, 0.5) {};
+	\draw (6, 0.25) node [style=texto] {createLDConnectionPhase};
+	\node [style=method] (41) at (6, 0) {};
+	\node [style=action] (42) at (5.25, -0.75) {};
+	\draw (5.5, -1) node [style=texto] {!start $act_{4}$};
+	\node [style=more] (43) at (6, -0.75) {...};
+	\node [style=action] (44) at (6.75, -0.75) {};
+	\draw (6.75, -1) node [style=texto] {!end $act_{4}$};
+\end{pgfonlayer}
+\begin{pgfonlayer}{edgelayer}
+	\draw [style=zeta] (25) to (40);
+	\draw [style=zeta] (40) to (41);
+	\draw [style=zeta] (41) to (42);
+	\draw [style=zeta] (41) to (43);
+	\draw [style=zeta] (41) to (44);
+	\draw [style=zeta] (6) to (4);
+	\draw [style=zeta] (6) to (15);
+	\draw [style=zeta] (3) to (6);
+	\draw [style=zeta] (6) to (0);
+	\draw [style=zeta] (0) to (5);
+	\draw [style=zeta] (5) to (1);
+	\draw [style=zeta] (5) to (2);
+	\draw [style=zeta] (5) to (16);
+	\draw [style=zeta] (1) to (27);
+	\draw [style=zeta] (2) to (26);
+	\draw [style=zeta] (16) to (7);
+	\draw [style=zeta] (27) to (19);
+	\draw [style=zeta] (27) to (20);
+	\draw [style=zeta] (26) to (24);
+	\draw [style=zeta] (26) to (11);
+	\draw [style=zeta] (7) to (10);
+	\draw [style=zeta] (7) to (9);
+	\draw [style=zeta] (7) to (17);
+	\draw [style=zeta] (17) to (25);
+	\draw [style=zeta] (31) to (8);
+	\draw [style=zeta] (18) to (28);
+	\draw [style=zeta] (30) to (29);
+	\draw [style=zeta] (25) to (31);
+	\draw [style=zeta] (25) to (18);
+	\draw [style=zeta] (25) to (30);
+	\draw [style=zeta] (8) to (14);
+	\draw [style=zeta] (8) to (21);
+	\draw [style=zeta] (28) to (23);
+	\draw [style=zeta] (28) to (13);
+	\draw [style=zeta] (29) to (22);
+	\draw [style=zeta] (29) to (12);
+	\draw [style=zeta] (6) to (32);
+	\draw [style=zeta] (6) to (33);
+	\draw [style=zeta] (27) to (34);
+	\draw [style=zeta] (26) to (35);
+	\draw [style=zeta] (7) to (36);
+	\draw [style=zeta] (8) to (37);
+	\draw [style=zeta] (28) to (38);
+	%\draw [style=zeta] (29) to (39);
+	\draw [style=zeta] (29) to (st8);
+	%method1
+	%\draw [style=zeta] (st8) to (me1);
+	%\draw [style=zeta] (me1) to (t9);
+	%createLDPracticeGroupActivity
+	%\draw [style=zeta] (t9) to (m9);
+	%\draw [style=zeta] (m9) to (ao9);
+	%\draw [style=zeta] (m9) to (mo9);
+	%\draw [style=zeta] (m9) to (st9);
+	%\draw [style=zeta] (m9) to (ac9);
+	%method2andtask
+	%\draw [style=zeta] (st9) to (m10);
+	%\draw [style=zeta] (m10) to (st10a);
+	%\draw [style=zeta] (m10) to (st10b);
+\end{pgfonlayer}
+\end{tikzpicture}
+\end{center} %\centering
+\caption{Processo de planejamento hierárquico usado para obter o plano de seções}
+\label{fig:exemploSecaoDecomposicaoHTN}
+\end{figure}
+
+\begin{alltt}\sffamily\scriptsize
+P = ((!startLDElement learning-design ((identifier \(ld\sb{1}\))) ((Fundamental UoL) \(ld\sb{1}\) ((\(c\sb{1}\) s4k3) (\(c\sb{2}\) s4k3) (\(c\sb{3}\) s4k3)) () ()
+                              ((estudante1 ... estudante8) (estudante1 ... estudante8) (estudante1 ... estudante8))))
+        ...
+        (!startLDElement play ((identifier \(play\sb{1}\))) ((Fundamental Script) \(play\sb{1}\) ((\(c\sb{1}\) s4k3)) ((estudante1 ... estudante8))))
+        ...
+        (!endLDElement play \(play\sb{1}\))
+        (!startLDElement play ((identifier \(play\sb{2}\))) ((Fundamental Script) \(play\sb{2}\) ((\(c\sb{2}\) s4k3)) ((estudante1 ... estudante8))))
+        ...
+        (!endLDElement play \(play\sb{2}\))
+        (!startLDElement play ((identifier \(play\sb{3}\))) ((Fundamental Script) \(play\sb{3}\) ((\(c\sb{3}\) s4k3)) ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement act \(act\sb{1}\) ((identifier \(act\sb{1}\))) ((Introduction Phase) \(act\sb{1}\) () ((estudante1 ... estudante8))))
+        ...
+        (!endLDElement act \(act\sb{1}\))
+        (!startLDElement act \(act\sb{2}\) ((identifier \(act\sb{2}\))) ((Develop Phase) \(act\sb{2}\) () ((estudante1 ... estudante8))))
+        ...
+        (!endLDElement act \(act\sb{2}\))
+        (!startLDElement act \(act\sb{3}\) ((identifier \(act\sb{3}\))) ((Practice Phase) \(act\sb{3}\) () ((estudante1 ... estudante8))))
+        ...
+        (!endLDElement act \(act\sb{3}\))
+        (!startLDElement act \(act\sb{4}\) ((identifier \(act\sb{4}\))) ((Connect Phase) \(act\sb{4}\) () ((estudante1 ... estudante8))))
+        ...
+        (!endLDElement act \(act\sb{4}\))
+        (!endLDElement play \(play\sb{3}\))
+        ...
+        (!endLDElement learning-design \(ld\sb{1}\)))
+\end{alltt}
+
+%\newpage
+A Figura \ref{fig:exemploSecoesCopperCore} mostra a interface de usuário no sistema CopperCore apresentando o plano de seções \textsf{P}, obtido pelo gerador de cursos colaborativos. A interface mostra as seções do cenário ``descobrir como aplicar o método da negação ou absurdo''.
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.9\textwidth]{figuras/secoescoppercore}
+\caption{Interface de usuário no CopperCore do plano de seções para um objetivo educacional}
+\label{fig:exemploSecoesCopperCore}
+\end{figure}
+
+\subsection{Plano de sessões práticas para uma seção prática}
+
+A Tabela \ref{tab:exemploPlanoSessoes} mostra o plano de sessões a ser obtido para a seção ``prática para aplicar o método da negação ou absurdo'' ($act_{3}$). O plano consiste de sete sessões com diferentes níveis de competência definidas em três fases. O plano de sessões esperado consiste de:
+
+\begin{itemize}
+\item Uma fase 01 definida como uma sessão $s_{1}$ formada pelo Grupo1 (estudante1 e estudante2) usando a teoria ``\textit{distributed cognition}'', uma sessão $s_{2}$ formada pelo Grupo2 (estudante3 e estudante4) usando a teoria ``\textit{distributed cognition}'' e uma sessão $s_{3}$ formada pelo Grupo3 (estudante5, ... e estudante8) usando a teoria ``\textit{peer tutoring}''.
+\item Uma fase 02 definida como uma sessão $s_{4}$ formada pelo Grupo4 (estudante1, estudante2, estudante3 e estudante4) usando a teoria ``\textit{distributed cognition}'', uma sessão $s_{5}$ formada pelo Grupo5 (estudante5 e estudante6) usando a teoria ``\textit{distributed cognition}'' e uma sessão $s_{6}$ formada pelo Grupo6 (estudante7 e estudante8) não associado a nenhuma teoria.
+\item Uma fase 03 definida como uma sessão $s_{7}$ formada pelo Grupo7 (estudante1, estudante2, ... e estudante8) usando a teoria ``\textit{distributed cognition}''.
+\end{itemize}
+
+\newpage
+\begin{table}[htbp]
+\begin{tabular}{|p{16cm}|}
+\hline
+\begin{center}\underline{Seção: ``Prática para aplicar o método da negação ou absurdo''}\end{center}
+Objetivo educacional:
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Aplicar o método da negação ou absurdo no nível autônomo e restruturação ($c_{3}$ s4k3).
+\end{itemize}
+\\ \hline
+Modelo de estudante (nível de competência para $c_{3}$):
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Autônomo e aperfeiçoamento (s4k2) - estudante1, estudante2.
+\item Associativo e aperfeiçoamento (s3k2) - estudante3, estudante4.
+\item Associativo e crescimento (s3k1) - estudante5, estudante6.
+\item Associativo e sem conhecimento (s3k0) - estudante7, estudante8.
+\end{itemize}
+\\ \hline
+Resultado, plano de sessões:
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Fase 01 ($act_{5}$):
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Praticar $c_{3}$ com um exercício do nível s4k3 ($s_{1}$) - estudante1, estudante2.
+\item Praticar $c_{3}$ com um exercício do nível s4k2 ($s_{2}$) - estudante3, estudante4.
+\item Praticar $c_{3}$ com um exercício do nível s3k1 e s3k2 ($s_{3}$) - estudante5, estudante6,\newline estudante7, estudante8.
+\end{itemize}
+\item Fase 02 ($act_{6}$):
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Praticar $c_{3}$ com um exercício do nível s4k3 ($s_{4}$) - estudante1, estudante2,\newline estudante3, estudante4.
+\item Praticar $c_{3}$ com um exercício do nível s3k3 ($s_{5}$) - estudante5, estudante6.
+\item Praticar $c_{3}$ com um exercício do nível s4k3 ($s_{6}$) - estudante7, estudante8.
+\end{itemize}
+\item Fase 03 ($act_{7}$):
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item \underline{Praticar $c_{3}$ com um exercício do nível s4k3} ($s_{7}$) - estudante1, estudante2,\newline estudante3, estudante4, estudante5, estudante6, estudante7, estudante 8.
+\end{itemize}
+\end{itemize}
+\\ \hline
+\end{tabular}
+\caption{Resultado esperado das sessões a serem obtidas para uma seção prática}
+\label{tab:exemploPlanoSessoes}
+\end{table}
+
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tikzpicture}[scale=1.5]
+\tikzstyle{task}=[rectangle,fill=Black,draw=Black]
+\tikzstyle{method}=[circle,fill=White,draw=Black,minimum size=2mm,inner sep=0pt]
+\tikzstyle{action}=[rectangle,fill=hexcolor0xd6d6d6,draw=Black]
+\tikzstyle{more}=[rectangle,fill=White,draw=White]
+\tikzstyle{zeta}=[fill=Black,->]
+\tikzstyle{texto}=[text badly centered, font=\tiny]
+\begin{pgfonlayer}{nodelayer}
+	%createPracticePhase
+	\node [style=task] (st8) at (4, -0.75) {};
+	\draw (4, -1) node [style=texto] {createPracticePhase};
+	%method1
+	\node [style=method] (me1) at (4, -1.25) {};
+	%createLDPracticeGroupActivity
+	\node [style=task] (t9) at (4, -1.75) {};
+	\draw (4.25, -2) node [style=texto] {createLDPracticeGroupActivity};
+	\node [style=method] (m9) at (4, -2.25) {};
+	\node [style=action] (ao9) at (3.25, -2.75) {};
+	\draw (3.25, -3) node [style=texto] {!start $rp_{0}$};
+	\node [style=more] (mo9) at (3.75, -2.75) {...};
+	\node [style=task] (st9) at (4.25, -2.75) {};
+	\node [style=action] (ac9) at (4.75, -2.75) {};
+	\draw (4.75, -3) node [style=texto] {!end $rp_{0}$};
+	%method2andtask
+	\node [style=method] (m10) at (4.25, -3.25) {};
+	\node [style=task] (st10a) at (3.75, -3.75) {};
+	\draw (3.5, -4) node [style=texto] {createLDGroup};
+	\node [style=task] (st10b) at (4.75, -3.75) {};
+	\draw (5.25, -4) node [style=texto] {createLDPracticeSessions};
+\end{pgfonlayer}
+\begin{pgfonlayer}{edgelayer}
+	%method1
+	\draw [style=zeta] (st8) to (me1);
+	\draw [style=zeta] (me1) to (t9);
+	%createLDPracticeGroupActivity
+	\draw [style=zeta] (t9) to (m9);
+	\draw [style=zeta] (m9) to (ao9);
+	\draw [style=zeta] (m9) to (mo9);
+	\draw [style=zeta] (m9) to (st9);
+	\draw [style=zeta] (m9) to (ac9);
+	%method2andtask
+	\draw [style=zeta] (st9) to (m10);
+	\draw [style=zeta] (m10) to (st10a);
+	\draw [style=zeta] (m10) to (st10b);
+\end{pgfonlayer}
+\end{tikzpicture}
+\end{center} %\centering
+\caption{Processo de planejamento hierárquico usado para obter tarefas de criação de sessões}
+\label{fig:exemploParcialSecaoDecomposicaoHTN}
+\end{figure}
+
+Antes de efetuar a geração do plano sessões práticas para a seção prática, o gerador de cursos colaborativos obtém um plano de tarefas \textsf{createLDPracticeSessions} mediante a decomposição da tarefa \textsf{createPracticePhase} empregando o processo mostrado na Figura \ref{fig:exemploParcialSecaoDecomposicaoHTN}. O processo obtém as tarefas mediante a definição de atividade de grupo usando a decomposição da tarefa \textsf{createLDPracticeGroupActivity} e \textsf{createPracticeGroupActivity} que define um par de tarefas \textsf{createLDGroup} e \textsf{createLDPracticeSessions}.
+
+\newpage
+Empregando o gerador de cursos colaborativos e a tarefa \textsf{createLDPracticeSessions}, o plano de sessões práticas \textsf{P} para a seção ``prática para aplicar o método da negação ou absurdo'' ($act_{3}$) é obtido mediante o processo de planejamento hierárquico mostrado na Figura \ref{fig:exemploSessaoDecomposicaoHTN}. O processo de planejamento hierárquico consiste de:
+
+\begin{itemize}
+\item[(1)] a criação de um roteiro mediante a decomposição da tarefa \textsf{createPracticeSessions};
+\item[(2)] a criação de fases práticas mediante a decomposição distributiva da tarefa \textsf{createPracticeScript}, decomposição distributiva efetuada até que todos os estudantes alcancem os objetivos educacionais; e
+\item[(3)] a formação de grupos mediante a decomposição distributiva das tarefas \textsf{createPracticePhase}, nas quais definimos a criação de atividades em grupo utilizando a tarefa \textsf{createLDPracticeGroupActivity}.
+\end{itemize}
+
+\begin{landscape}
+\begin{figure}[htbp]
+\begin{center}
+\begin{tikzpicture}[scale=1.5]
+\tikzstyle{task}=[rectangle,fill=Black,draw=Black]
+\tikzstyle{method}=[circle,fill=White,draw=Black,minimum size=2mm,inner sep=0pt]
+\tikzstyle{action}=[rectangle,fill=hexcolor0xd6d6d6,draw=Black]
+\tikzstyle{more}=[rectangle,fill=White,draw=White]
+\tikzstyle{zeta}=[fill=Black,->]
+\tikzstyle{texto}=[text badly centered, font=\tiny]
+\begin{pgfonlayer}{nodelayer}
+	%createLDPracticeSessions
+	\node [style=task] (t1) at (5.5, 9) {};
+	\draw (5.5, 8.75) node [style=texto] {createLDPracticeSessions};
+	\node [style=method] (m1) at (5.5, 8.5) {};
+	\node [style=action] (ao1) at (4.5, 8) {};
+	\draw (4.5, 7.75) node [style=texto] {!start $ld_{2}$};
+	\node [style=more] (mo1a) at (5, 8) {...};
+	\node [style=task] (st1) at (5.5, 8) {};
+	\node [style=more] (mo1b) at (6, 8) {...};
+	\node [style=action] (ac1) at (6.5, 8) {};
+	\draw (6.5, 7.75) node [style=texto] {!end $ld_{2}$};
+	%distribuicaoScript
+	\node [style=method] (md1) at (5.5, 7.5) {};
+	\draw (6.5, 7.5) node [style=texto] {(1) criação de roteiros};
+	%createLDPracticeScript
+	\node [style=task] (t2) at (5.5, 7) {};
+	\draw (5.5, 6.75) node [style=texto] {createLDPracticeScript};
+	\node [style=method] (m2) at (5.5, 6.5) {};
+	\node [style=action] (ao2) at (4.75, 6) {};
+	\draw (4.75, 5.75) node [style=texto] {!start $play_{4}$};
+	\node [style=more] (mo2) at (5.25, 6) {...};
+	\node [style=task] (st2) at (5.75, 6) {};
+	\node [style=action] (ac2) at (6.25, 6) {};
+	\draw (6.25, 5.75) node [style=texto] {!end $play_{4}$};
+	%distributePracticePhase
+	\node [style=method] (md2) at (5.75, 5) {};
+	\draw (7, 5) node [style=texto] {(2) criação de fases práticas};
+	%createLDPracticePhase 01
+	\node [style=task] (t3) at (0.75, 4) {};
+	\draw (0.75, 3.75) node [style=texto] {createLDPracticePhase};
+	\node [style=method] (m3) at (0.75, 3.5) {};
+	\node [style=action] (ao3) at (0, 3) {};
+	\draw (0, 2.75) node [style=texto] {!start $act_{5}$};
+	\node [style=more] (mo3) at (0.5, 3) {...};
+	\node [style=task] (st3) at (1, 3) {};
+	\node [style=action] (ac3) at (1.5, 3) {};
+	\draw (1.5, 2.75) node [style=texto] {!end $act_{5}$};
+	%createLDPracticePhase 02
+	\node [style=task] (t4) at (6.75, 4) {};
+	\draw (6.75, 3.75) node [style=texto] {createLDPracticePhase};
+	\node [style=method] (m4) at (6.75, 3.5) {};
+	\node [style=action] (ao4) at (6, 3) {};
+	\draw (6, 2.75) node [style=texto] {!start $act_{6}$};
+	\node [style=more] (mo4) at (6.5, 3) {...};
+	\node [style=task] (st4) at (7, 3) {};
+	\node [style=action] (ac4) at (7.5, 3) {};
+	\draw (7.5, 2.75) node [style=texto] {!end $act_{6}$};
+	%createLDPracticePhase 03
+	\node [style=task] (t5) at (10.75, 4) {};
+	\draw (10.75, 3.75) node [style=texto] {createLDPracticePhase};
+	\node [style=method] (m5) at (10.75, 3.5) {};
+	\node [style=action] (ao5) at (10, 3) {};
+	\draw (10, 2.75) node [style=texto] {!start $act_{7}$};
+	\node [style=more] (mo5) at (10.5, 3) {...};
+	\node [style=task] (st5) at (11, 3) {};
+	\node [style=action] (ac5) at (11.5, 3) {};
+	\draw (11.5, 2.75) node [style=texto] {!end $act_{7}$};
+	%formação de grupos 01
+	\node [style=method] (mg1) at (1, 2) {};
+	\draw (2, 2) node [style=texto] {(3) formação de grupos};
+	%formação de grupos 02
+	\node [style=method] (mg2) at (7, 2) {};
+	\draw (8, 2) node [style=texto] {(3) formação de grupos};
+	%formação de grupos 03
+	\node [style=method] (mg3) at (11, 2) {};
+	\draw (12, 2) node [style=texto] {(3) formação de grupos};
+	%createLDPracticeGroupActivity 01
+	\node [style=task] (t6) at (-1, 1) {};
+	\draw (-1, 0.75) node [style=texto] {createLDPracticeGroupActivity};
+	\node [style=method] (m6) at (-1, 0.5) {};
+	\node [style=action] (ao6) at (-1.5, 0) {};
+	\draw (-1.5, -0.25) node [style=texto] {!start $rp_{1}$};
+	\node [style=more] (mo6) at (-1, 0) {...};
+	\node [style=action] (ac6) at (-0.5, 0) {};
+	\draw (-0.5, -0.25) node [style=texto] {!end $rp_{1}$};
+	%createLDPracticeGroupActivity 02
+	\node [style=task] (t7) at (1, 1) {};
+	\node [style=method] (m7) at (1, 0.5) {};
+	\node [style=action] (ao7) at (0.5, 0) {};
+	\draw (0.5, -0.25) node [style=texto] {!start $rp_{2}$};
+	\node [style=more] (mo7) at (1, 0) {...};
+	\node [style=action] (ac7) at (1.5, 0) {};
+	\draw (1.5, -0.25) node [style=texto] {!end $rp_{2}$};
+	%createLDPracticeGroupActivity 03
+	\node [style=task] (t8) at (3, 1) {};
+	\node [style=method] (m8) at (3, 0.5) {};
+	\node [style=action] (ao8) at (2.5, 0) {};
+	\draw (2.5, -0.25) node [style=texto] {!start $rp_{3}$};
+	\node [style=more] (mo8) at (3, 0) {...};
+	\node [style=action] (ac8) at (3.5, 0) {};
+	\draw (3.5, -0.25) node [style=texto] {!end $rp_{3}$};
+	%createLDPracticeGroupActivity 04
+	\node [style=task] (t9) at (5, 1) {};
+	\node [style=method] (m9) at (5, 0.5) {};
+	\node [style=action] (ao9) at (4.5, 0) {};
+	\draw (4.5, -0.25) node [style=texto] {!start $rp_{4}$};
+	\node [style=more] (mo9) at (5, 0) {...};
+	\node [style=action] (ac9) at (5.5, 0) {};
+	\draw (5.5, -0.25) node [style=texto] {!end $rp_{4}$};
+	%createLDPracticeGroupActivity 05
+	\node [style=task] (t10) at (7, 1) {};
+	\draw (7, 0.75) node [style=texto] {createLDPracticeGroupActivity};
+	\node [style=method] (m10) at (7, 0.5) {};
+	\node [style=action] (ao10) at (6.5, 0) {};
+	\draw (6.5, -0.25) node [style=texto] {!start $rp_{5}$};
+	\node [style=more] (mo10) at (7, 0) {...};
+	\node [style=action] (ac10) at (7.5, 0) {};
+	\draw (7.5, -0.25) node [style=texto] {!end $rp_{5}$};
+	%createLDPracticeGroupActivity 06
+	\node [style=task] (t11) at (9, 1) {};
+	\node [style=method] (m11) at (9, 0.5) {};
+	\node [style=action] (ao11) at (8.5, 0) {};
+	\draw (8.5, -0.25) node [style=texto] {!start $rp_{6}$};
+	\node [style=more] (mo11) at (9, 0) {...};
+	\node [style=action] (ac11) at (9.5, 0) {};
+	\draw (9.5, -0.25) node [style=texto] {!end $rp_{6}$};
+	%createLDPracticeGroupActivity 07
+	\node [style=task] (t12) at (11, 1) {};
+	\draw (11, 0.75) node [style=texto] {createLDPracticeGroupActivity};
+	\node [style=method] (m12) at (11, 0.5) {};
+	\node [style=action] (ao12) at (10.5, 0) {};
+	\draw (10.5, -0.25) node [style=texto] {!start $rp_{7}$};
+	\node [style=more] (mo12) at (11, 0) {...};
+	\node [style=action] (ac12) at (11.5, 0) {};
+	\draw (11.5, -0.25) node [style=texto] {!end $rp_{7}$};
+\end{pgfonlayer}
+\begin{pgfonlayer}{edgelayer}
+	%createLDPracticePhase
+	\draw [style=zeta] (t1) to (m1);
+	\draw [style=zeta] (m1) to (ao1);
+	\draw [style=zeta] (m1) to (mo1a);
+	\draw [style=zeta] (m1) to (st1);
+	\draw [style=zeta] (m1) to (mo1b);
+	\draw [style=zeta] (m1) to (ac1);
+	%distribuicaoScript
+	\draw [style=zeta] (st1) to (md1);
+	\draw [style=zeta] (md1) to (t2);
+	%createLDPracticeScript
+	\draw [style=zeta] (t2) to (m2);
+	\draw [style=zeta] (m2) to (ao2);
+	\draw [style=zeta] (m2) to (mo2);
+	\draw [style=zeta] (m2) to (st2);
+	\draw [style=zeta] (m2) to (ac2);
+	%distributePracticePhase
+	\draw [style=zeta] (st2) to (md2);
+	\draw [style=zeta] (md2) to (t3);
+	\draw [style=zeta] (md2) to (t4);
+	\draw [style=zeta] (md2) to (t5);
+	%createLDPracticePhase 01
+	\draw [style=zeta] (t3) to (m3);
+	\draw [style=zeta] (m3) to (ao3);
+	\draw [style=zeta] (m3) to (mo3);
+	\draw [style=zeta] (m3) to (st3);
+	\draw [style=zeta] (m3) to (ac3);
+	%createLDPracticePhase 02
+	\draw [style=zeta] (t4) to (m4);
+	\draw [style=zeta] (m4) to (ao4);
+	\draw [style=zeta] (m4) to (mo4);
+	\draw [style=zeta] (m4) to (st4);
+	\draw [style=zeta] (m4) to (ac4);
+	%createLDPracticePhase 03
+	\draw [style=zeta] (t5) to (m5);
+	\draw [style=zeta] (m5) to (ao5);
+	\draw [style=zeta] (m5) to (mo5);
+	\draw [style=zeta] (m5) to (st5);
+	\draw [style=zeta] (m5) to (ac5);
+	%formação de grupos 01
+	\draw [style=zeta] (st3) to (mg1);
+	\draw [style=zeta] (mg1) to (t6);
+	\draw [style=zeta] (mg1) to (t7);
+	\draw [style=zeta] (mg1) to (t8);
+	%createLDPracticeGroupActivity 01
+	\draw [style=zeta] (t6) to (m6);
+	\draw [style=zeta] (m6) to (ao6);
+	\draw [style=zeta] (m6) to (mo6);
+	\draw [style=zeta] (m6) to (ac6);
+	%createLDPracticeGroupActivity 02
+	\draw [style=zeta] (t7) to (m7);
+	\draw [style=zeta] (m7) to (ao7);
+	\draw [style=zeta] (m7) to (mo7);
+	\draw [style=zeta] (m7) to (ac7);
+	%createLDPracticeGroupActivity 03
+	\draw [style=zeta] (t8) to (m8);
+	\draw [style=zeta] (m8) to (ao8);
+	\draw [style=zeta] (m8) to (mo8);
+	\draw [style=zeta] (m8) to (ac8);
+	%formação de grupos 02
+	\draw [style=zeta] (st4) to (mg2);
+	\draw [style=zeta] (mg2) to (t9);
+	\draw [style=zeta] (mg2) to (t10);
+	\draw [style=zeta] (mg2) to (t11);
+	%createLDPracticeGroupActivity 04
+	\draw [style=zeta] (t9) to (m9);
+	\draw [style=zeta] (m9) to (ao9);
+	\draw [style=zeta] (m9) to (mo9);
+	\draw [style=zeta] (m9) to (ac9);
+	%createLDPracticeGroupActivity 05
+	\draw [style=zeta] (t10) to (m10);
+	\draw [style=zeta] (m10) to (ao10);
+	\draw [style=zeta] (m10) to (mo10);
+	\draw [style=zeta] (m10) to (ac10);
+	%createLDPracticeGroupActivity 06
+	\draw [style=zeta] (t11) to (m11);
+	\draw [style=zeta] (m11) to (ao11);
+	\draw [style=zeta] (m11) to (mo11);
+	\draw [style=zeta] (m11) to (ac11);
+	%formação de grupos 02
+	\draw [style=zeta] (st5) to (mg3);
+	\draw [style=zeta] (mg3) to (t12);
+	%createLDPracticeGroupActivity 07
+	\draw [style=zeta] (t12) to (m12);
+	\draw [style=zeta] (m12) to (ao12);
+	\draw [style=zeta] (m12) to (mo12);
+	\draw [style=zeta] (m12) to (ac12);
+\end{pgfonlayer}
+\end{tikzpicture}
+\end{center} %\centering
+\caption{Processo de planejamento hierárquico usado para obter o plano de sessões na seção prática}
+\label{fig:exemploSessaoDecomposicaoHTN}
+\end{figure}
+\end{landscape}
+
+\begin{alltt}\sffamily\scriptsize
+P = ((!startLDElement role-part \(rp\sb{0}\) ((identifier \(rp\sb{0}\))) ((Practice GroupActivity) \(rp\sb{0}\) ((\(c\sb{3}\) s4k3)) ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement learning-design ((identifier \(ld\sb{2}\))) ((PracticeSessions UoL) \(ld\sb{2}\) ((\(c\sb{3}\) s4k3)) ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement play ((identifier \(play\sb{4}\))) ((Practice Script) \(play\sb{4}\) ((\(c\sb{3}\) s4k3)) ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement act ((identifier \(act\sb{5}\))) ((Practice Phase) \(act\sb{5}\) () ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement role-part ((identifier \(rp\sb{1}\))) ((Practice GroupActivity) \(rp\sb{1}\) ((\(c\sb{3}\) s4k3)) ((estudante1 estudante2))))
+        ...
+        (!endLDElement role-part \(rp\sb{1}\))
+        (!startLDElement role-part ((identifier \(rp\sb{2}\))) ((Practice GroupActivity) \(rp\sb{2}\) ((\(c\sb{3}\) s4k2)) ((estudante3 estudante4))))
+        ...
+        (!endLDElement role-part \(rp\sb{2}\))
+        (!startLDElement role-part ((identifier \(rp\sb{3}\))) ((Practice GroupActivity) \(rp\sb{3}\) ((\(c\sb{3}\) s3k2) (\(c\sb{3}\) s3k1)) 
+                                                                  ((estudante5 estudante6) (estudante7 estudante8))))
+        ...
+        (!endLDElement role-part \(rp\sb{3}\))
+        (!endLDElement act \(act\sb{5}\))
+        (!startLDElement act ((identifier \(act\sb{6}\))) ((Practice Phase) \(act\sb{6}\) () ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement role-part ((identifier \(rp\sb{4}\))) ((Practice GroupActivity) \(rp\sb{4}\) ((\(c\sb{3}\) s4k3)) ((estudante1 ... estudante4))))
+        ...
+        (!endLDElement role-part \(rp\sb{4}\))
+        (!startLDElement role-part ((identifier \(rp\sb{5}\))) ((Practice GroupActivity) \(rp\sb{5}\) ((\(c\sb{3}\) s3k3)) ((estudante5 estudante6))))
+        ...
+        (!endLDElement role-part \(rp\sb{5}\))
+        (!startLDElement role-part ((identifier \(rp\sb{6}\))) ((Practice GroupActivity) \(rp\sb{6}\) ((\(c\sb{3}\) s4k3)) ((estudante7 estudante8))))
+        ...
+        (!endLDElement role-part \(rp\sb{6}\))
+        (!endLDElement act \(act\sb{6}\))
+        (!startLDElement act ((identifier \(act\sb{7}\))) ((Practice Phase) \(act\sb{7}\) () ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement role-part ((identifier \(rp\sb{7}\))) ((Practice GroupActivity) \(rp\sb{7}\) ((\(c\sb{3}\) s4k3)) ((estudante1 ... estudante8))))
+        ...
+        (!endLDElement role-part \(rp\sb{7}\))
+        (!endLDElement act \(act\sb{7}\))
+        (!endLDElement play \(play\sb{4}\))
+        ...
+        (!endLDElement learning-design \(ld\sb{2}\))
+        (!endLDElement role-part \(rp\sb{0}\)))
+\end{alltt}
+
+A Tabela \ref{tab:exemploPlanoSessoes} mostra as interfaces de usuário no sistema CopperCore, apresentando o plano de sessões \textsf{P} obtido pelo gerador de cursos colaborativos. As imagens na tabela mostram as interfaces de cada uma das sessões práticas obtidas na seção ``prática para aplicar o método da negação ou absurdo''.
+
+\begin{landscape}
+\begin{table}[htbp]%\small
+\centering
+\begin{tabular}{|c|c|c|c|}
+%\hline
+% & \multicolumn{3}{|c|}{\textbf{competências}} & \multicolumn{2}{|c|}{\textbf{históricos}} & \multicolumn{2}{|c|}{\textbf{preferências}} \\
+\hline
+\multirow{3}{*}{Fase 01} & Sessão $s_{1}$ & Sessão $s_{2}$ & Sessão $s_{3}$ \\
+ & \includegraphics[width=0.4\textwidth]{figuras/sessao1coppercore} & \includegraphics[width=0.4\textwidth]{figuras/sessao2coppercore} & \includegraphics[width=0.4\textwidth]{figuras/sessao3coppercore} \\
+ & Grupo 1 (estudante1 e estudante2) & Grupo 2 (estudante3 e estudante4) & Grupo 3 (estudante5, ... e estudante8) \\ \hline
+\multirow{3}{*}{Fase 02} & Sessão $s_{4}$ & Sessão $s_{5}$ & Sessão $s_{6}$ \\
+ & \includegraphics[width=0.4\textwidth]{figuras/sessao4coppercore} & \includegraphics[width=0.4\textwidth]{figuras/sessao5coppercore} & \includegraphics[width=0.4\textwidth]{figuras/sessao6coppercore} \\
+ & Grupo 4 (estudante1, ... e estudante4) & Grupo 5 (estudante5 e estudante6) & Grupo 3 (estudante7 e estudante8) \\ \hline
+\multirow{3}{*}{Fase 03} & \multicolumn{3}{|c|}{Sessão $s_{7}$} \\
+ & \multicolumn{3}{|c|}{\includegraphics[width=0.5\textwidth]{figuras/sessao7coppercore}} \\
+ & \multicolumn{3}{|c|}{Grupo 7 (estudante1, estudante2, ... e estudante8)} \\ \hline
+\end{tabular}
+\caption{Interfaces de usuário no CopperCore do plano de sessões práticas para uma seção prática}
+\label{tab:exemploPlanoSessoes}
+\end{table}
+\end{landscape}
+
+\newpage
+\subsection{Plano de sessões definidas pelo macrorroteiro \textit{jigsaw}}
+
+A Tabela \ref{tab:exemploPlanoSessoesMacrorroteiro} mostra o plano de sessões definidas pelo macrorroteiro \textit{jigsaw} a ser obtido para a sessão ``praticar o método da negação ou absurdo com um exercício do nível autônomo e restruturação'' ($s_{7}$). O plano de sessões esperado consiste de:
+
+\begin{itemize}
+\item Uma fase individual definida como: quatro sessões $s_{8}$, $s_{9}$, $s_{10}$ e $s_{11}$, na qual cada estudante estudante1, estudante2, estudante3 e estudante4 participam da sessão ``demonstrar, se a fórmula $H$ é uma tautologia''; e quatro sessões $s_{12}$, $s_{13}$, $s_{14}$ e $s_{15}$, na qual cada estudante estudante5, estudante6, estudante7 e estudante8 participam da sessão ``demonstrar, se a fórmula $G'$ é uma tautologia''.
+\item Uma fase de especialização definida como uma sessão $s_{16}$ formada pelo Grupo16 (estudante1, estudante2, estudante3, estudante4) com estudantes que participaram da sessão ``demonstrar, se a fórmula $H$ é uma tautologia'' na fase individual e uma sessão $s_{17}$ formada pelo Grupo17 (estudante5, estudante6, estudante7, estudante8) com estudantes que participaram da sessão ``demonstrar, se a fórmula $G'$ é uma tautologia'' na fase individual.
+\item Uma fase \textit{jigsaw} definida como uma sessão $s_{18}$ ``discussão para demonstrar, se a fórmula $H$ é uma tautologia'', uma sessão $s_{19}$ ``discussão para demonstrar, se a fórmula $G'$ é uma tautologia'' e uma sessão $s_{20}$ para ``demonstrar, se a fórmula $G$ é uma tautologia'' formada pelo Grupo18 (estudante1, estudante2, ... e estudante8).
+\end{itemize}
+
+\begin{table}[htbp]
+\begin{tabular}{|p{16cm}|}
+\hline
+\begin{center}\underline{Sessão: ``Praticar $c_{3}$ com um exercício do nível s4k3''}\end{center}
+Objetivo educacional:
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Demonstre, utilizando o método da negação ou absurdo, se a fórmula ``$G = H \leftrightarrow (H \vee G')$'' é uma tautologia ($c_{a}$ s4k3), onde:
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item $H = (P \rightarrow (Q \rightarrow R)) \rightarrow ((P \wedge Q) \rightarrow R)$, ($c_{a1}$).
+\item $G' = (\neg P \rightarrow Q) \rightarrow ((\neg Q \rightarrow P) \wedge (P \vee Q))$, ($c_{a2}$).
+\end{itemize}
+\end{itemize}
+\\ \hline
+Modelo de estudante (nível de competência para $c_{a}$):
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Autônomo e restruturação (s4k3) - estudante1, estudante2, estudante3, estudante4,\newline estudante7, estudante8.
+\item Associativo e restruturação (s3k3) - estudante5, estudante6.
+\end{itemize}
+\\ \hline
+Resultado, plano de sessões usando o macrorroteiro ``\textit{Jigsaw}'':
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Fase individual:
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Demostrar, se a fórmula $H$ é uma tautologia ($s_{8}$) - estudante1.
+\item Demostrar, se a fórmula $H$ é uma tautologia ($s_{9}$) - estudante2.
+\item Demostrar, se a fórmula $H$ é uma tautologia ($s_{10}$) - estudante3.
+\item Demostrar, se a fórmula $H$ é uma tautologia ($s_{11}$) - estudante4.
+\item Demostrar, se a fórmula $G'$ é uma tautologia ($s_{12}$) - estudante5.
+\item Demostrar, se a fórmula $G'$ é uma tautologia ($s_{13}$) - estudante6.
+\item Demostrar, se a fórmula $G'$ é uma tautologia ($s_{14}$) - estudante7.
+\item Demostrar, se a fórmula $G'$ é uma tautologia ($s_{15}$) - estudante8.
+\end{itemize}
+\item Fase de especialização:
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Demostrar, se a fórmula $H$ é uma tautologia ($s_{16}$) - estudante1, estudante2,\newline estudante3, estudante4.
+\item Demostrar, se a fórmula $G'$ é uma tautologia ($s_{17}$) - estudante5, estudante6,\newline estudante7, estudante8.
+\end{itemize}
+\item Fase \textit{jigsaw} - estudante1, estudante2, ... e estudante 8:
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Discussão para demonstrar, se a fórmula $H$ é uma tautologia ($s_{18}$).
+\item Discussão para demonstrar, se a fórmula $G'$ é uma tautologia ($s_{19}$).
+\item \underline{Demostrar se a fórmula $G$ é uma tautologia} ($s_{20}$).
+\end{itemize}
+\end{itemize}
+\\ \hline
+\end{tabular}
+\caption{Resultado esperado das sessões definidas pelo macrorroteiro \textit{jigsaw} em uma sessão prática}
+\label{tab:exemploPlanoSessoesMacrorroteiro}
+\end{table}
+
+O gerador de cursos colaborativos obtém o plano de sessões definido pelo macrorroteiro \textit{jigsaw} na sessão $s_{7}$ mediante o processo de planejamento hierárquico mostrado na Figura \ref{fig:exemploJigsawSessaoDecomposicaoHTN}. Empregando a tarefa \textsf{createLDPracticeSession}, o processo de planejamento hierárquico para obter o plano \textsf{P}, apresentado a seguir, consiste de:
+
+\begin{itemize}
+\item[(1)] a seleção do elemento de conhecimento de tipo auxiliar adequado mediante a decomposição da tarefa \textsf{createPracticeSession};
+\item[(2)] a seleção do padrão de macrorroteiro mediante a  decomposição da tarefa \textsf{createLDScriptCLScenario!}, tarefa de integração de macrorroteiros e microrroteiros que define a seleção como a tarefa \textsf{createLDJigsawScript};
+\item[(3)] a criação das fases individual, especialização e \textit{jigsaw} mediante a decomposição da tarefa \textsf{createJigsawScript};
+\item[(4)] a formação de grupos mediante a decomposição distributiva das tarefas \textsf{createIndividualPhase}, \textsf{createExpertPhase} e \textsf{createJigsawPhase}, nas quais definimos a criação de atividades em grupo utilizando as tarefas \textsf{createLDIndividualGroupActivity}, \textsf{createLDExpertGroupActivity} e \textsf{createLDJigsawGroupActivity}.
+\end{itemize}
+
+
+\begin{landscape}
+\begin{figure}[htbp]
+\begin{center}
+\begin{tikzpicture}[scale=1.5]
+\tikzstyle{task}=[rectangle,fill=Black,draw=Black]
+\tikzstyle{method}=[circle,fill=White,draw=Black,minimum size=2mm,inner sep=0pt]
+\tikzstyle{action}=[rectangle,fill=hexcolor0xd6d6d6,draw=Black]
+\tikzstyle{more}=[rectangle,fill=White,draw=White]
+\tikzstyle{zeta}=[fill=Black,->]
+\tikzstyle{texto}=[text badly centered, font=\tiny]
+\begin{pgfonlayer}{nodelayer}
+	%createLDPracticeSession
+	\node [style=task] (t9) at (22.5, 10) {};
+	\draw (22.5, 9.75) node [style=texto] {createLDPracticeSession};
+	\node [style=method] (m9) at (22.5, 9.5) {};
+	\node [style=action] (ao9) at (21.5, 9) {};
+	\draw (21.5, 8.75) node [style=texto] {!start $ld_{3}$};
+	\node [style=more] (mo9a) at (22, 9) {...};
+	\node [style=task] (st9) at (22.5, 9) {};
+	\node [style=more] (mo9b) at (23, 9) {...};
+	\node [style=action] (ac9) at (23.5, 9) {};
+	\draw (23.5, 8.75) node [style=texto] {!end $ld_{3}$};
+	%methodPracticeSession
+	\node [style=method] (sm9) at (22.5, 8.5) {};
+	\draw (23.75, 8.5) node [style=texto] {(1) sel. elemento auxiliar};
+	%createLDInputs
+	\node [style=task] (t10) at (21.5, 8) {};
+	\draw (21.5, 7.75) node [style=texto] {createLDInputs};
+	%createLDScriptCLScenario
+	\node [style=task] (t11) at (23.5, 8) {};
+	\draw (23.5, 7.75) node [style=texto] {createLDScriptCLScenario!};
+	%methodScriptCLScenario
+	\node [style=method] (sm11) at (23.5, 7.5) {};
+	\draw (24.5, 7.5) node [style=texto] {(2) sel. macrorroteiro};
+	%createLDScript!
+	%\node [style=task] (t12) at (23.5, 8) {};
+	%\draw (23.5, 7.75) node [style=texto] {createLDScript!};
+	%methodScript
+	%\node [style=method] (sm12) at (23.5, 7.5) {};
+	%createLDJigsawScript
+	\node [style=task] (t13) at (23.5, 7) {};
+	\draw (23.5, 6.75) node [style=texto] {createLDJigsawScript};
+	\node [style=method] (m13) at (23.5, 6.5) {};
+	\node [style=action] (ao13) at (22.75, 6) {};
+	\draw (22.75, 5.75) node [style=texto] {!start $play_{5}$};
+	\node [style=more] (mo13) at (23.25, 6) {...};
+	\node [style=task] (st13) at (23.75, 6) {};
+	\node [style=action] (ac13) at (24.25, 6) {};
+	\draw (24.25, 5.75) node [style=texto] {!end $play_{5}$};
+	%methodJigsawScript
+	\node [style=method] (sm13) at (23.75, 5.5) {};
+	\draw (24.5, 5.5) node [style=texto] {(3)};
+	%createLDIndividualPhase
+	\node [style=task] (t14) at (19.5, 5) {};
+	\draw (19.5, 4.75) node [style=texto] {createLDIndividualPhase};
+	\node [style=method] (m14) at (19.5, 4.5) {};
+	\node [style=action] (ao14) at (18.75, 4) {};
+	\draw (18.75, 3.75) node [style=texto] {!start $act_{8}$};
+	\node [style=more] (mo14) at (19.25, 4) {...};
+	\node [style=task] (st14) at (19.75, 4) {};
+	\node [style=action] (ac14) at (20.25, 4) {};
+	\draw (20.25, 3.75) node [style=texto] {!end $act_{8}$};
+	%createLDExpertPhase
+	\node [style=task] (t15) at (23.75, 5) {};
+	\draw (23.75, 4.75) node [style=texto] {createLDExpertPhase};
+	\node [style=method] (m15) at (23.75, 4.5) {};
+	\node [style=action] (ao15) at (23, 4) {};
+	\draw (23, 3.75) node [style=texto] {!start $act_{9}$};
+	\node [style=more] (mo15) at (23.5, 4) {...};
+	\node [style=task] (st15) at (24, 4) {};
+	\node [style=action] (ac15) at (24.5, 4) {};
+	\draw (24.5, 3.75) node [style=texto] {!end $act_{9}$};
+	%methodExpertGroupActivity
+	\node [style=method] (sm15) at (24, 3.5) {};
+	\draw (25, 3.5) node [style=texto] {(4) formação de grupos};
+	%createLDJigsawPhase
+	\node [style=task] (t16) at (28, 5) {};
+	\draw (28, 4.75) node [style=texto] {createLDJigsawPhase};
+	\node [style=method] (m16) at (28, 4.5) {};
+	\node [style=action] (ao16) at (27.25, 4) {};
+	\draw (27.25, 3.75) node [style=texto] {!start $act_{10}$};
+	\node [style=more] (mo16) at (27.75, 4) {...};
+	\node [style=task] (st16) at (28.25, 4) {};
+	\node [style=action] (ac16) at (28.75, 4) {};
+	\draw (28.75, 3.75) node [style=texto] {!end $act_{10}$};
+	%methodJigsawGroupActivity
+	\node [style=method] (sm16) at (28.25, 3.5) {};
+	\draw (29.25, 3.5) node [style=texto] {(4) formação de grupos};
+	%createLDExpertGroupActivity01
+	\node [style=task] (t17) at (22.5, 3) {};
+	\draw (22.5, 2.75) node [style=texto] {createLDExpertGroupActivity};
+	\node [style=method] (m17) at (22.5, 2.5) {};
+	\node [style=action] (ao17) at (21.75, 2) {};
+	\draw (21.75, 1.75) node [style=texto] {!start $rp_{8}$};
+	\node [style=more] (mo17) at (22.25, 2) {...};
+	\node [style=task] (st17) at (22.75, 2) {};
+	\node [style=action] (ac17) at (23.25, 2) {};
+	\draw (23.25, 1.75) node [style=texto] {!end $rp_{8}$};
+	%createLDExpertGroupActivity02
+	\node [style=task] (t18) at (25.5, 3) {};
+	\draw (25.5, 2.75) node [style=texto] {createLDExpertGroupActivity};
+	\node [style=method] (m18) at (25.5, 2.5) {};
+	\node [style=action] (ao18) at (24.75, 2) {};
+	\draw (24.75, 1.75) node [style=texto] {!start $rp_{9}$};
+	\node [style=more] (mo18) at (25.25, 2) {...};
+	\node [style=task] (st18) at (25.75, 2) {};
+	\node [style=action] (ac18) at (26.25, 2) {};
+	\draw (26.25, 1.75) node [style=texto] {!end $rp_{9}$};
+	%createLDJigsawGroupActivity
+	\node [style=task] (t19) at (28.25, 3) {};
+	\draw (28.25, 2.75) node [style=texto] {createLDJigsawGroupActivity};
+	\node [style=method] (m19) at (28.25, 2.5) {};
+	\node [style=action] (ao19) at (27.5, 2) {};
+	\draw (27.5, 1.75) node [style=texto] {!start $rp_{10}$};
+	\node [style=more] (mo19) at (28, 2) {...};
+	\node [style=task] (st19) at (28.5, 2) {};
+	\node [style=action] (ac19) at (29, 2) {};
+	\draw (29, 1.75) node [style=texto] {!end $rp_{10}$};
+	%methodJigsawGroupActivity
+	\node [style=method] (sm19) at (28.5, 1.5) {};
+	\node [style=task] (tg19) at (28, 1) {};
+	%createLDJigsawSessions
+	\node [style=task] (t20) at (29, 1) {};
+	\draw (29, 0.75) node [style=texto] {createLDJigsawSessions};
+	\node [style=method] (m20) at (29, 0.5) {};
+	\node [style=action] (ao20) at (28, 0) {};
+	\draw (28, -0.25) node [style=texto] {!start $as_{1}$};
+	\node [style=task] (st20a) at (28.5, 0) {}; %\draw (28.5, -0.25) node [style=texto] {createLDDiscussionSession};
+	\node [style=task] (st20b) at (29, 0) {}; %\draw (29, -0.25) node [style=texto] {createLDDiscussionSession};
+	\node [style=task] (st20c) at (29.5, 0) {}; %\draw (29.5, -0.25) node [style=texto] {createLDJigsawSession};
+	\node [style=action] (ac20) at (30, 0) {};
+	\draw (30, -0.25) node [style=texto] {!end $as_{1}$};
+\end{pgfonlayer}
+\begin{pgfonlayer}{edgelayer}
+	%createLDPracticeSession
+	\draw [style=zeta] (t9) to (m9);
+	\draw [style=zeta] (m9) to (ao9);
+	\draw [style=zeta] (m9) to (mo9a);
+	\draw [style=zeta] (m9) to (st9);
+	\draw [style=zeta] (m9) to (mo9b);
+	\draw [style=zeta] (m9) to (ac9);
+	%methodPracticeSession
+	\draw [style=zeta] (st9) to (sm9);
+	\draw [style=zeta] (sm9) to (t10);
+	\draw [style=zeta] (sm9) to (t11);
+	%methodScriptCLScenario
+	\draw [style=zeta] (t11) to (sm11);
+	\draw [style=zeta] (sm11) to (t13);
+	%createLDJigsawScript
+	\draw [style=zeta] (t13) to (m13);
+	\draw [style=zeta] (m13) to (ao13);
+	\draw [style=zeta] (m13) to (mo13);
+	\draw [style=zeta] (m13) to (st13);
+	\draw [style=zeta] (m13) to (ac13);
+	%methodJigsawScript
+	\draw [style=zeta] (st13) to (sm13);
+	\draw [style=zeta] (sm13) to (t14);
+	\draw [style=zeta] (sm13) to (t15);
+	\draw [style=zeta] (sm13) to (t16);
+	%createLDIndividualPhase
+	\draw [style=zeta] (t14) to (m14);
+	\draw [style=zeta] (m14) to (ao14);
+	\draw [style=zeta] (m14) to (mo14);
+	\draw [style=zeta] (m14) to (st14);
+	\draw [style=zeta] (m14) to (ac14);
+	%createLDExpertPhase
+	\draw [style=zeta] (t15) to (m15);
+	\draw [style=zeta] (m15) to (ao15);
+	\draw [style=zeta] (m15) to (mo15);
+	\draw [style=zeta] (m15) to (st15);
+	\draw [style=zeta] (m15) to (ac15);
+	%createLDJigsawPhase
+	\draw [style=zeta] (t16) to (m16);
+	\draw [style=zeta] (m16) to (ao16);
+	\draw [style=zeta] (m16) to (mo16);
+	\draw [style=zeta] (m16) to (st16);
+	\draw [style=zeta] (m16) to (ac16);
+	%methodExpertGroupActivity
+	\draw [style=zeta] (st15) to (sm15);
+	\draw [style=zeta] (sm15) to (t17);
+	\draw [style=zeta] (sm15) to (t18);
+	%methodJigsawGroupActivity
+	\draw [style=zeta] (st16) to (sm16);
+	\draw [style=zeta] (sm16) to (t19);
+	%createLDExpertGroupActivity01
+	\draw [style=zeta] (t17) to (m17);
+	\draw [style=zeta] (m17) to (ao17);
+	\draw [style=zeta] (m17) to (mo17);
+	\draw [style=zeta] (m17) to (st17);
+	\draw [style=zeta] (m17) to (ac17);
+	%createLDExpertGroupActivity02
+	\draw [style=zeta] (t18) to (m18);
+	\draw [style=zeta] (m18) to (ao18);
+	\draw [style=zeta] (m18) to (mo18);
+	\draw [style=zeta] (m18) to (st18);
+	\draw [style=zeta] (m18) to (ac18);
+	%createLDJigsawGroupActivity
+	\draw [style=zeta] (t19) to (m19);
+	\draw [style=zeta] (m19) to (ao19);
+	\draw [style=zeta] (m19) to (mo19);
+	\draw [style=zeta] (m19) to (st19);
+	\draw [style=zeta] (m19) to (ac19);
+	%methodJigsawGroupActivity
+	\draw [style=zeta] (st19) to (sm19);
+	\draw [style=zeta] (sm19) to (tg19);
+	\draw [style=zeta] (sm19) to (t20);
+	%createLDJigsawSessions
+	\draw [style=zeta] (t20) to (m20);
+	\draw [style=zeta] (m20) to (ao20);
+	\draw [style=zeta] (m20) to (st20a);
+	\draw [style=zeta] (m20) to (st20b);
+	\draw [style=zeta] (m20) to (st20c);
+	\draw [style=zeta] (m20) to (ac20);
+\end{pgfonlayer}
+\end{tikzpicture}
+\end{center} %\centering
+\caption{Processo de planejamento hierárquico usado para obter o plano de sessões definidas pelo macrorroteiro \textit{jigsaw} na sessão prática}
+\label{fig:exemploJigsawSessaoDecomposicaoHTN}
+\end{figure}
+\end{landscape}
+
+\newpage
+
+\begin{alltt}\sffamily\scriptsize
+P = ((!startLDElement learning-design ((identifier \(ld\sb{3}\))) ((PracticeSession UoL) \(ld\sb{3}\) ((\(c\sb{3}\) s4k3)) ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement play ((identifier \(play\sb{5}\))) ((Jigsaw Script) \(play\sb{5}\) ((\(c\sb{a}\) s4k3)) ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement act ((identifier \(act\sb{8}\))) ((Individual Phase) \(act\sb{8}\) () ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement role-part ((identifier \(rp\sb{a}\))) ((Individual GroupActivity) \(rp\sb{a}\) ((\(c\sb{a1}\) s3k3)) ((estudante1))))
+        ...
+        (!endLDElement role-part \(rp\sb{a}\))
+        (!startLDElement role-part ((identifier \(rp\sb{b}\))) ((Individual GroupActivity) \(rp\sb{b}\) ((\(c\sb{a1}\) s3k3)) ((estudante2))))
+        ...
+        (!endLDElement role-part \(rp\sb{b}\))
+        (!startLDElement role-part ((identifier \(rp\sb{c}\))) ((Individual GroupActivity) \(rp\sb{c}\) ((\(c\sb{a1}\) s3k3)) ((estudante3))))
+        ...
+        (!endLDElement role-part \(rp\sb{c}\))
+        (!startLDElement role-part ((identifier \(rp\sb{d}\))) ((Individual GroupActivity) \(rp\sb{d}\) ((\(c\sb{a1}\) s3k3)) ((estudante4))))
+        ...
+        (!endLDElement role-part \(rp\sb{d}\))
+        (!startLDElement role-part ((identifier \(rp\sb{e}\))) ((Individual GroupActivity) \(rp\sb{e}\) ((\(c\sb{a2}\) s3k3)) ((estudante5))))
+        ...
+        (!endLDElement role-part \(rp\sb{e}\))
+        (!startLDElement role-part ((identifier \(rp\sb{f}\))) ((Individual GroupActivity) \(rp\sb{f}\) ((\(c\sb{a2}\) s3k3)) ((estudante6))))
+        ...
+        (!endLDElement role-part \(rp\sb{f}\))
+        (!startLDElement role-part ((identifier \(rp\sb{g}\))) ((Individual GroupActivity) \(rp\sb{g}\) ((\(c\sb{a2}\) s3k3)) ((estudante7))))
+        ...
+        (!endLDElement role-part \(rp\sb{g}\))
+        (!startLDElement role-part ((identifier \(rp\sb{h}\))) ((Individual GroupActivity) \(rp\sb{h}\) ((\(c\sb{a2}\) s3k3)) ((estudante8))))
+        ...
+        (!endLDElement role-part \(rp\sb{h}\))
+        (!endLDElement act \(act\sb{8}\))
+        (!startLDElement act ((identifier \(act\sb{9}\))) ((Expert Phase) \(act\sb{9}\) () ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement role-part ((identifier \(rp\sb{8}\))) ((Expert GroupActivity) \(rp\sb{8}\) ((\(c\sb{a1}\) s3k3)) ((estudante1 ... estudante4))))
+        ...
+        (!endLDElement role-part \(rp\sb{8}\))
+        (!startLDElement role-part ((identifier \(rp\sb{9}\))) ((Expert GroupActivity) \(rp\sb{9}\) ((\(c\sb{a2}\) s3k3)) ((estudante5 ... estudante8))))
+        ...
+        (!endLDElement role-part \(rp\sb{9}\))
+        (!endLDElement act \(act\sb{9}\))
+        (!startLDElement act ((identifier \(act\sb{10}\))) ((Jigsaw Phase) \(act\sb{10}\) () ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement role-part ((identifier \(rp\sb{10}\))) ((Jigsaw GroupActivity) \(rp\sb{10}\) ((\(c\sb{a}\) s4k3)) ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement activity-structure ((identifier \(as\sb{1}\))) ((Jigsaw Sessions) \(as\sb{1}\) ((\(c\sb{a}\) s4k3)) ((estudante1 ... estudante8))))
+        ...
+        (!endLDElement activity-structure \(as\sb{1}\))
+        (!endLDElement role-part \(rp\sb{10}\))
+        (!endLDElement act \(act\sb{10}\))
+        (!endLDElement play \(play\sb{5}\))
+        ...
+        (!endLDElement learning-design \(ld\sb{3}\)))
+\end{alltt}
+
+A Tabela \ref{tab:exemploPlanoJigsawSessoes} mostra as interfaces de usuário no sistema CopperCore, apresentando o plano de sessões \textsf{P} definido pelo macrorroteiro \textit{jigsaw}. As imagens na tabela mostram as interfaces de cada uma das sessões práticas obtidas pelo gerador de cursos colaborativos.
+
+
+%\begin{landscape}
+\begin{table}[htbp]%\small
+\centering
+\begin{tabular}{|p{3cm}|c|c|}
+%\hline
+% & \multicolumn{3}{|c|}{\textbf{competências}} & \multicolumn{2}{|c|}{\textbf{históricos}} & \multicolumn{2}{|c|}{\textbf{preferências}} \\
+\hline
+\multirow{3}{*}{Fase individual} & Sessão $s_{8}$, $s_{9}$, $s_{10}$ e $s_{11}$ & Sessão $s_{12}$, $s_{13}$, $s_{14}$ e $s_{15}$ \\
+ & \includegraphics[width=0.4\textwidth]{figuras/sessao11coppercore} & \includegraphics[width=0.4\textwidth]{figuras/sessao15coppercore} \\
+ & Grupo8, Grupo9, Grupo10 e Grupo11 & Grupo12, Grupo13, Grupo14 e Grupo15 \\ \hline
+\multirow{3}{3cm}{Fase de especialização} & Sessão $s_{16}$ & Sessão $s_{17}$ \\
+ & \includegraphics[width=0.4\textwidth]{figuras/sessao16coppercore} & \includegraphics[width=0.4\textwidth]{figuras/sessao17coppercore} \\
+ & Grupo16 (estudante1, ... e estudante4) & Grupo17 (estudante5, ... e estudante8)  \\ \hline
+\multirow{5}{*}{Fase \textit{jigsaw}} & Sessão $s_{18}$ & Sessão $s_{19}$ \\
+ & \includegraphics[width=0.4\textwidth]{figuras/sessao18coppercore} & \includegraphics[width=0.4\textwidth]{figuras/sessao19coppercore} \\ \cline{2-3}
+ & \multicolumn{2}{|c|}{Sessão $s_{20}$} \\
+ & \multicolumn{2}{|c|}{\includegraphics[width=0.4\textwidth]{figuras/sessao20coppercore}} \\
+ & \multicolumn{2}{|c|}{Grupo18 (estudante1, estudante2, ... e estudante8)} \\ \hline
+\end{tabular}
+\caption{Interfaces de usuário no CopperCore do plano de sessões definidas pelo macrorroteiro \textit{jigsaw}}
+\label{tab:exemploPlanoJigsawSessoes}
+\end{table}
+%\end{landscape}
+
+
+\newpage
+\subsection{Plano de interações definidas pelo microrroteiro \textit{distributed cognition}}
+
+A Tabela \ref{tab:exemploPlanoInteracoes} mostra o plano de interações definidas pelo microrroteiro \textit{distributed cognition} a ser obtido na sessão ``demostrar se a fórmula $G'$ é uma tautologia'' ($s_{20}$) do macrorroteiro \textit{jigsaw}. O plano de interações esperado consiste de:
+
+\begin{itemize}
+\item Duas interações cíclicas $as_{3}$ e $as_{4}$ definidas como um par de eventos IL ``demonstrar como resolver o problema - instigar a troca de ideias'' e um par de eventos IL ``requisitar detalhes sobre o problema - instigar o pensar''; e
+\item Um evento IL ``notificar o estado corrente do estudante'' ($la_{9}$).
+\end{itemize}
+
+\begin{table}[htbp]
+\begin{tabular}{|p{16cm}|}
+\hline
+\begin{center}\underline{Sessão: Demostrar se a fórmula ``$G = H \leftrightarrow (H \vee G')$'' é uma tautologia} ($c_{a}$ s4k3)\end{center}
+Objetivo educacional:
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Aperfeiçoamento continuo e gradual na demostração da fórmula $G$ e reestruturação do método de negação ou absurdo para considerar as relações entre os conhecimentos.
+\end{itemize}
+\\ \hline
+Modelo de estudante (nível de competência para $c_{a}$):
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Autônomo e restruturação (s4k3) - estudante1, estudante2, estudante3, estudante4,\newline estudante7, estudante8.
+\item Associativo e restruturação (s3k3) - estudante5, estudante6.
+\end{itemize}
+\\ \hline
+%Papéis atribuidos no microrroteiro:
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Participante pleno como instrutor: estudante1, estudante2, estudante3, estudante4.
+\item Participante pleno como aprendiz: estudante5, estudante6, estudante7, estudante8.
+\end{itemize}
+
+Resultado, plano de interações usando o microrroteiro ``\textit{distributed cognition}'':
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Demonstrar como resolver o problema - Instigar a troca de ideias (interação cíclica, $as_{3}$)
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Demonstrar como resolver o problema (evento IL, $la_{5}$)
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Evento instrucional: Demonstrar.
+\item Evento de aprendizagem: Observar demonstração.
+\end{itemize}
+\item Instigar a troca de ideias (evento IL, $la_{6}$)
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Evento instrucional: Requisição de opinião.
+\item Evento de aprendizagem: Exposição de opinião.
+\end{itemize}
+\end{itemize}
+\item Requisitar detalhes sobre o problema - Instigar o pensar (interação cíclica, $as_{4}$)
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Requisitar detalhes sobre o problema (evento IL, $la_{7}$)
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Evento instrucional: Requisição de pontos problemáticos.
+\item Evento de aprendizagem: Apresentação de pontos problemáticos.
+\end{itemize}
+\item Instigar o pensar (evento IL, $la_{8}$)
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Evento instrucional: Argumentação.
+\item Evento de aprendizagem: Análise de argumentos.
+\end{itemize}
+\end{itemize}
+\item Notificar o estado corrente do estudante (evento IL, $la_{9}$)
+\begin{itemize}\setlength{\itemsep}{-5pt}
+\item Evento instrucional: Dar informação.
+\item Evento de aprendizagem: Receber informação.
+\end{itemize}
+\end{itemize}
+\\ \hline
+\end{tabular}
+\caption{Resultado esperado das interações definidas pelo microrroteiro \textit{distributed cognition}}
+\label{tab:exemploPlanoInteracoes}
+\end{table}
+
+O gerador de cursos colaborativos obtém  o plano das interações definidas pelo microrroteiro \textit{distributed cognition} na sessão $s_{20}$ do macrorroteiro \textit{jigsaw} mediante o processo de planejamento hierárquico mostrado na Figura \ref{fig:exemploDistributedCognitionSessaoDecomposicaoHTN}. O processo de obtenção do plano \textsf{P}, consiste de:
+
+\begin{itemize}
+\item[(1)] a seleção do elemento de conhecimento de tipo auxiliar adequado mediante a decomposição da tarefa \textsf{createJigsawSession};
+\item[(2)] a seleção do padrão de microroteiro \textit{distributed cognition} mediante a decomposição da tarefa \textsf{createLDScriptCLScenario!}, tarefa de integração de macrorroteiros e microrroteiros que define a seleção do microrroteiro como a tarefa \textsf{createLDDistCognitionCLScenario};
+\item[(3)] a criação de fases mediante a decomposição da tarefa \textsf{createDistCognitionPhase}; e
+\item[(4)] a criação de interações (direcionadas e cíclicas) e eventos IL mediante a decomposição da tarefa \textsf{createDistCognitionInteractions}, na qual definimos a criação das interações e eventos IL utilizando as tarefas \textsf{createLDDemonstInstigDiscussionInteractions}, \textsf{createLDReqDetailInstThinkingInteractions} e \textsf{createLDHowLearnerIsILEvent}.
+\end{itemize}
+
+
+\begin{alltt}\sffamily\scriptsize
+P = ((!startLDElement learning-design ((identifier \(ld\sb{4}\))) ((DistCognition UoL) \(ld\sb{4}\) ((\(c\sb{a}\) s4k3)) ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement play ((identifier \(play\sb{6}\))) ((DistCognition CLScenario) \(play\sb{6}\) ((\(c\sb{a}\) s4k3)) ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement act ((identifier \(act\sb{11}\))) ((DistCognition Phase) \(act\sb{11}\) () ((estudante1 ... estudante8))))
+        ...
+        (!startLDElement activity-structure ((identifier \(as\sb{3}\))) ((DistCogntion Interaction) \(as\sb{3}\) ((\(c\sb{a}\) s4k3)) ((...))))
+        ...
+        (!startLDElement activity-structure ((identifier \(as\sb{4}\))) ((DemonsInstDiscuss Interaction) \(as\sb{4}\) ((\(c\sb{a}\) s4k3)) ((...))))
+        ...
+        (!endLDElement activity-structure \(as\sb{4}\))
+        (!startLDElement activity-structure ((identifier \(as\sb{5}\))) ((ReqDetailInstThink Interaction) \(as\sb{5}\) ((\(c\sb{a}\) s4k3)) ((...))))
+        ...
+        (!endLDElement activity-structure \(as\sb{5}\))
+        (!startLDElement learning-activity ((identifier \(la\sb{9}\))) ((HowLearnerIs ILEvent) \(la\sb{9}\) ((\(c\sb{a}\) s4k3)) ((...))))
+        ...
+        (!endLDElement learning-activity \(la\sb{9}\))
+        (!endLDElement activity-structure \(as\sb{3}\))
+        (!endLDElement act \(act\sb{11}\))
+        (!endLDElement play \(play\sb{6}\))
+        ...
+        (!endLDElement learning-design \(ld\sb{4}\)))
+\end{alltt}
+
+
+
+\begin{landscape}
+\begin{figure}[htbp]
+\begin{center}
+\begin{tikzpicture}[scale=1.5]
+\tikzstyle{task}=[rectangle,fill=Black,draw=Black]
+\tikzstyle{method}=[circle,fill=White,draw=Black,minimum size=2mm,inner sep=0pt]
+\tikzstyle{action}=[rectangle,fill=hexcolor0xd6d6d6,draw=Black]
+\tikzstyle{more}=[rectangle,fill=White,draw=White]
+\tikzstyle{zeta}=[fill=Black,->]
+\tikzstyle{texto}=[text badly centered, font=\tiny]
+\begin{pgfonlayer}{nodelayer}
+	%createLDJigsawSession
+	\node [style=task] (t5) at (24.5, 12) {};
+	\draw (24.5, 11.75) node [style=texto] {createLDJigsawSession};
+	\node [style=method] (m5) at (24.5, 11.5) {};
+	\node [style=action] (ao5) at (23.5, 11) {};
+	\draw (23.5, 10.75) node [style=texto] {!start $ld_{4}$};
+	\node [style=more] (mo5a) at (24, 11) {...};
+	\node [style=task] (st5) at (24.5, 11) {};
+	\node [style=more] (mo5b) at (25, 11) {...};
+	\node [style=action] (ac5) at (25.5, 11) {};
+	\draw (25.5, 10.75) node [style=texto] {!end $ld_{4}$};
+	%methodPracticeSession
+	\node [style=method] (sm5) at (24.5, 10.5) {};
+	\draw (25.75, 10.5) node [style=texto] {(1) sel. elemento auxiliar};
+	%createLDInputs
+	\node [style=task] (t6) at (23.5, 10) {};
+	\draw (23.5, 9.75) node [style=texto] {createLDInputs};
+	%createLDScriptCLScenario
+	\node [style=task] (t7) at (25.5, 10) {};
+	\draw (25.5, 9.75) node [style=texto] {createLDScriptCLScenario!};
+	%methodScriptCLScenario
+	\node [style=method] (sm7) at (25.5, 9.5) {};
+	\draw (26.5, 9.5) node [style=texto] {(2) sel. microrroteiro};
+	%createLDDistCognitionCLScenario
+	\node [style=task] (t8) at (25.5, 9) {};
+	\draw (25.5, 8.75) node [style=texto] {createLDDistCogCLScenario};
+	\node [style=method] (m8) at (25.5, 8.5) {};
+	\node [style=action] (ao8) at (24.75, 8) {};
+	\draw (24.75, 7.75) node [style=texto] {!start $play_{6}$};
+	\node [style=more] (mo8) at (25.25, 8) {...};
+	\node [style=task] (st8) at (25.75, 8) {};
+	\node [style=action] (ac8) at (26.25, 8) {};
+	\draw (26.25, 7.75) node [style=texto] {!end $play_{6}$};	
+	%methodDistCognitionCLScenario
+	\node [style=method] (sm8) at (25.75, 7.5) {};
+	%createLDDistCognitionPhase
+	\node [style=task] (t9) at (25.75, 7) {};
+	\draw (25.75, 6.75) node [style=texto] {createLDDistCogPhase};
+	\node [style=method] (m9) at (25.75, 6.5) {};
+	\node [style=action] (ao9) at (25, 6) {};
+	\draw (25, 5.75) node [style=texto] {!start $act_{11}$};
+	\node [style=more] (mo9) at (25.5, 6) {...};
+	\node [style=task] (st9) at (26, 6) {};
+	\node [style=action] (ac9) at (26.5, 6) {};
+	\draw (26.5, 5.75) node [style=texto] {!end $act_{11}$};
+	%methodDistCognitionPhase
+	\node [style=method] (sm9) at (26, 5.5) {};
+	%createLDLearningByDiscussionInstructionalStrategy
+	\node [style=task] (t10) at (25, 5) {};
+	%createLDLearningByDiscussionLearningStrategy
+	\node [style=task] (t11) at (26, 5) {};
+	%createLDDistCognitionInteractions
+	\node [style=task] (t12) at (27, 5) {};
+	\draw (27, 4.75) node [style=texto] {createLDDistCogInteractions};
+	\node [style=method] (m12) at (27, 4.5) {};
+	\node [style=action] (ao12) at (26.25, 4) {};
+	\draw (26.25, 3.75) node [style=texto] {!start $as_{3}$};
+	\node [style=more] (mo12) at (26.75, 4) {...};
+	\node [style=task] (st12) at (27.25, 4) {};
+	\node [style=action] (ac12) at (27.75, 4) {};
+	\draw (27.75, 3.75) node [style=texto] {!end $as_{3}$};
+	%methodDistributeCognitionInteractions
+	\node [style=method] (sm12) at (27.25, 3.5) {};
+	%createLDDemonInstigDiscusInteractions
+	\node [style=task] (t13) at (23.25, 3) {};
+	\draw (23.25, 2.75) node [style=texto] {createLDDemonInstigDiscus};
+	\node [style=method] (m13) at (23.25, 2.5) {};
+	\node [style=action] (ao13) at (22.5, 2) {};
+	\draw (22.5, 1.75) node [style=texto] {!start $as_{4}$};
+	\node [style=more] (mo13) at (23, 2) {...};
+	\node [style=task] (st13) at (23.5, 2) {};
+	\node [style=action] (ac13) at (24, 2) {};
+	\draw (24, 1.75) node [style=texto] {!end $as_{4}$};
+	%methodDemonInstigDiscuss
+%	\node [style=method] (sm13) at (21.5, 1.5) {};
+	%createLDReqDetailInstigThinkInteractions
+	\node [style=task] (t14) at (27.25, 3) {};
+	\draw (27.25, 2.75) node [style=texto] {createLDReqDetailInstigThink};
+	\node [style=method] (m14) at (27.25, 2.5) {};
+	\node [style=action] (ao14) at (26.5, 2) {};
+	\draw (26.5, 1.75) node [style=texto] {!start $as_{5}$};
+	\node [style=more] (mo14) at (27, 2) {...};
+	\node [style=task] (st14) at (27.5, 2) {};
+	\node [style=action] (ac14) at (28, 2) {};
+	\draw (28, 1.75) node [style=texto] {!end $as_{5}$};
+	%methodReqDetailInstigThink
+%	\node [style=method] (sm14) at (27.5, 1.5) {};
+	%createLDDemonILEvent
+%	\node [style=task] (t15) at (20, 1) {};
+%	\draw (20, 0.75) node [style=texto] {createLDDemonILEvent};
+%	\node [style=method] (m15) at (20, 0.5) {};
+%	\node [style=action] (ao15) at (19.5, 0) {};
+%	\draw (19.5, -0.25) node [style=texto] {!start $la_{5}$};
+%	\node [style=more] (mo15) at (20, 0) {...};
+%	\node [style=action] (ac15) at (20.5, 0) {};
+%	\draw (20.5, -0.25) node [style=texto] {!end $la_{5}$};
+	%createLDInstigDiscusILEvent
+%	\node [style=task] (t15) at (23, 1) {};
+%	\draw (23, 0.75) node [style=texto] {createLDInstigDiscusILEvent};
+%	\node [style=method] (m15) at (23, 0.5) {};
+%	\node [style=action] (ao15) at (22.5, 0) {};
+%	\draw (22.5, -0.25) node [style=texto] {!start $la_{6}$};
+%	\node [style=more] (mo15) at (23, 0) {...};
+%	\node [style=action] (ac15) at (23.5, 0) {};
+%	\draw (23.5, -0.25) node [style=texto] {!end $la_{6}$};
+	%createLDReqDetailILEvent
+%	\node [style=task] (t15) at (26, 1) {};
+%	\draw (26, 0.75) node [style=texto] {createLDReqDetailILEvent};
+%	\node [style=method] (m15) at (26, 0.5) {};
+%	\node [style=action] (ao15) at (25.5, 0) {};
+%	\draw (25.5, -0.25) node [style=texto] {!start $la_{7}$};
+%	\node [style=more] (mo15) at (26, 0) {...};
+%	\node [style=action] (ac15) at (26.5, 0) {};
+%	\draw (26.5, -0.25) node [style=texto] {!end $la_{7}$};
+	%createLDInstigThinkILEvent
+%	\node [style=task] (t15) at (29, 1) {};
+%	\draw (29, 0.75) node [style=texto] {createLDInstigThinkILEvent};
+%	\node [style=method] (m15) at (29, 0.5) {};
+%	\node [style=action] (ao15) at (28.5, 0) {};
+%	\draw (28.5, -0.25) node [style=texto] {!start $la_{8}$};
+%	\node [style=more] (mo15) at (29, 0) {...};
+%	\node [style=action] (ac15) at (29.5, 0) {};
+%	\draw (29.5, -0.25) node [style=texto] {!end $la_{8}$};
+	%createLDHowLearnerIsILEvent
+	\node [style=task] (t15) at (31.25, 3) {};
+	\draw (31.25, 2.75) node [style=texto] {createLDHowLearnerIsILEvent};
+	\node [style=method] (m15) at (31.25, 2.5) {};
+	\node [style=action] (ao15) at (30.75, 2) {};
+	\draw (30.75, 1.75) node [style=texto] {!start $la_{9}$};
+	\node [style=more] (mo15) at (31.25, 2) {...};
+	\node [style=action] (ac15) at (31.75, 2) {};
+	\draw (31.75, 1.75) node [style=texto] {!end $la_{9}$};
+\end{pgfonlayer}
+\begin{pgfonlayer}{edgelayer}
+	%createLDJigsawSession
+	\draw [style=zeta] (t5) to (m5);
+	\draw [style=zeta] (m5) to (ao5);
+	\draw [style=zeta] (m5) to (mo5a);
+	\draw [style=zeta] (m5) to (st5);
+	\draw [style=zeta] (m5) to (mo5b);
+	\draw [style=zeta] (m5) to (ac5);
+	%methodPracticeSession
+	\draw [style=zeta] (st5) to (sm5);
+	\draw [style=zeta] (sm5) to (t6);
+	\draw [style=zeta] (sm5) to (t7);
+	%methodScriptCLScenario
+	\draw [style=zeta] (t7) to (sm7);
+	\draw [style=zeta] (sm7) to (t8);
+	%createLDDistCognitionCLScenario
+	\draw [style=zeta] (t8) to (m8);
+	\draw [style=zeta] (m8) to (ao8);
+	\draw [style=zeta] (m8) to (mo8);
+	\draw [style=zeta] (m8) to (st8);
+	\draw [style=zeta] (m8) to (ac8);
+	%methodDistCognitionCLScenario
+	\draw [style=zeta] (st8) to (sm8);
+	\draw [style=zeta] (sm8) to (t9);
+	%createLDDistCognitionPhase
+	\draw [style=zeta] (t9) to (m9);
+	\draw [style=zeta] (m9) to (ao9);
+	\draw [style=zeta] (m9) to (mo9);
+	\draw [style=zeta] (m9) to (st9);
+	\draw [style=zeta] (m9) to (ac9);
+	%methodDistCognitionPhase
+	\draw [style=zeta] (st9) to (sm9);
+	\draw [style=zeta] (sm9) to (t10);
+	\draw [style=zeta] (sm9) to (t11);
+	\draw [style=zeta] (sm9) to (t12);
+	%createLDDistCognitionInteractions
+	\draw [style=zeta] (t12) to (m12);
+	\draw [style=zeta] (m12) to (ao12);
+	\draw [style=zeta] (m12) to (mo12);
+	\draw [style=zeta] (m12) to (st12);
+	\draw [style=zeta] (m12) to (ac12);
+	%methodDistributeCognitionInteractions
+	\draw [style=zeta] (st12) to (sm12);
+	\draw [style=zeta] (sm12) to (t13);
+	\draw [style=zeta] (sm12) to (t14);
+	\draw [style=zeta] (sm12) to (t15);
+	%createLDDemonInstigDiscusInteractions
+	\draw [style=zeta] (t13) to (m13);
+	\draw [style=zeta] (m13) to (ao13);
+	\draw [style=zeta] (m13) to (mo13);
+	\draw [style=zeta] (m13) to (st13);
+	\draw [style=zeta] (m13) to (ac13);
+	%createLDReqDetailInstigThinkInteractions
+	\draw [style=zeta] (t14) to (m14);
+	\draw [style=zeta] (m14) to (ao14);
+	\draw [style=zeta] (m14) to (mo14);
+	\draw [style=zeta] (m14) to (st14);
+	\draw [style=zeta] (m14) to (ac14);
+	%createLDHowLearnerIsILEvent
+	\draw [style=zeta] (t15) to (m15);
+	\draw [style=zeta] (m15) to (ao15);
+	\draw [style=zeta] (m15) to (mo15);
+	\draw [style=zeta] (m15) to (ac15);
+\end{pgfonlayer}
+\end{tikzpicture}
+\end{center} %\centering
+\caption{Processo de planejamento hierárquico usado para obter o plano de interações definidas pelo microrroteiro \textit{distributed cognition}}
+\label{fig:exemploDistributedCognitionSessaoDecomposicaoHTN}
+\end{figure}
+\end{landscape}
+
+A Tabela \ref{tab:exemploPlanoDistCogInteracoes} mostra as interfaces de usuário no sistema CopperCore, apresentando o plano de interações \textsf{P} obtido pelo gerador de cursos colaborativos definido pelo microrroteiro \textit{distributed cognition}. As imagens na tabela mostram as interfaces para usuários com papéis de ``participante pleno como instrutor'' e ``participante pleno como aprendiz''.
+
+%\begin{landscape}
+\begin{table}[htbp]%\small
+\centering
+\begin{tabular}{|c|c|}
+\hline
+% & \multicolumn{3}{|c|}{\textbf{competências}} & \multicolumn{2}{|c|}{\textbf{históricos}} & \multicolumn{2}{|c|}{\textbf{preferências}} \\
+\multirow{2}{*}{Papel de Instrutor} & (estudante1, estudante2, estudante3 e estudante4) \\
+ & \includegraphics[width=0.7\textwidth]{figuras/distcognition1coppercore} \\
+ \\ \hline
+\multirow{2}{*}{Papel de Aprendiz} & (estudante5, estudante6, estudante7 e estudante8)  \\
+ & \includegraphics[width=0.7\textwidth]{figuras/distcognition2coppercore} \\ \hline
+\end{tabular}
+\caption{Interfaces de usuário no CopperCore definidas pelo microrroteiro \textit{distributed cognition}}
+\label{tab:exemploPlanoDistCogInteracoes}
+\end{table}
+%\end{landscape}
+
+%Se na definição de uma sessão de aprendizagem do plano obtido pelo macrorroteiro ou cenário pedagógico, existe um padrão de microrroteiro que possa ser aplicado, a obtenção de um plano de interações na sessão é definida usando o padrão. Assim, o exemplo mostrado na Tabela \ref{tab:exemploPlanoInteracoes} consistente na definição de interações usando o microrroteiro ``\textit{distributed cognition}'' na sessão ``demonstrar se a fórmula $G = H \leftrightarrow (H \vee G')$ é uma tautologia'' ($c_{a}$ s4k3). A seleção é definida usando os níveis de competência no modelo de estudante, efetuando a atribuição dos papéis ``participante pleno como instrutor'' e ``participante pleno como aprendiz''.
+
+%Nesta seção com o objetivo de verificar a modelagem  Em conclusão, a verificação da modelagem  os resultados apresentados nesta seção sugerem que nossa proposta é adequada no planejamento instrucional automatizado em ACSC. a verificação da modelagem das estratégias de planejamento instrucional usando padrões de roteiros colaborativos como tarefas e métodos hierárquicos é eficaz para representar as . a estrutura de formação do grupo apresentado em ontologia pode ser usado para formar grupos adequadamente eficazes. A verificação é essencial, a fim de fornecer sistemas inteligentes, com conhecimentos de planejamento instrucional que esclarecem como as teorias de aprendizagem ajudar instrutores para formar grupos, para projetar atividades CL, e para melhorar os resultados de aprendizagem. A ontologia apresentada neste trabalho tem como objetivo representar o conhecimento de sistemas inteligentes de ensino que suportam CL, ao jogar um papel central na tomada de decisão sobre como, quando e por que devemos usar teorias para formar grupos que consideram os fatores que influenciam o CL processo.
+
+
+\pgfsetlayers{main}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
